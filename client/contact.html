@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Contact Lonestar Autos | Premium Car Dealership</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #c41e3a, #1e3a8a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #1e293b;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #c41e3a;
+        }
+
+        /* Hero Section */
+        .contact-hero {
+            padding: 120px 0 60px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-hero:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1494976388531-d1058494cdd8?ixlib=rb-4.0.3') center/cover;
+            opacity: 0.1;
+        }
+
+        .contact-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-hero p {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Contact Grid */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 60px 0;
+        }
+
+        /* Contact Info Card */
+        .contact-info {
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid #eef2f6;
+        }
+
+        .info-header {
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .info-header h2 {
+            font-size: 1.8rem;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .info-header p {
+            color: #64748b;
+        }
+
+        .contact-detail {
+            margin-bottom: 32px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        .contact-detail:hover {
+            transform: translateX(5px);
+            background: #f1f5f9;
+        }
+
+        .contact-detail h3 {
+            margin-bottom: 12px;
+            color: #c41e3a;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .contact-detail h3 i {
+            font-size: 1.3rem;
+        }
+
+        .contact-detail p {
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 4px;
+        }
+
+        .contact-detail .small-text {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .business-hours {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #eef2f6;
+        }
+
+        .hour-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            color: #475569;
+        }
+
+        .hour-row .day {
+            font-weight: 500;
+        }
+
+        .hour-row .time {
+            color: #64748b;
+        }
+
+        .hour-row.highlight {
+            color: #c41e3a;
+            font-weight: 600;
+        }
+
+        /* Social Links */
+        .social-links {
+            display: flex;
+            gap: 16px;
+            margin-top: 24px;
+            justify-content: center;
+        }
+
+        .social-link {
+            width: 44px;
+            height: 44px;
+            background: #f1f5f9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            color: #475569;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            background: linear-gradient(135deg, #c41e3a, #1e3a8a);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* Contact Form */
+        .contact-form {
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid #eef2f6;
+        }
+
+        .form-header {
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .form-header h2 {
+            font-size: 1.8rem;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .form-header p {
+            color: #64748b;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #1e293b;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #c41e3a;
+            box-shadow: 0 0 0 3px rgba(196,30,58,0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #c41e3a, #1e3a8a);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(196,30,58,0.3);
+        }
+
+        .success-message {
+            background: #d1fae5;
+            padding: 16px;
+            border-radius: 12px;
+            color: #059669;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            padding: 16px;
+            border-radius: 12px;
+            color: #dc2626;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* Map Section */
+        .map-section {
+            margin: 40px 0 60px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .map-placeholder {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            padding: 60px;
+            text-align: center;
+            color: white;
+        }
+
+        .map-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            color: #c41e3a;
+        }
+
+        /* Footer */
+        .footer {
+            background: #0f172a;
+            color: white;
+            padding: 48px 0 24px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section a {
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: #c41e3a;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #94a3b8;
+        }
+
+        /* ========== MOBILE RESPONSIVE STYLES ========== */
+        
+        @media (max-width: 1024px) {
+            .contact-grid {
+                gap: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+            
+            .navbar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+            }
+            
+            .nav-content {
+                padding: 0.75rem 0;
+            }
+            
+            .logo-text {
+                font-size: 1.2rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .contact-hero {
+                padding: 100px 0 40px;
+            }
+            
+            .contact-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .contact-hero p {
+                font-size: 1rem;
+            }
+            
+            .hero-badge {
+                font-size: 0.7rem;
+                padding: 6px 16px;
+            }
+            
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                padding: 40px 0;
+            }
+            
+            .contact-info {
+                padding: 24px;
+            }
+            
+            .info-header h2 {
+                font-size: 1.4rem;
+            }
+            
+            .contact-detail {
+                padding: 16px;
+            }
+            
+            .contact-form {
+                padding: 24px;
+            }
+            
+            .form-header h2 {
+                font-size: 1.4rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                padding: 12px 14px;
+                font-size: 16px;
+            }
+            
+            .map-placeholder {
+                padding: 40px;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .contact-info {
+                padding: 20px;
+            }
+            
+            .contact-detail h3 {
+                font-size: 1rem;
+            }
+            
+            .contact-detail p {
+                font-size: 0.85rem;
+            }
+            
+            .hour-row {
+                font-size: 0.85rem;
+            }
+            
+            .social-link {
+                width: 38px;
+                height: 38px;
+            }
+            
+            .btn-primary {
+                padding: 12px 24px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Touch-friendly improvements */
+        @media (max-width: 768px) {
+            button,
+            .nav-links a,
+            .social-link,
+            .contact-detail {
+                cursor: pointer;
+                -webkit-tap-highlight-color: transparent;
+            }
+            
+            .btn-primary:active {
+                transform: scale(0.98);
+            }
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+
+            /* ========== ENHANCED NAVBAR STYLES ========== */
+    
+    .navbar {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(10px);
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .nav-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        position: relative;
+    }
+    
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .logo-img {
+        height: 45px;
+        width: auto;
+    }
+    
+    .logo-text {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #c41e3a 0%, #1e3a8a 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.5px;
+    }
+    
+    /* Desktop Navigation Links */
+    .nav-links {
+        display: flex;
+        gap: 32px;
+        align-items: center;
+    }
+    
+    .nav-links a {
+        text-decoration: none;
+        color: #1e293b;
+        font-weight: 500;
+        transition: color 0.3s;
+        font-size: 0.95rem;
+    }
+    
+    .nav-links a:hover,
+    .nav-links a.active {
+        color: #c41e3a;
+    }
+    
+    .nav-links .btn-primary {
+        background: linear-gradient(135deg, #c41e3a, #1e3a8a);
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 30px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.3s, box-shadow 0.3s;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 0.9rem;
+    }
+    
+    .nav-links .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px rgba(196, 30, 58, 0.4);
+    }
+    
+    /* Mobile Menu Button */
+    .mobile-menu-btn {
+        display: none;
+        font-size: 1.8rem;
+        cursor: pointer;
+        color: #1e293b;
+        transition: color 0.3s;
+        z-index: 1001;
+    }
+    
+    .mobile-menu-btn:hover {
+        color: #c41e3a;
+    }
+    
+    /* Mobile Dropdown Menu */
+    .mobile-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        border-radius: 0 0 20px 20px;
+        padding: 20px;
+        flex-direction: column;
+        gap: 12px;
+        z-index: 999;
+        animation: slideDown 0.3s ease;
+    }
+    
+    .mobile-menu.show {
+        display: flex;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .mobile-nav-link {
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #1e293b;
+        font-weight: 500;
+        border-radius: 12px;
+        transition: all 0.3s;
+        font-size: 1rem;
+    }
+    
+    .mobile-nav-link:hover,
+    .mobile-nav-link.active {
+        background: #f8fafc;
+        color: #c41e3a;
+    }
+    
+    .mobile-browse-btn-full {
+        text-align: center;
+        margin-top: 8px;
+        background: linear-gradient(135deg, #c41e3a, #1e3a8a);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        display: block;
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .nav-links {
+            display: none;
+        }
+        
+        .mobile-menu-btn {
+            display: block;
+        }
+        
+        .logo-text {
+            font-size: 1.2rem;
+        }
+        
+        .logo-img {
+            height: 35px;
+        }
+        
+        .nav-content {
+            padding: 0.75rem 0;
+        }
+    }
+    
+    /* Small Mobile Devices */
+    @media (max-width: 480px) {
+        .logo-text {
+            font-size: 1rem;
+        }
+        
+        .mobile-nav-link {
+            padding: 10px 14px;
+            font-size: 0.9rem;
+        }
+    }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <div class="logo-text">LONESTAR AUTOS</div>
+                </div>
+                
+                <!-- Desktop Navigation Links -->
+                <div class="nav-links" id="navLinks">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="inventory.html" class="nav-link">Inventory</a>
+                    <a href="about.html" class="nav-link">About Us</a>
+                    <a href="shipping.html" class="nav-link">Shipping</a>
+                    <a href="contact.html" class="nav-link">Contact</a>
+                    <a href="track.html" class="nav-link">Track Delivery</a>
+                    <a href="#inventory" class="btn-primary mobile-browse-btn">Browse Cars</a>
+                </div>
+                
+                <!-- Mobile Hamburger Menu Button -->
+                <div class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+            
+            <!-- Mobile Dropdown Menu -->
+            <div class="mobile-menu" id="mobileMenu">
+                <a href="index.html" class="mobile-nav-link">Home</a>
+                <a href="inventory.html" class="mobile-nav-link">Inventory</a>
+                <a href="about.html" class="mobile-nav-link">About Us</a>
+                <a href="shipping.html" class="mobile-nav-link">Shipping</a>
+                <a href="contact.html" class="mobile-nav-link">Contact</a>
+                <a href="track.html" class="mobile-nav-link">Track Delivery</a>
+                <a href="#inventory" class="btn-primary mobile-browse-btn-full">Browse Cars</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="contact-hero">
+        <div class="container">
+            <div class="hero-badge">
+                <i class="fas fa-headset"></i> 24/7 Customer Support
+            </div>
+            <h1>Contact Us</h1>
+            <p>We're here to help with your next vehicle purchase</p>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="contact-grid">
+            <!-- Contact Information -->
+            <div class="contact-info">
+                <div class="info-header">
+                    <h2>Get in Touch</h2>
+                    <p>We'd love to hear from you</p>
+                </div>
+                
+                <div class="contact-detail">
+                    <h3><i class="fas fa-phone-alt"></i> Phone</h3>
+                    <p><strong>Sales:</strong> 1-888-LONESTAR (566-3782)</p>
+                    <p><strong>Support:</strong> 1-888-566-3783</p>
+                    <p class="small-text">Mon-Sat: 9am - 8pm EST | Sun: Closed</p>
+                </div>
+                
+                <div class="contact-detail">
+                    <h3><i class="fas fa-envelope"></i> Email</h3>
+                    <p><strong>Sales:</strong> sales@lonestarautos.com</p>
+                    <p><strong>Support:</strong> support@lonestarautos.com</p>
+                    <p><strong>Financing:</strong> finance@lonestarautos.com</p>
+                    <p class="small-text">Response within 24 hours</p>
+                </div>
+                
+                <div class="contact-detail">
+                    <h3><i class="fas fa-map-marker-alt"></i> Showroom</h3>
+                    <p>123 Auto Row Drive</p>
+                    <p>Houston, TX 77001</p>
+                    <p class="small-text">By appointment only - we deliver nationwide!</p>
+                </div>
+                
+                <div class="business-hours">
+                    <h3><i class="fas fa-clock"></i> Business Hours</h3>
+                    <div class="hour-row">
+                        <span class="day">Monday - Friday</span>
+                        <span class="time">9:00 AM - 8:00 PM</span>
+                    </div>
+                    <div class="hour-row">
+                        <span class="day">Saturday</span>
+                        <span class="time">10:00 AM - 6:00 PM</span>
+                    </div>
+                    <div class="hour-row highlight">
+                        <span class="day">Sunday</span>
+                        <span class="time">Closed (Online sales 24/7)</span>
+                    </div>
+                </div>
+                
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            
+            <!-- Contact Form -->
+            <div class="contact-form">
+                <div class="form-header">
+                    <h2>Send us a Message</h2>
+                    <p>Fill out the form and we'll get back to you within 24 hours</p>
+                </div>
+                
+                <form id="contactForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Full Name *</label>
+                            <input type="text" id="name" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address *</label>
+                            <input type="email" id="email" placeholder="john@example.com" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="phone" placeholder="(555) 123-4567">
+                        </div>
+                        <div class="form-group">
+                            <label>Inquiry Type</label>
+                            <select id="inquiryType">
+                                <option value="Vehicle Purchase">🚗 Vehicle Purchase</option>
+                                <option value="Shipping Inquiry">🚚 Shipping Inquiry</option>
+                                <option value="Financing">💰 Financing</option>
+                                <option value="General Question">📋 General Question</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Message *</label>
+                        <textarea rows="5" id="message" placeholder="Please provide details about your inquiry..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary" id="submitBtn">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </button>
+                </form>
+                <div id="formResult" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+        
+        <!-- Map Section -->
+        <div class="map-section">
+            <div class="map-placeholder">
+                <i class="fas fa-map-marked-alt"></i>
+                <h3>Visit Our Showroom</h3>
+                <p>123 Auto Row Drive, Houston, TX 77001</p>
+                <p style="margin-top: 12px; font-size: 0.9rem;">By appointment only - Contact us to schedule a visit</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Lonestar Autos</h4>
+                    <p>Premium car dealership offering luxury, sports, and everyday vehicles with nationwide delivery since 2019.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="inventory.html">Inventory</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="shipping.html">Shipping</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="track.html">Track Delivery</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Financing Disclosure</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> 1-888-LONESTAR</li>
+                        <li><i class="fas fa-envelope"></i> sales@lonestarautos.com</li>
+                        <li><i class="fas fa-clock"></i> Mon-Sat: 9am-8pm EST</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Lonestar Autos. All rights reserved. | Texas Born & Bred Since 2019</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const vehicleParam = urlParams.get('vehicle');
+        const messageParam = urlParams.get('message');
+        
+        // Pre-fill form if coming from inventory
+        if (vehicleParam) {
+            document.getElementById('inquiryType').value = 'Vehicle Purchase';
+            document.getElementById('message').value = messageParam || `I'm interested in the ${vehicleParam}. Please contact me with more information about pricing, financing, and delivery options.`;
+        }
+        
+        // Handle form submission
+        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            submitBtn.disabled = true;
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                inquiryType: document.getElementById('inquiryType').value,
+                message: document.getElementById('message').value,
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent
+            };
+            
+            const resultDiv = document.getElementById('formResult');
+            resultDiv.innerHTML = '<div class="success-message"><i class="fas fa-spinner fa-spin"></i> Sending your message...</div>';
+            
+            try {
+                // Send to backend API
+                const response = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="success-message">
+                            <i class="fas fa-check-circle"></i> ✅ Thank you for your message! 
+                            <br><strong>Reference ID:</strong> ${data.referenceId || 'Contact-' + Date.now()}
+                            <br>A Lonestar Autos representative will contact you within 24 hours.
+                        </div>
+                    `;
+                    document.getElementById('contactForm').reset();
+                } else {
+                    // Fallback to localStorage if API fails
+                    const inquiries = JSON.parse(localStorage.getItem('inquiries') || '[]');
+                    inquiries.push({ ...formData, referenceId: 'Local-' + Date.now() });
+                    localStorage.setItem('inquiries', JSON.stringify(inquiries));
+                    
+                    resultDiv.innerHTML = `
+                        <div class="success-message">
+                            <i class="fas fa-check-circle"></i> ✅ Message received! 
+                            <br>Reference ID: Local-${Date.now()}
+                            <br>A Lonestar Autos representative will contact you within 24 hours.
+                        </div>
+                    `;
+                    document.getElementById('contactForm').reset();
+                }
+                
+                // Clear result after 8 seconds
+                setTimeout(() => {
+                    resultDiv.innerHTML = '';
+                }, 8000);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                // Fallback to localStorage
+                const inquiries = JSON.parse(localStorage.getItem('inquiries') || '[]');
+                inquiries.push({ ...formData, referenceId: 'Local-' + Date.now() });
+                localStorage.setItem('inquiries', JSON.stringify(inquiries));
+                
+                resultDiv.innerHTML = `
+                    <div class="success-message">
+                        <i class="fas fa-check-circle"></i> ✅ Message received! 
+                        <br>Reference ID: Local-${Date.now()}
+                        <br>A Lonestar Autos representative will contact you within 24 hours.
+                    </div>
+                `;
+                document.getElementById('contactForm').reset();
+                
+                setTimeout(() => {
+                    resultDiv.innerHTML = '';
+                }, 8000);
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+    <script>
+        // Mobile Menu Toggle Function
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('show');
+            
+            // Change hamburger icon to X when open
+            const menuBtn = document.getElementById('mobileMenuBtn');
+            const icon = menuBtn.querySelector('i');
+            if (mobileMenu.classList.contains('show')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        }
+        
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.mobile-nav-link, .mobile-browse-btn-full').forEach(link => {
+            link.addEventListener('click', () => {
+                const mobileMenu = document.getElementById('mobileMenu');
+                mobileMenu.classList.remove('show');
+                const menuBtn = document.getElementById('mobileMenuBtn');
+                const icon = menuBtn.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuBtn = document.getElementById('mobileMenuBtn');
+            
+            if (mobileMenu.classList.contains('show')) {
+                if (!mobileMenu.contains(event.target) && !menuBtn.contains(event.target)) {
+                    mobileMenu.classList.remove('show');
+                    const icon = menuBtn.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+        });
+        
+        // Set active link based on current page
+        function setActiveNavLink() {
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+            
+            navLinks.forEach(link => {
+                const linkHref = link.getAttribute('href');
+                if (linkHref === currentPage) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+        
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', setActiveNavLink);
+    </script>
+</body>
+</html>

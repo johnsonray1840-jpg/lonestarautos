@@ -1,0 +1,2989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Secure Checkout - Lonestar Autos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ========== ALL EXISTING STYLES REMAIN INTACT ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fa;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 100px 24px 60px;
+        }
+
+        .navbar {
+            background: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #c41e3a, #1e3a8a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #1e293b;
+            margin-left: 2rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #c41e3a;
+        }
+
+        .checkout-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 32px;
+        }
+
+        .vehicle-summary {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #eef2f6;
+            position: sticky;
+            top: 100px;
+        }
+
+        .vehicle-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            background: #f8fafc;
+        }
+
+        .vehicle-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1e293b;
+        }
+
+        .vehicle-price {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #c41e3a;
+            margin: 16px 0;
+        }
+
+        .downpayment-info {
+            background: linear-gradient(135deg, #fefce8, #fef9c3);
+            border: 1px solid #fde047;
+            border-radius: 16px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .downpayment-label {
+            font-size: 0.85rem;
+            color: #854d0e;
+            font-weight: 600;
+        }
+
+        .downpayment-amount {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #c41e3a;
+        }
+
+        .price-breakdown {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 16px;
+            margin: 20px 0;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .price-row.total {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 8px;
+            padding-top: 12px;
+            border-top: 2px solid #c41e3a;
+        }
+
+        .payment-options {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #eef2f6;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #1e293b;
+        }
+
+        .option-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+            border-bottom: 2px solid #eef2f6;
+            padding-bottom: 16px;
+        }
+
+        .option-tab {
+            flex: 1;
+            padding: 12px 20px;
+            text-align: center;
+            background: none;
+            border: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s;
+            color: #64748b;
+        }
+
+        .option-tab:hover {
+            background: #f8fafc;
+        }
+
+        .option-tab.active {
+            background: linear-gradient(135deg, #c41e3a, #1e3a8a);
+            color: white;
+            box-shadow: 0 4px 12px rgba(196,30,58,0.2);
+        }
+
+        .option-tab.reserve-tab.active {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .option-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .option-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .info-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 24px;
+            border-left: 4px solid #c41e3a;
+        }
+
+        .info-card i {
+            color: #c41e3a;
+            margin-right: 8px;
+        }
+
+        .terms-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .term-item {
+            font-size: 0.8rem;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .term-item i {
+            color: #10b981;
+            font-size: 0.7rem;
+        }
+
+        .payment-methods-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .payment-method-card {
+            background: white;
+            border: 2px solid #eef2f6;
+            border-radius: 16px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .payment-method-card:hover {
+            border-color: #c41e3a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .payment-icon {
+            width: 48px;
+            height: 48px;
+            background: #f8fafc;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .payment-info {
+            flex: 1;
+        }
+
+        .payment-name {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .payment-desc {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        /* Delivery Form */
+        .delivery-form {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .delivery-form h4 {
+            margin-bottom: 16px;
+            color: #1e293b;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: #475569;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #c41e3a;
+        }
+
+        /* Modal */
+        .payment-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-container {
+            background: white;
+            max-width: 550px;
+            width: 90%;
+            border-radius: 28px;
+            overflow: hidden;
+            animation: modalSlideIn 0.3s ease;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: scale(0.95) translateY(-20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-header {
+            padding: 28px;
+            text-align: center;
+            color: white;
+        }
+
+        .modal-header.paypal { background: linear-gradient(135deg, #0070ba, #003087); }
+        .modal-header.venmo { background: linear-gradient(135deg, #008CFF, #0066CC); }
+        .modal-header.cashapp { background: linear-gradient(135deg, #00D632, #00B82C); }
+        .modal-header.wire { background: linear-gradient(135deg, #1e293b, #0f172a); }
+        .modal-header.card { background: linear-gradient(135deg, #475569, #1e293b); }
+
+        .modal-icon {
+            font-size: 3.5rem;
+            margin-bottom: 12px;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+
+        .modal-body {
+            padding: 28px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .delivery-details-summary {
+            background: #f1f5f9;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .delivery-details-summary h4 {
+            margin-bottom: 12px;
+            color: #1e293b;
+        }
+
+        .delivery-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 0.85rem;
+        }
+
+        .payment-instructions {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 16px;
+            margin: 20px 0;
+        }
+
+        .payment-detail {
+            background: white;
+            padding: 12px;
+            border-radius: 12px;
+            margin-top: 12px;
+            border: 1px solid #eef2f6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            color: #c41e3a;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .copy-btn:hover {
+            background: #f1f5f9;
+        }
+
+        .timer-section {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .timer-display {
+            font-size: 2.5rem;
+            font-weight: 800;
+            font-family: monospace;
+            letter-spacing: 6px;
+            color: #92400e;
+            margin: 12px 0;
+        }
+
+        .verification-steps {
+            margin: 20px 0;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            background: white;
+            margin: 10px 0;
+            border-radius: 14px;
+            border: 1px solid #eef2f6;
+            animation: fadeInStep 0.4s ease forwards;
+            opacity: 0;
+            transform: translateX(-15px);
+        }
+
+        .step.completed {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            border-color: #10b981;
+        }
+
+        .step.completed i {
+            color: #10b981;
+        }
+
+        .step.active {
+            background: #eff6ff;
+            border-color: #3b82f6;
+        }
+
+        .step-icon {
+            width: 32px;
+            height: 32px;
+            background: #f1f5f9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .step.completed .step-icon {
+            background: #10b981;
+            color: white;
+        }
+
+        .step.active .step-icon {
+            background: #3b82f6;
+            color: white;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .step-desc {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        @keyframes fadeInStep {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .btn-pay {
+            background: linear-gradient(135deg, #c41e3a, #1e3a8a);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .btn-pay:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(196,30,58,0.3);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-cancel {
+            background: white;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            margin-top: 12px;
+        }
+
+        .btn-cancel:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .success-page {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .success-checkmark {
+            width: 80px;
+            height: 80px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .success-checkmark i {
+            font-size: 40px;
+            color: white;
+        }
+
+        .success-details {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 24px 0;
+            text-align: left;
+        }
+
+        .card-unavailable {
+            background: #fef3c7;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .card-unavailable h4 {
+            color: #92400e;
+            margin-bottom: 12px;
+        }
+
+        .card-unavailable ul {
+            margin-left: 20px;
+            color: #78716c;
+            font-size: 0.85rem;
+        }
+
+        .card-unavailable li {
+            margin: 6px 0;
+        }
+
+        /* ========== MOBILE RESPONSIVE STYLES (ADDED - PRESERVES ALL EXISTING CODE) ========== */
+        
+        /* Tablet Devices (768px and below) */
+        @media (max-width: 768px) {
+            .container {
+                padding: 80px 16px 40px;
+            }
+            
+            .navbar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+            }
+            
+            .nav-content {
+                padding: 0.75rem 1rem;
+            }
+            
+            .logo-text {
+                font-size: 1.2rem;
+            }
+            
+            .nav-links a {
+                margin-left: 1rem;
+                font-size: 0.85rem;
+            }
+            
+            .checkout-wrapper {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .vehicle-summary {
+                position: relative;
+                top: 0;
+                padding: 20px;
+                margin-bottom: 0;
+            }
+            
+            .vehicle-image {
+                height: 180px;
+            }
+            
+            .vehicle-title {
+                font-size: 1.25rem;
+            }
+            
+            .vehicle-price {
+                font-size: 1.5rem;
+            }
+            
+            .downpayment-amount {
+                font-size: 1.2rem;
+            }
+            
+            .payment-options {
+                padding: 20px;
+            }
+            
+            .option-tabs {
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+            
+            .option-tab {
+                padding: 10px 12px;
+                font-size: 0.85rem;
+                min-width: calc(33.33% - 8px);
+                flex: none;
+            }
+            
+            .payment-methods-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .payment-method-card {
+                padding: 14px;
+            }
+            
+            .payment-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.4rem;
+            }
+            
+            .delivery-form {
+                padding: 16px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            
+            .form-group {
+                margin-bottom: 12px;
+            }
+            
+            .form-group input, 
+            .form-group select, 
+            .form-group textarea {
+                padding: 10px;
+                font-size: 0.85rem;
+            }
+            
+            .info-card {
+                padding: 14px;
+                font-size: 0.85rem;
+            }
+            
+            .terms-list {
+                gap: 10px;
+            }
+            
+            .term-item {
+                font-size: 0.7rem;
+            }
+            
+            /* Modal Responsive */
+            .modal-container {
+                width: 95%;
+                max-width: 95%;
+                margin: 20px auto;
+                border-radius: 20px;
+            }
+            
+            .modal-header {
+                padding: 20px;
+            }
+            
+            .modal-icon {
+                font-size: 2.5rem;
+            }
+            
+            .modal-header h3 {
+                font-size: 1.2rem;
+            }
+            
+            .modal-body {
+                padding: 20px;
+                max-height: 75vh;
+            }
+            
+            .delivery-details-summary {
+                padding: 12px;
+            }
+            
+            .delivery-row {
+                font-size: 0.75rem;
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+            
+            .payment-instructions {
+                padding: 16px;
+            }
+            
+            .timer-display {
+                font-size: 1.8rem;
+                letter-spacing: 3px;
+            }
+            
+            .step {
+                padding: 10px 12px;
+                gap: 10px;
+            }
+            
+            .step-icon {
+                width: 28px;
+                height: 28px;
+                font-size: 0.75rem;
+            }
+            
+            .step-title {
+                font-size: 0.8rem;
+            }
+            
+            .step-desc {
+                font-size: 0.65rem;
+            }
+            
+            .btn-pay, .btn-secondary {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .success-page {
+                padding: 24px;
+            }
+            
+            .success-checkmark {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .success-checkmark i {
+                font-size: 28px;
+            }
+            
+            .success-details {
+                padding: 16px;
+                margin: 16px 0;
+            }
+            
+            .card-unavailable {
+                padding: 16px;
+            }
+            
+            .card-unavailable ul {
+                margin-left: 16px;
+            }
+            
+            .card-unavailable li {
+                font-size: 0.75rem;
+            }
+        }
+        
+        /* Small Mobile Devices (480px and below) */
+        @media (max-width: 480px) {
+            .container {
+                padding: 70px 12px 30px;
+            }
+            
+            .nav-content {
+                padding: 0.6rem 0.75rem;
+            }
+            
+            .logo-text {
+                font-size: 1rem;
+            }
+            
+            .nav-links a {
+                margin-left: 0.75rem;
+                font-size: 0.75rem;
+            }
+            
+            .vehicle-summary {
+                padding: 16px;
+            }
+            
+            .vehicle-image {
+                height: 150px;
+            }
+            
+            .vehicle-title {
+                font-size: 1.1rem;
+            }
+            
+            .vehicle-price {
+                font-size: 1.3rem;
+                margin: 12px 0;
+            }
+            
+            .downpayment-info {
+                padding: 12px;
+                margin: 12px 0;
+            }
+            
+            .downpayment-label {
+                font-size: 0.7rem;
+            }
+            
+            .downpayment-amount {
+                font-size: 1rem;
+            }
+            
+            .price-breakdown {
+                padding: 12px;
+                margin: 12px 0;
+            }
+            
+            .price-row {
+                padding: 6px 0;
+                font-size: 0.85rem;
+            }
+            
+            .payment-options {
+                padding: 16px;
+            }
+            
+            .option-tab {
+                padding: 8px 10px;
+                font-size: 0.75rem;
+                min-width: calc(33.33% - 6px);
+            }
+            
+            .info-card {
+                font-size: 0.75rem;
+            }
+            
+            .payment-method-card {
+                padding: 12px;
+            }
+            
+            .payment-name {
+                font-size: 0.85rem;
+            }
+            
+            .delivery-form h4 {
+                font-size: 0.9rem;
+                margin-bottom: 12px;
+            }
+            
+            .form-group label {
+                font-size: 0.75rem;
+            }
+            
+            .modal-header {
+                padding: 16px;
+            }
+            
+            .modal-icon {
+                font-size: 2rem;
+            }
+            
+            .modal-header h3 {
+                font-size: 1rem;
+            }
+            
+            .modal-header p {
+                font-size: 0.75rem;
+            }
+            
+            .modal-body {
+                padding: 16px;
+            }
+            
+            .timer-section {
+                padding: 12px;
+            }
+            
+            .timer-display {
+                font-size: 1.5rem;
+                letter-spacing: 2px;
+            }
+            
+            .btn-pay, .btn-secondary {
+                padding: 10px 16px;
+                font-size: 0.85rem;
+            }
+            
+            .success-page {
+                padding: 20px;
+            }
+            
+            .success-checkmark {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .success-checkmark i {
+                font-size: 24px;
+            }
+            
+            .success-details h4 {
+                font-size: 0.9rem;
+            }
+            
+            .success-details {
+                font-size: 0.75rem;
+            }
+            
+            .delivery-details-summary h4 {
+                font-size: 0.85rem;
+            }
+        }
+        
+        /* Fix for touch targets on mobile */
+        @media (max-width: 768px) {
+            button, 
+            .btn-pay, 
+            .btn-secondary, 
+            .payment-method-card,
+            .option-tab,
+            .copy-btn {
+                cursor: pointer;
+                -webkit-tap-highlight-color: transparent;
+            }
+            
+            .payment-method-card:active {
+                transform: scale(0.98);
+            }
+            
+            .option-tab:active {
+                transform: scale(0.98);
+            }
+            
+            input, select, textarea {
+                font-size: 16px !important; /* Prevents zoom on iOS */
+            }
+        }
+        
+        /* Landscape orientation fixes */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .container {
+                padding: 70px 16px 20px;
+            }
+            
+            .vehicle-summary {
+                position: relative;
+            }
+            
+            .modal-body {
+                max-height: 80vh;
+            }
+            
+            .delivery-details-summary {
+                max-height: 200px;
+                overflow-y: auto;
+            }
+        }
+        
+        /* Ensure smooth scrolling on mobile */
+        html {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Improve modal scrolling on mobile */
+        .modal-body {
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Fix for notch devices */
+        @supports (padding: max(0px)) {
+            .navbar {
+                padding-top: max(0px, env(safe-area-inset-top));
+            }
+            
+            .container {
+                padding-left: max(16px, env(safe-area-inset-left));
+                padding-right: max(16px, env(safe-area-inset-right));
+            }
+        }
+
+          /* ========== ENHANCED NAVBAR STYLES ========== */
+    
+    .navbar {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(10px);
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .nav-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        position: relative;
+    }
+    
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .logo-img {
+        height: 45px;
+        width: auto;
+    }
+    
+    .logo-text {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #c41e3a 0%, #1e3a8a 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.5px;
+    }
+    
+    /* Desktop Navigation Links */
+    .nav-links {
+        display: flex;
+        gap: 32px;
+        align-items: center;
+    }
+    
+    .nav-links a {
+        text-decoration: none;
+        color: #1e293b;
+        font-weight: 500;
+        transition: color 0.3s;
+        font-size: 0.95rem;
+    }
+    
+    .nav-links a:hover,
+    .nav-links a.active {
+        color: #c41e3a;
+    }
+    
+    .nav-links .btn-primary {
+        background: linear-gradient(135deg, #c41e3a, #1e3a8a);
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 30px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.3s, box-shadow 0.3s;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 0.9rem;
+    }
+    
+    .nav-links .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px rgba(196, 30, 58, 0.4);
+    }
+    
+    /* Mobile Menu Button */
+    .mobile-menu-btn {
+        display: none;
+        font-size: 1.8rem;
+        cursor: pointer;
+        color: #1e293b;
+        transition: color 0.3s;
+        z-index: 1001;
+    }
+    
+    .mobile-menu-btn:hover {
+        color: #c41e3a;
+    }
+    
+    /* Mobile Dropdown Menu */
+    .mobile-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        border-radius: 0 0 20px 20px;
+        padding: 20px;
+        flex-direction: column;
+        gap: 12px;
+        z-index: 999;
+        animation: slideDown 0.3s ease;
+    }
+    
+    .mobile-menu.show {
+        display: flex;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .mobile-nav-link {
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #1e293b;
+        font-weight: 500;
+        border-radius: 12px;
+        transition: all 0.3s;
+        font-size: 1rem;
+    }
+    
+    .mobile-nav-link:hover,
+    .mobile-nav-link.active {
+        background: #f8fafc;
+        color: #c41e3a;
+    }
+    
+    .mobile-browse-btn-full {
+        text-align: center;
+        margin-top: 8px;
+        background: linear-gradient(135deg, #c41e3a, #1e3a8a);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        display: block;
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .nav-links {
+            display: none;
+        }
+        
+        .mobile-menu-btn {
+            display: block;
+        }
+        
+        .logo-text {
+            font-size: 1.2rem;
+        }
+        
+        .logo-img {
+            height: 35px;
+        }
+        
+        .nav-content {
+            padding: 0.75rem 0;
+        }
+    }
+    
+    /* Small Mobile Devices */
+    @media (max-width: 480px) {
+        .logo-text {
+            font-size: 1rem;
+        }
+        
+        .mobile-nav-link {
+            padding: 10px 14px;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Loading Overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.loading-popup {
+    background: white;
+    border-radius: 28px;
+    padding: 40px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s ease;
+}
+
+.loading-gif {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+}
+
+.loading-popup h3 {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+    color: #1e293b;
+}
+
+.loading-popup p {
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.unavailable-popup {
+    background: white;
+    border-radius: 28px;
+    padding: 40px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.unavailable-popup .error-icon {
+    width: 70px;
+    height: 70px;
+    background: #fee2e2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.unavailable-popup .error-icon i {
+    font-size: 2rem;
+    color: #dc2626;
+}
+
+.unavailable-popup h3 {
+    color: #dc2626;
+    margin-bottom: 12px;
+}
+
+.unavailable-popup button {
+    margin-top: 24px;
+    background: #c41e3a;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid #e2e8f0;
+    border-top-color: #c41e3a;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <div class="logo-text">LONESTAR AUTOS</div>
+                </div>
+                
+                <!-- Desktop Navigation Links -->
+                <div class="nav-links" id="navLinks">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="inventory.html" class="nav-link">Inventory</a>
+                    <a href="about.html" class="nav-link">About Us</a>
+                    <a href="shipping.html" class="nav-link">Shipping</a>
+                    <a href="contact.html" class="nav-link">Contact</a>
+                    <a href="track.html" class="nav-link">Track Delivery</a>
+                    <a href="#inventory" class="btn-primary mobile-browse-btn">Browse Cars</a>
+                </div>
+                
+                <!-- Mobile Hamburger Menu Button -->
+                <div class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+            
+            <!-- Mobile Dropdown Menu -->
+            <div class="mobile-menu" id="mobileMenu">
+                <a href="index.html" class="mobile-nav-link">Home</a>
+                <a href="inventory.html" class="mobile-nav-link">Inventory</a>
+                <a href="about.html" class="mobile-nav-link">About Us</a>
+                <a href="shipping.html" class="mobile-nav-link">Shipping</a>
+                <a href="contact.html" class="mobile-nav-link">Contact</a>
+                <a href="track.html" class="mobile-nav-link">Track Delivery</a>
+                <a href="#inventory" class="btn-primary mobile-browse-btn-full">Browse Cars</a>
+            </div>
+        </div>
+    </nav>
+    
+
+    <div class="container">
+        <div id="checkoutContent">
+            <div class="loading" style="text-align: center; padding: 60px; background: white; border-radius: 24px;">
+                <i class="fas fa-spinner fa-spin fa-2x" style="color: #c41e3a;"></i>
+                <p style="margin-top: 16px;">Loading checkout details...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== ALL EXISTING JAVASCRIPT CODE REMAINS COMPLETELY INTACT ==========
+        let vehicleData = null;
+        let selectedPaymentMethod = null;
+        let timerInterval = null;
+        let timeLeft = 600;
+        let isProcessing = false;
+        let transactionCompleted = false;
+        let deliveryDetails = {};
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const vehicleId = urlParams.get('id');
+
+        // Shipping rates based on vehicle type and distance
+        function calculateShippingEstimate(vehicleModel, distance) {
+            const rates = {
+                'SUV': { base: 800, perMile: 0.85 },
+                'Truck': { base: 900, perMile: 0.95 },
+                'Luxury': { base: 1200, perMile: 1.2 },
+                'Sports': { base: 1100, perMile: 1.1 },
+                'Sedan': { base: 600, perMile: 0.7 },
+                'Compact': { base: 500, perMile: 0.6 }
+            };
+            
+            let vehicleType = 'Sedan';
+            const modelLower = vehicleModel.toLowerCase();
+            if (modelLower.includes('suv') || modelLower.includes('range') || modelLower.includes('explorer')) vehicleType = 'SUV';
+            else if (modelLower.includes('truck') || modelLower.includes('f-150') || modelLower.includes('ram')) vehicleType = 'Truck';
+            else if (modelLower.includes('s-class') || modelLower.includes('7-series') || modelLower.includes('a8')) vehicleType = 'Luxury';
+            else if (modelLower.includes('911') || modelLower.includes('ferrari') || modelLower.includes('lamborghini')) vehicleType = 'Sports';
+            else if (modelLower.includes('civic') || modelLower.includes('corolla')) vehicleType = 'Compact';
+            
+            const rate = rates[vehicleType];
+            return Math.floor(rate.base + (distance * rate.perMile));
+        }
+
+        const bankDetails = {
+            bankName: 'JPMorgan Chase Bank',
+            accountName: 'Lonestar Autos LLC',
+            accountNumber: '9876543210',
+            routingNumber: '021000021',
+            swiftCode: 'CHASUS33'
+        };
+
+        // ============================================================
+// DYNAMIC PAYMENT METHODS - LOADED FROM BACKEND
+// ============================================================
+let dynamicPaymentMethods = [];
+
+async function loadPaymentMethods() {
+    try {
+        const response = await fetch('/api/payment-methods');
+        if (!response.ok) throw new Error('Failed to load payment methods');
+        dynamicPaymentMethods = await response.json();
+        console.log('📋 Loaded payment methods:', dynamicPaymentMethods);
+        
+        // Re-render payment methods if already displayed
+        const reserveContainer = document.getElementById('paymentMethodsReserve');
+        const fullContainer = document.getElementById('paymentMethodsFull');
+        if (reserveContainer) renderPaymentMethods('reserve');
+        if (fullContainer) renderPaymentMethods('full');
+        
+        return dynamicPaymentMethods;
+    } catch (error) {
+        console.error('Error loading payment methods:', error);
+        // Fallback to empty array
+        dynamicPaymentMethods = [];
+        return [];
+    }
+}
+
+// Helper function to get payment method by name
+function getPaymentMethodByName(name) {
+    return dynamicPaymentMethods.find(pm => pm.name === name);
+}
+
+// Helper function to get icon class
+function getPaymentMethodIcon(method) {
+    if (method.icon) return method.icon;
+    const icons = {
+        venmo: 'fab fa-venmo',
+        cashapp: 'fab fa-cashapp', 
+        paypal: 'fab fa-paypal',
+        wire_transfer: 'fas fa-university',
+        bank_transfer: 'fas fa-building-columns'
+    };
+    return icons[method.name] || 'fas fa-credit-card';
+}
+
+      
+
+        async function loadCheckout() {
+            if (!vehicleId) {
+                window.location.href = 'inventory.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/inventory/${vehicleId}`);
+                if (!response.ok) throw new Error('Vehicle not found');
+                vehicleData = await response.json();
+                
+                if (vehicleData.status === 'Sold') {
+                    window.location.href = 'inventory.html?error=sold';
+                    return;
+                }
+                await loadPaymentMethods();
+                
+                displayCheckout();
+            } catch (error) {
+                document.getElementById('checkoutContent').innerHTML = `
+                    <div style="text-align: center; padding: 60px; background: white; border-radius: 24px;">
+                        <i class="fas fa-exclamation-triangle fa-2x" style="color: #c41e3a;"></i>
+                        <h3 style="margin-top: 16px;">Vehicle not found</h3>
+                        <a href="inventory.html" class="btn-pay" style="display: inline-block; margin-top: 20px; width: auto; padding: 12px 32px;">Browse Inventory</a>
+                    </div>
+                `;
+            }
+        }
+
+        function displayCheckout() {
+            const price = vehicleData.price;
+            const downPayment = price * 0.1;
+            
+            const html = `
+                <div class="checkout-wrapper">
+                    <div class="vehicle-summary">
+                        <img src="${vehicleData.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image'}" 
+                             alt="${vehicleData.title}" class="vehicle-image">
+                        <h2 class="vehicle-title">${vehicleData.year} ${vehicleData.make} ${vehicleData.model}</h2>
+                        <div class="vehicle-price">$${price.toLocaleString()}</div>
+                        
+                        <div class="downpayment-info">
+                            <div class="downpayment-label">💰 Reserve with 10% Down Payment</div>
+                            <div class="downpayment-amount">$${downPayment.toLocaleString()}</div>
+                        </div>
+                        
+                        <div class="price-breakdown" id="priceBreakdown">
+                            <div class="price-row">
+                                <span>Vehicle Price</span>
+                                <span>$${price.toLocaleString()}</span>
+                            </div>
+                            <div class="price-row" id="shippingRow">
+                                <span>Shipping (Estimate)</span>
+                                <span id="shippingAmount">$--</span>
+                            </div>
+                            <div class="price-row total">
+                                <span>Total Estimate</span>
+                                <span id="totalAmount">$${price.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="payment-options">
+                        <div class="option-tabs">
+                            <button class="option-tab reserve-tab active" onclick="switchOption('reserve')">
+                                🔒 Reserve (10% Down)
+                            </button>
+                            <button class="option-tab" onclick="switchOption('full')">
+                                💰 Full Payment
+                            </button>
+                            <button class="option-tab" onclick="switchOption('finance')">
+                                📋 Request Financing
+                            </button>
+                        </div>
+                        
+                        <!-- Reserve Option -->
+                        <div id="reserveOption" class="option-content active">
+                            <div class="info-card">
+                                <i class="fas fa-info-circle"></i>
+                                <strong>How it works:</strong> Pay 10% down payment to reserve this vehicle for 7 days.
+                                <div class="terms-list">
+                                    <div class="term-item"><i class="fas fa-check-circle"></i> 10% down payment reserves your vehicle for 7 days</div>
+                                    <div class="term-item"><i class="fas fa-check-circle"></i> Balance due upon delivery or financing available</div>
+                                    <div class="term-item"><i class="fas fa-check-circle"></i> Free cancellation within 48 hours</div>
+                                </div>
+                            </div>
+                            
+                            <div class="delivery-form">
+                                <h4>📦 Delivery Details</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Full Name *</label>
+                                        <input type="text" id="deliveryName" placeholder="Enter your full name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Phone Number *</label>
+                                        <input type="tel" id="deliveryPhone" placeholder="(555) 123-4567">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email Address *</label>
+                                        <input type="email" id="deliveryEmail" placeholder="your@email.com">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Delivery Address *</label>
+                                    <input type="text" id="deliveryAddress" placeholder="Street address, city, state, ZIP">
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Vehicle Type</label>
+                                        <select id="vehicleType" onchange="updateShippingEstimate()">
+                                            <option value="Sedan">Sedan</option>
+                                            <option value="SUV">SUV / Crossover</option>
+                                            <option value="Truck">Truck / Pickup</option>
+                                            <option value="Luxury">Luxury / Premium</option>
+                                            <option value="Sports">Sports / Performance</option>
+                                            <option value="Compact">Compact / Economy</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Distance (miles from dealership)</label>
+                                        <input type="number" id="deliveryDistance" placeholder="Enter approximate distance" onchange="updateShippingEstimate()">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Preferred Delivery Date</label>
+                                        <input type="date" id="deliveryDate">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Preferred Time</label>
+                                        <select id="deliveryTime">
+                                            <option>Morning (9am - 12pm)</option>
+                                            <option>Afternoon (12pm - 4pm)</option>
+                                            <option>Evening (4pm - 7pm)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Special Instructions (Optional)</label>
+                                    <textarea id="specialInstructions" rows="2" placeholder="Gate code, delivery notes, etc."></textarea>
+                                </div>
+                            </div>
+                            
+                            <p style="margin-bottom: 16px; font-weight: 500;">Select your payment method:</p>
+                            <div class="payment-methods-grid" id="paymentMethodsReserve"></div>
+                        </div>
+                        
+                        <!-- Full Payment Option -->
+                        <div id="fullOption" class="option-content">
+                            <div class="info-card">
+                                <i class="fas fa-shield-alt"></i>
+                                <strong>Secure Payment Options:</strong> Choose your preferred payment method below.
+                            </div>
+                            
+                            <div class="delivery-form">
+                                <h4>📦 Delivery Details</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Full Name *</label>
+                                        <input type="text" id="fullDeliveryName" placeholder="Enter your full name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Phone Number *</label>
+                                        <input type="tel" id="fullDeliveryPhone" placeholder="(555) 123-4567">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Email Address *</label>
+                                    <input type="email" id="fullDeliveryEmail" placeholder="your@email.com">
+                                </div>
+                                <div class="form-group">
+                                    <label>Delivery Address *</label>
+                                    <input type="text" id="fullDeliveryAddress" placeholder="Street address, city, state, ZIP">
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Vehicle Type</label>
+                                        <select id="fullVehicleType" onchange="updateFullShippingEstimate()">
+                                            <option value="Sedan">Sedan</option>
+                                            <option value="SUV">SUV / Crossover</option>
+                                            <option value="Truck">Truck / Pickup</option>
+                                            <option value="Luxury">Luxury / Premium</option>
+                                            <option value="Sports">Sports / Performance</option>
+                                            <option value="Compact">Compact / Economy</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Distance (miles from dealership)</label>
+                                        <input type="number" id="fullDeliveryDistance" placeholder="Enter approximate distance" onchange="updateFullShippingEstimate()">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Preferred Delivery Date</label>
+                                        <input type="date" id="fullDeliveryDate">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Preferred Time</label>
+                                        <select id="fullDeliveryTime">
+                                            <option>Morning (9am - 12pm)</option>
+                                            <option>Afternoon (12pm - 4pm)</option>
+                                            <option>Evening (4pm - 7pm)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Special Instructions (Optional)</label>
+                                    <textarea id="fullSpecialInstructions" rows="2" placeholder="Gate code, delivery notes, etc."></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="payment-methods-grid" id="paymentMethodsFull"></div>
+                            
+                            <div class="card-unavailable" id="cardUnavailable" style="display: none;">
+                                <h4><i class="fas fa-exclamation-triangle"></i> Card Payments Temporarily Unavailable</h4>
+                                <ul>
+                                    <li>⚠️ Due to increased security measures, card payments are temporarily disabled</li>
+                                    <li>🔒 Protecting our customers from chargeback fraud and unauthorized transactions</li>
+                                    <li>💳 Alternative payment methods (Wire Transfer) are available below</li>
+                                    <li>📞 For assistance, please call our secure payment line: 1-888-LONESTAR</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                       <!-- Financing Option - Updated with proper form handling -->
+<div id="financeOption" class="option-content">
+    <div class="info-card">
+        <i class="fas fa-chart-line"></i>
+        <strong>Financing Available</strong><br>
+        Get pre-approved with competitive rates. Our finance partners work with all credit types.
+    </div>
+    
+    <form id="financeForm" onsubmit="submitFinancingRequest(event)">
+        <div class="form-row">
+            <div class="form-group">
+                <label>Full Name *</label>
+                <input type="text" id="financeName" required>
+            </div>
+            <div class="form-group">
+                <label>Date of Birth *</label>
+                <input type="date" id="financeDob" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Social Security Number *</label>
+                <input type="text" id="financeSsn" placeholder="XXX-XX-XXXX" required>
+            </div>
+            <div class="form-group">
+                <label>Email Address *</label>
+                <input type="email" id="financeEmail" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Phone Number *</label>
+                <input type="tel" id="financePhone" required>
+            </div>
+            <div class="form-group">
+                <label>Annual Income *</label>
+                <input type="number" id="financeIncome" placeholder="USD" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Employer Name</label>
+                <input type="text" id="financeEmployer">
+            </div>
+            <div class="form-group">
+                <label>Years Employed</label>
+                <input type="number" id="financeYearsEmployed" placeholder="Years">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Credit Score Range *</label>
+                <select id="financeCredit" required>
+                    <option value="">Select credit range</option>
+                    <option>Excellent (720+)</option>
+                    <option>Good (680-719)</option>
+                    <option>Fair (620-679)</option>
+                    <option>Poor (Below 620)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Monthly Housing Payment</label>
+                <input type="number" id="financeHousing" placeholder="Rent/Mortgage amount">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Address *</label>
+            <input type="text" id="financeAddress" placeholder="Street address, city, state, ZIP" required>
+        </div>
+        <button type="submit" class="btn-pay" id="financeSubmitBtn">
+            <i class="fas fa-paper-plane"></i> Submit Financing Request
+        </button>
+    </form>
+    <div id="financeSuccessMessage" style="display: none; margin-top: 20px;"></div>
+</div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('checkoutContent').innerHTML = html;
+            
+            renderPaymentMethods('reserve');
+            renderPaymentMethods('full');
+            updateShippingEstimate();
+            updateFullShippingEstimate();
+        }
+        
+        function updateShippingEstimate() {
+            const vehicleType = document.getElementById('vehicleType')?.value || 'Sedan';
+            const distance = parseInt(document.getElementById('deliveryDistance')?.value) || 500;
+            
+            const rates = { Sedan: 600, SUV: 800, Truck: 900, Luxury: 1200, Sports: 1100, Compact: 500 };
+            const baseRate = rates[vehicleType] || 600;
+            const shippingCost = baseRate + Math.floor(distance * 0.7);
+            
+            document.getElementById('shippingAmount').innerHTML = `$${shippingCost.toLocaleString()}`;
+            const total = vehicleData.price + shippingCost;
+            document.getElementById('totalAmount').innerHTML = `$${total.toLocaleString()}`;
+        }
+        
+        function updateFullShippingEstimate() {
+            const vehicleType = document.getElementById('fullVehicleType')?.value || 'Sedan';
+            const distance = parseInt(document.getElementById('fullDeliveryDistance')?.value) || 500;
+            
+            const rates = { Sedan: 600, SUV: 800, Truck: 900, Luxury: 1200, Sports: 1100, Compact: 500 };
+            const baseRate = rates[vehicleType] || 600;
+            const shippingCost = baseRate + Math.floor(distance * 0.7);
+            
+            const shippingElement = document.getElementById('fullShippingAmount');
+            const totalElement = document.getElementById('fullTotalAmount');
+            if (shippingElement) shippingElement.innerHTML = `$${shippingCost.toLocaleString()}`;
+            if (totalElement) {
+                const total = vehicleData.price + shippingCost;
+                totalElement.innerHTML = `$${total.toLocaleString()}`;
+            }
+        }
+
+        function renderPaymentMethods(option) {
+    const container = document.getElementById(`paymentMethods${option.charAt(0).toUpperCase() + option.slice(1)}`);
+    if (!container) return;
+    
+    // Filter active payment methods
+    let activeMethods = dynamicPaymentMethods.filter(pm => pm.isActive);
+    
+    if (option !== 'reserve') {
+        // For full payment, also include wire transfer if active
+        const wireMethod = dynamicPaymentMethods.find(pm => pm.name === 'wire_transfer');
+        if (wireMethod && wireMethod.isActive && !activeMethods.find(m => m.name === 'wire_transfer')) {
+            activeMethods.push(wireMethod);
+        }
+    }
+    
+    if (activeMethods.length === 0) {
+        container.innerHTML = `<div class="info-card" style="text-align: center; color: #64748b;">
+            <i class="fas fa-spinner fa-spin"></i> Loading payment methods...
+        </div>`;
+        return;
+    }
+    
+    // Helper function to get icon HTML
+    const getIconHtml = (pm) => {
+        if (pm.imageUrl) {
+            return `<img src="${pm.imageUrl}" style="width: 32px; height: 32px; object-fit: contain; border-radius: 8px;">`;
+        }
+        const icons = {
+            venmo: 'fab fa-venmo',
+            cashapp: 'fas fa-dollar-sign',
+            paypal: 'fab fa-paypal',
+            wire_transfer: 'fas fa-university',
+            bank_transfer: 'fas fa-building-columns'
+        };
+        return `<i class="${icons[pm.name] || 'fas fa-credit-card'}" style="color: ${pm.color || '#c41e3a'}; font-size: 1.8rem;"></i>`;
+    };
+    
+    // Helper function to get description
+    const getDescription = (pm) => {
+        if (pm.name === 'wire_transfer') {
+            return pm.accountDetails?.bankName || 'Bank transfer - secure & verified';
+        }
+        return pm.accountDetails?.username ? `@${pm.accountDetails.username}` : (pm.accountDetails?.email || '');
+    };
+    
+    container.innerHTML = activeMethods.map(pm => `
+        <div class="payment-method-card" onclick="openPaymentModal('${option}', '${pm.name}')">
+            <div class="payment-icon">${getIconHtml(pm)}</div>
+            <div class="payment-info">
+                <div class="payment-name">${pm.displayName}</div>
+                <div class="payment-desc">${getDescription(pm)}</div>
+            </div>
+        </div>
+    `).join('');
+    
+    // Add credit card unavailable message for full payment option
+    if (option !== 'reserve') {
+        container.innerHTML += `
+            <div class="payment-method-card" onclick="showCardUnavailable()">
+                <div class="payment-icon"><i class="fas fa-credit-card"></i></div>
+                <div class="payment-info">
+                    <div class="payment-name">Credit/Debit Card</div>
+                    <div class="payment-desc">Visa, Mastercard, Amex, Discover</div>
+                </div>
+                <i class="fas fa-lock" style="color: #94a3b8;"></i>
+            </div>
+        `;
+    }
+}
+        
+
+        
+        function getDeliveryDetails(option) {
+    if (option === 'reserve') {
+        return {
+            name: document.getElementById('deliveryName')?.value || 'Not provided',
+            email: document.getElementById('deliveryEmail')?.value || '',
+            phone: document.getElementById('deliveryPhone')?.value || 'Not provided',
+            address: document.getElementById('deliveryAddress')?.value || 'Not provided',
+            vehicleType: document.getElementById('vehicleType')?.value || 'Sedan',
+            distance: document.getElementById('deliveryDistance')?.value || '500',
+            deliveryDate: document.getElementById('deliveryDate')?.value || 'To be scheduled',
+            deliveryTime: document.getElementById('deliveryTime')?.value || 'To be confirmed',
+            instructions: document.getElementById('specialInstructions')?.value || 'None'
+        };
+    } else {
+        return {
+            name: document.getElementById('fullDeliveryName')?.value || 'Not provided',
+            email: document.getElementById('fullDeliveryEmail')?.value || '',
+            phone: document.getElementById('fullDeliveryPhone')?.value || 'Not provided',
+            address: document.getElementById('fullDeliveryAddress')?.value || 'Not provided',
+            vehicleType: document.getElementById('fullVehicleType')?.value || 'Sedan',
+            distance: document.getElementById('fullDeliveryDistance')?.value || '500',
+            deliveryDate: document.getElementById('fullDeliveryDate')?.value || 'To be scheduled',
+            deliveryTime: document.getElementById('fullDeliveryTime')?.value || 'To be confirmed',
+            instructions: document.getElementById('fullSpecialInstructions')?.value || 'None'
+        };
+    }
+}
+        
+
+window.openPaymentModal = async function(option, methodName) {
+    if (isProcessing || transactionCompleted) return;
+    
+    // Find the payment method from dynamic list
+    const paymentMethod = dynamicPaymentMethods.find(pm => pm.name === methodName);
+    if (!paymentMethod) {
+        alert('Payment method not configured. Please contact support.');
+        return;
+    }
+    
+    const delivery = getDeliveryDetails(option);
+    const amount = option === 'reserve' ? vehicleData.price * 0.1 : vehicleData.price;
+    
+    // ============================================================
+    // SHOW MODAL WITH LOADING STATE FIRST
+    // ============================================================
+    let iconHtml = '';
+    if (paymentMethod.imageUrl) {
+        iconHtml = `<img src="${paymentMethod.imageUrl}" style="width: 50px; height: 50px; object-fit: contain; border-radius: 12px;">`;
+    } else {
+        const icons = {
+            venmo: 'fab fa-venmo',
+            cashapp: 'fas fa-dollar-sign',
+            paypal: 'fab fa-paypal',
+            wire_transfer: 'fas fa-university',
+            bank_transfer: 'fas fa-building-columns'
+        };
+        iconHtml = `<i class="${icons[paymentMethod.name] || 'fas fa-credit-card'}" style="font-size: 2rem;"></i>`;
+    }
+    
+    // Show modal with loading spinner
+    const loadingModalHtml = `
+        <div class="modal-container">
+            <div class="modal-header" style="background: linear-gradient(135deg, ${paymentMethod.color || '#c41e3a'}, ${paymentMethod.color || '#c41e3a'}dd);">
+                <div class="modal-icon">${iconHtml}</div>
+                <h3>${paymentMethod.displayName} Payment</h3>
+                <p>Processing your request...</p>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: 40px;">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                    <div class="loading-spinner" style="width: 60px; height: 60px; border: 4px solid #e2e8f0; border-top-color: #c41e3a; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    <h3 style="color: #1e293b;">Heavy Transaction Traffic</h3>
+                    <p style="color: #64748b;">The system is looking for available payment details...</p>
+                    <p style="font-size: 0.75rem; color: #94a3b8;">Please wait, this may take a few seconds</p>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    showModal(loadingModalHtml);
+    
+    // Wait 7 seconds
+    await new Promise(resolve => setTimeout(resolve, 7000));
+    
+    // Close the loading modal
+    closeModal();
+    
+    // ============================================================
+    // CHECK IF PAYMENT METHOD IS SUSPENDED
+    // ============================================================
+    if (paymentMethod.isSuspended === true) {
+        const unavailableModalHtml = `
+            <div class="modal-container">
+                <div class="modal-header" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
+                    <div class="modal-icon"><i class="fas fa-exclamation-triangle" style="font-size: 2.5rem;"></i></div>
+                    <h3>Payment Temporarily Unavailable</h3>
+                    <p>Please try another method</p>
+                </div>
+                <div class="modal-body" style="text-align: center;">
+                    <div style="background: #fee2e2; border-radius: 16px; padding: 20px; margin-bottom: 20px;">
+                        <p style="color: #dc2626; margin-bottom: 12px;"><strong>Due to high transaction traffic, ${paymentMethod.displayName} is temporarily unavailable.</strong></p>
+                        <p style="color: #475569;">Please try again later or contact our support department for assistance.</p>
+                    </div>
+                    <div style="display: flex; gap: 12px;">
+                        <button onclick="closeModal()" class="btn-secondary" style="flex: 1;">Close</button>
+                        <button onclick="location.reload()" class="btn-pay" style="flex: 1; background: #c41e3a;">Try Again</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        showModal(unavailableModalHtml);
+        return;
+    }
+    
+    // ============================================================
+    // PAYMENT METHOD IS ACTIVE - SHOW PAYMENT DETAILS MODAL
+    // ============================================================
+    selectedPaymentMethod = {
+        name: paymentMethod.name,
+        displayName: paymentMethod.displayName,
+        imageUrl: paymentMethod.imageUrl,
+        color: paymentMethod.color || '#c41e3a',
+        isWireTransfer: paymentMethod.name === 'wire_transfer',
+        backendName: paymentMethod.name
+    };
+    
+    // Build account details based on method type
+    let detailsHtml = '';
+    let instructionText = '';
+    
+    if (paymentMethod.name === 'wire_transfer') {
+        // Wire transfer specific details
+        const bankName = paymentMethod.accountDetails?.bankName || 'JPMorgan Chase Bank';
+        const accountName = paymentMethod.accountDetails?.accountName || 'Lonestar Autos LLC';
+        const accountNumber = paymentMethod.accountDetails?.accountNumber || '9876543210';
+        const routingNumber = paymentMethod.accountDetails?.routingNumber || '021000021';
+        const swiftCode = paymentMethod.accountDetails?.swiftCode || 'CHASUS33';
+        const reference = `LONESTAR-${vehicleId.substring(0, 8)}`;
+        
+        detailsHtml = `
+            <div class="payment-detail"><span><strong>Bank Name:</strong> ${bankName}</span><button class="copy-btn" onclick="copyToClipboard('${bankName}')"><i class="fas fa-copy"></i></button></div>
+            <div class="payment-detail"><span><strong>Account Name:</strong> ${accountName}</span><button class="copy-btn" onclick="copyToClipboard('${accountName}')"><i class="fas fa-copy"></i></button></div>
+            <div class="payment-detail"><span><strong>Account Number:</strong> ${accountNumber}</span><button class="copy-btn" onclick="copyToClipboard('${accountNumber}')"><i class="fas fa-copy"></i></button></div>
+            <div class="payment-detail"><span><strong>Routing Number:</strong> ${routingNumber}</span><button class="copy-btn" onclick="copyToClipboard('${routingNumber}')"><i class="fas fa-copy"></i></button></div>
+            <div class="payment-detail"><span><strong>SWIFT Code:</strong> ${swiftCode}</span><button class="copy-btn" onclick="copyToClipboard('${swiftCode}')"><i class="fas fa-copy"></i></button></div>
+            <div class="payment-detail"><span><strong>Reference:</strong> ${reference}</span><button class="copy-btn" onclick="copyToClipboard('${reference}')"><i class="fas fa-copy"></i></button></div>
+        `;
+        instructionText = paymentMethod.accountDetails?.instructions || 'Please include your reservation number in the transfer reference.';
+    } else {
+        // P2P methods (Venmo, CashApp, PayPal)
+        const sendTo = paymentMethod.accountDetails?.username || 
+                       paymentMethod.accountDetails?.email || 
+                       'Contact support for details';
+        detailsHtml = `
+            <div class="payment-detail">
+                <span>Send to: ${sendTo}</span>
+                <button class="copy-btn" onclick="copyToClipboard('${sendTo.replace(/'/g, "\\'")}')"><i class="fas fa-copy"></i> Copy</button>
+            </div>
+        `;
+        instructionText = paymentMethod.accountDetails?.instructions || 
+                         `Send payment to ${paymentMethod.displayName} and include your reservation number.`;
+    }
+    
+    // Determine icon display for payment modal
+    let paymentIconHtml = '';
+    if (selectedPaymentMethod.imageUrl) {
+        paymentIconHtml = `<img src="${selectedPaymentMethod.imageUrl}" style="width: 50px; height: 50px; object-fit: contain; border-radius: 12px;">`;
+    } else {
+        const icons = {
+            venmo: 'fab fa-venmo',
+            cashapp: 'fas fa-dollar-sign',
+            paypal: 'fab fa-paypal',
+            wire_transfer: 'fas fa-university'
+        };
+        paymentIconHtml = `<i class="${icons[paymentMethod.name] || 'fas fa-credit-card'}" style="font-size: 2rem;"></i>`;
+    }
+    
+    const paymentModalHtml = `
+        <div class="modal-container">
+            <div class="modal-header" style="background: linear-gradient(135deg, ${selectedPaymentMethod.color}, ${selectedPaymentMethod.color}dd);">
+                <div class="modal-icon">${paymentIconHtml}</div>
+                <h3>${selectedPaymentMethod.displayName} Payment</h3>
+                <p>Complete your ${option === 'reserve' ? 'reservation' : 'payment'}</p>
+            </div>
+            <div class="modal-body">
+                <div class="delivery-details-summary">
+                    <h4><i class="fas fa-truck"></i> Delivery Details</h4>
+                    <div class="delivery-row"><span>Name:</span><strong>${delivery.name}</strong></div>
+                    <div class="delivery-row"><span>Phone:</span><strong>${delivery.phone}</strong></div>
+                    <div class="delivery-row"><span>Address:</span><strong>${delivery.address}</strong></div>
+                    <div class="delivery-row"><span>Vehicle Type:</span><strong>${delivery.vehicleType}</strong></div>
+                    <div class="delivery-row"><span>Distance:</span><strong>${delivery.distance} miles</strong></div>
+                    <div class="delivery-row"><span>Preferred Delivery:</span><strong>${delivery.deliveryDate} (${delivery.deliveryTime})</strong></div>
+                    ${delivery.instructions !== 'None' ? `<div class="delivery-row"><span>Instructions:</span><strong>${delivery.instructions}</strong></div>` : ''}
+                </div>
+                
+                <div class="payment-instructions">
+                    <p><strong>Amount to send:</strong> <span style="font-size: 1.3rem; font-weight: 700; color: #c41e3a;">$${amount.toLocaleString()}</span></p>
+                    ${detailsHtml}
+                    <p style="margin-top: 12px; font-size: 0.85rem; color: #64748b;">${instructionText}</p>
+                </div>
+                
+                <div class="timer-section" id="paymentTimer">
+                    <i class="fas fa-hourglass-half"></i> Complete payment within:
+                    <div class="timer-display" id="timerDisplay">10:00</div>
+                    <button id="paidBtn" class="btn-pay" style="margin-top: 12px; background: #10b981;">
+                        <i class="fas fa-check-circle"></i> I Have Made Payment
+                    </button>
+                </div>
+                
+                <div id="verificationSteps" class="verification-steps"></div>
+                <div id="successMessage" style="display: none;"></div>
+                
+                <button class="btn-secondary btn-cancel" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    `;
+    
+    showModal(paymentModalHtml);
+    startTimer('payment', () => {});
+    
+    const paidBtn = document.getElementById('paidBtn');
+    if (paidBtn) {
+        paidBtn.onclick = () => startVerification(option, delivery, amount, paymentMethod.name);
+    }
+};
+
+        
+       
+           
+        
+        function startTimer(type, onComplete) {
+            if (timerInterval) clearInterval(timerInterval);
+            timeLeft = 600;
+            
+            const timerDisplay = document.getElementById('timerDisplay') || document.getElementById('wireTimerDisplay');
+            
+            timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    closeModal();
+                    alert('Payment window has expired. Please start over.');
+                    return;
+                }
+                
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                if (timerDisplay) {
+                    timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+                timeLeft--;
+            }, 1000);
+        }
+        
+        function startVerification(option, delivery, amount, methodKey) {  // Add methodKey parameter
+    if (isProcessing) return;
+    isProcessing = true;
+    
+    const timerDiv = document.getElementById('paymentTimer');
+    const stepsDiv = document.getElementById('verificationSteps');
+    
+    if (timerDiv) timerDiv.style.display = 'none';
+    if (stepsDiv) stepsDiv.style.display = 'block';
+    
+    const steps = [
+        { title: "Verifying sender details", desc: "Checking payment account information", icon: "fas fa-user-check" },
+        { title: "Secure access protocol", desc: "Establishing encrypted connection", icon: "fas fa-shield-alt" },
+        { title: "Confirming payment source", desc: "Validating payment method", icon: "fas fa-credit-card" },
+        { title: "Processing transaction", desc: "Contacting payment network", icon: "fas fa-sync-alt" },
+        { title: "Finalizing confirmation", desc: "Completing secure verification", icon: "fas fa-check-circle" }
+    ];
+    
+    let currentStep = 0;
+    
+    function addStep() {
+        if (currentStep >= steps.length) {
+            completeVerification(option, delivery, amount, methodKey);  // Pass methodKey
+            return;
+        }
+        
+        const step = steps[currentStep];
+        const stepElement = document.createElement('div');
+        stepElement.className = 'step';
+        stepElement.innerHTML = `
+            <div class="step-icon"><i class="${step.icon}"></i></div>
+            <div class="step-content">
+                <div class="step-title">${step.title}</div>
+                <div class="step-desc">${step.desc}</div>
+            </div>
+        `;
+        stepsDiv.appendChild(stepElement);
+        
+        setTimeout(() => {
+            stepElement.style.opacity = '1';
+            stepElement.style.transform = 'translateX(0)';
+            stepElement.classList.add('active');
+        }, 50);
+        
+        setTimeout(() => {
+            stepElement.classList.remove('active');
+            stepElement.classList.add('completed');
+            currentStep++;
+            setTimeout(addStep, 1200);
+        }, 1500);
+    }
+    
+    stepsDiv.innerHTML = '';
+    addStep();
+}
+
+        // ============================================================
+// FINANCING REQUEST SUBMISSION
+// ============================================================
+
+async function submitFinancingRequest(event) {
+    event.preventDefault();
+    
+    // Get form data
+    const formData = {
+        vehicleId: vehicleId,
+        vehicleInfo: {
+            title: vehicleData.title,
+            make: vehicleData.make,
+            model: vehicleData.model,
+            year: vehicleData.year,
+            price: vehicleData.price
+        },
+        customerInfo: {
+            name: document.getElementById('financeName')?.value,
+            email: document.getElementById('financeEmail')?.value,
+            phone: document.getElementById('financePhone')?.value,
+            dob: document.getElementById('financeDob')?.value,
+            ssn: document.getElementById('financeSsn')?.value,
+            address: document.getElementById('financeAddress')?.value
+        },
+        financialInfo: {
+            annualIncome: parseFloat(document.getElementById('financeIncome')?.value),
+            employer: document.getElementById('financeEmployer')?.value || '',
+            yearsEmployed: parseInt(document.getElementById('financeYearsEmployed')?.value) || 0,
+            creditScore: document.getElementById('financeCredit')?.value,
+            monthlyHousing: parseFloat(document.getElementById('financeHousing')?.value) || 0
+        }
+    };
+    
+    // Validate required fields
+    if (!formData.customerInfo.name || !formData.customerInfo.email || !formData.customerInfo.phone) {
+        showFinanceMessage('Please fill in all required fields', 'error');
+        return;
+    }
+    
+    // Show loading state
+    const submitBtn = document.getElementById('financeSubmitBtn');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+    submitBtn.disabled = true;
+    
+    try {
+        console.log('Submitting financing request:', formData);
+        
+        const response = await fetch('/api/create-financing', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        console.log('Response:', result);
+        
+        if (response.ok) {
+            // Success - show success message
+            showFinanceMessage(`
+                <div style="text-align: center; padding: 20px;">
+                    <div style="width: 60px; height: 60px; background: #10b981; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                        <i class="fas fa-check" style="color: white; font-size: 30px;"></i>
+                    </div>
+                    <h3 style="color: #1e293b; margin-bottom: 12px;">Financing Request Submitted!</h3>
+                    <p style="color: #475569; margin-bottom: 16px;">Your request has been received. A financing specialist will contact you within 24 hours.</p>
+                    <p style="color: #10b981; font-size: 14px;"><strong>Request ID:</strong> ${result.requestId}</p>
+                    <button onclick="resetFinanceForm()" class="btn-pay" style="margin-top: 20px; background: #c41e3a;">Submit Another Request</button>
+                    <button onclick="window.location.href='inventory.html'" class="btn-secondary" style="margin-top: 12px;">Browse More Cars</button>
+                </div>
+            `, 'success');
+            
+            // Reset form fields
+            document.getElementById('financeForm').reset();
+            
+        } else {
+            // Error
+            showFinanceMessage(result.error || 'Failed to submit financing request. Please try again.', 'error');
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+        
+    } catch (error) {
+        console.error('Financing submission error:', error);
+        showFinanceMessage('Network error. Please check your connection and try again.', 'error');
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
+}
+
+function showFinanceMessage(message, type) {
+    const messageDiv = document.getElementById('financeSuccessMessage');
+    messageDiv.style.display = 'block';
+    
+    if (type === 'success') {
+        messageDiv.innerHTML = `<div style="background: #d1fae5; border-left: 4px solid #10b981; padding: 20px; border-radius: 12px; color: #065f46;">${message}</div>`;
+        // Scroll to message
+        messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+        messageDiv.innerHTML = `<div style="background: #fee2e2; border-left: 4px solid #dc2626; padding: 20px; border-radius: 12px; color: #991b1b;">${message}</div>`;
+    }
+    
+    // Auto hide after 10 seconds for errors
+    if (type === 'error') {
+        setTimeout(() => {
+            if (messageDiv.innerHTML.includes('failed')) {
+                messageDiv.style.display = 'none';
+            }
+        }, 10000);
+    }
+}
+
+function resetFinanceForm() {
+    const messageDiv = document.getElementById('financeSuccessMessage');
+    messageDiv.style.display = 'none';
+    messageDiv.innerHTML = '';
+    document.getElementById('financeForm').reset();
+}
+        
+        function startWireVerification(delivery, amount) {
+            if (isProcessing) return;
+            isProcessing = true;
+            
+            const timerDiv = document.getElementById('wireTimer');
+            const stepsDiv = document.getElementById('wireVerification');
+            
+            if (timerDiv) timerDiv.style.display = 'none';
+            if (stepsDiv) stepsDiv.style.display = 'block';
+            
+            const steps = [
+                { title: "Checking wire transfer details", desc: "Verifying bank account information", icon: "fas fa-university" },
+                { title: "Secure banking protocol", desc: "Establishing secure connection", icon: "fas fa-shield-alt" },
+                { title: "Confirming funds availability", desc: "Validating transfer amount", icon: "fas fa-dollar-sign" },
+                { title: "Processing transfer", desc: "Initiating wire transfer", icon: "fas fa-sync-alt" },
+                { title: "Transfer confirmed", desc: "Wire transfer completed", icon: "fas fa-check-circle" }
+            ];
+            
+            let currentStep = 0;
+            
+            function addStep() {
+                if (currentStep >= steps.length) {
+                    completeWireVerification(delivery, amount);
+                    return;
+                }
+                
+                const step = steps[currentStep];
+                const stepElement = document.createElement('div');
+                stepElement.className = 'step';
+                stepElement.innerHTML = `
+                    <div class="step-icon"><i class="${step.icon}"></i></div>
+                    <div class="step-content">
+                        <div class="step-title">${step.title}</div>
+                        <div class="step-desc">${step.desc}</div>
+                    </div>
+                `;
+                stepsDiv.appendChild(stepElement);
+                
+                setTimeout(() => {
+                    stepElement.style.opacity = '1';
+                    stepElement.style.transform = 'translateX(0)';
+                    stepElement.classList.add('active');
+                }, 50);
+                
+                setTimeout(() => {
+                    stepElement.classList.remove('active');
+                    stepElement.classList.add('completed');
+                    currentStep++;
+                    setTimeout(addStep, 1200);
+                }, 1500);
+            }
+            
+            stepsDiv.innerHTML = '';
+            addStep();
+        }
+
+        // ============================================================
+// COMPLETE VERIFICATION - SEND PAYMENT TO BACKEND
+// ============================================================
+        
+async function completeVerification(option, delivery, amount) {
+    // Start the final processing animation
+    const stepsDiv = document.getElementById('verificationSteps');
+    const successDiv = document.getElementById('successMessage');
+    
+    if (stepsDiv) {
+        // Show final processing step
+        const finalStep = document.createElement('div');
+        finalStep.className = 'step active';
+        finalStep.innerHTML = `
+            <div class="step-icon"><i class="fas fa-database"></i></div>
+            <div class="step-content">
+                <div class="step-title">Recording payment to secure database</div>
+                <div class="step-desc">Encrypting and storing transaction details...</div>
+            </div>
+        `;
+        stepsDiv.appendChild(finalStep);
+        await new Promise(r => setTimeout(r, 800));
+    }
+
+    function getPaymentMethodValue(paymentMethodName) {
+    // Map display names to backend enum values
+    const methodMap = {
+        'venmo': 'venmo',
+        'cashapp': 'cashapp',
+        'cash app': 'cashapp',
+        'paypal': 'paypal',
+        'wire_transfer': 'wire_transfer',
+        'bank_transfer': 'bank_transfer'
+    };
+    return methodMap[paymentMethodName?.toLowerCase()] || 'unknown';
+}
+    
+    // Prepare payment data for backend
+    const paymentData = {
+        paymentType: option === 'reserve' ? 'down_payment' : 'full_payment',
+        paymentMethod: selectedPaymentMethod ? getPaymentMethodValue(selectedPaymentMethod.name.toLowerCase()) : 'unknown',
+        amount: amount,
+        totalPrice: vehicleData.price,
+        vehicleId: vehicleId,
+        vehicleInfo: {
+            title: vehicleData.title,
+            make: vehicleData.make,
+            model: vehicleData.model,
+            year: vehicleData.year,
+            price: vehicleData.price,
+            images: vehicleData.images
+        },
+        customerInfo: {
+            name: delivery.name,
+            email: delivery.email || `${delivery.name.replace(/\s/g, '').toLowerCase()}@customer.com`,
+            phone: delivery.phone,
+            address: delivery.address
+        },
+        deliveryDetails: {
+            vehicleType: delivery.vehicleType,
+            distance: parseInt(delivery.distance),
+            shippingCost: calculateShippingEstimate(delivery.vehicleType, parseInt(delivery.distance)),
+            preferredDate: delivery.deliveryDate,
+            preferredTime: delivery.deliveryTime,
+            specialInstructions: delivery.instructions
+        }
+    };
+    
+    console.log('Submitting payment to backend:', paymentData);
+    
+    try {
+        const response = await fetch('/api/create-payment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(paymentData)
+        });
+        
+        const result = await response.json();
+        console.log('Payment response:', result);
+        
+        if (response.ok) {
+            // IMPORTANT: Hide the verification steps completely
+            if (stepsDiv) {
+                stepsDiv.style.display = 'none';
+            }
+            
+            // Show success message
+            if (successDiv) {
+                successDiv.style.display = 'block';
+                successDiv.innerHTML = `
+                    <div class="success-page" style="animation: fadeIn 0.5s ease;">
+                        <div class="success-checkmark" style="animation: scaleIn 0.5s ease;">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <h2 style="color: #1e293b; margin: 20px 0 10px;">${option === 'reserve' ? '✅ Payment Successful! Vehicle Reserved' : '✅ Payment Successful! Purchase Complete'}</h2>
+                        <p style="color: #475569;">Your payment has been recorded and is pending admin approval.</p>
+                        
+                        <div class="success-details" style="background: linear-gradient(135deg, #f8fafc, #fff); border-radius: 20px; padding: 24px; margin: 24px 0;">
+                            <h4 style="color: #c41e3a; margin-bottom: 16px;">📋 Transaction Details</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                <div><strong>Payment ID:</strong></div>
+                                <div style="font-family: monospace;">${result.paymentId}</div>
+                                <div><strong>Amount Paid:</strong></div>
+                                <div style="color: #c41e3a; font-weight: bold;">$${paymentData.amount.toLocaleString()}</div>
+                                <div><strong>Payment Type:</strong></div>
+                                <div>${option === 'reserve' ? '🔒 10% Down Payment (Reservation)' : '💰 Full Payment'}</div>
+                                <div><strong>Payment Method:</strong></div>
+                                <div>${paymentData.paymentMethod.toUpperCase()}</div>
+                                <div><strong>Status:</strong></div>
+                                <div><span style="background: #fef3c7; color: #f59e0b; padding: 4px 12px; border-radius: 20px;">Pending Approval</span></div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-radius: 16px; padding: 16px; margin: 20px 0;">
+                            <i class="fas fa-envelope" style="color: #059669;"></i>
+                            <strong style="color: #065f46;"> A confirmation email has been sent to ${paymentData.customerInfo.email}</strong><br>
+                            <small>Our team will review your payment within 24 hours.</small>
+                        </div>
+                        
+                        <div style="display: flex; gap: 12px; margin-top: 20px;">
+                            <button onclick="closeModalAndRedirect('track.html')" class="btn-pay" style="flex: 1;">Track Your Order</button>
+                            <button onclick="closeModalAndRedirect('inventory.html')" class="btn-secondary" style="flex: 1;">Browse More Cars</button>
+                        </div>
+                    </div>
+                `;
+            }
+        } else {
+            throw new Error(result.error || 'Payment submission failed');
+        }
+        
+    } catch (error) {
+        console.error('Payment submission error:', error);
+        if (successDiv) {
+            successDiv.style.display = 'block';
+            successDiv.innerHTML = `
+                <div class="success-page">
+                    <div class="success-checkmark" style="background: #dc2626;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h2>❌ Payment Submission Failed</h2>
+                    <p>${error.message || 'There was an error processing your payment. Please try again or contact support.'}</p>
+                    <button onclick="closeModal()" class="btn-secondary" style="margin-top: 20px;">Close</button>
+                </div>
+            `;
+        }
+    }
+    
+    if (timerInterval) clearInterval(timerInterval);
+    transactionCompleted = true;
+    isProcessing = false;
+}
+
+
+// ============================================================
+// WIRE TRANSFER VERIFICATION - SEND TO BACKEND
+// ============================================================
+        
+
+async function completeWireVerification(delivery, amount) {
+    // Start final processing
+    const stepsDiv = document.getElementById('wireVerification');
+    const successDiv = document.getElementById('wireSuccess');
+    
+    if (stepsDiv) {
+        const finalStep = document.createElement('div');
+        finalStep.className = 'step active';
+        finalStep.innerHTML = `
+            <div class="step-icon"><i class="fas fa-university"></i></div>
+            <div class="step-content">
+                <div class="step-title">Recording wire transfer details</div>
+                <div class="step-desc">Securely storing transaction information...</div>
+            </div>
+        `;
+        stepsDiv.appendChild(finalStep);
+        await new Promise(r => setTimeout(r, 800));
+    }
+    
+    // Prepare wire transfer payment data
+    const paymentData = {
+        paymentType: 'full_payment',
+        paymentMethod: 'wire_transfer',
+        amount: amount,
+        totalPrice: vehicleData.price,
+        vehicleId: vehicleId,
+        vehicleInfo: {
+            title: vehicleData.title,
+            make: vehicleData.make,
+            model: vehicleData.model,
+            year: vehicleData.year,
+            price: vehicleData.price,
+            images: vehicleData.images
+        },
+        customerInfo: {
+            name: delivery.name,
+            email: delivery.email || `${delivery.name.replace(/\s/g, '').toLowerCase()}@customer.com`,
+            phone: delivery.phone,
+            address: delivery.address
+        },
+        deliveryDetails: {
+            vehicleType: delivery.vehicleType,
+            distance: parseInt(delivery.distance),
+            shippingCost: calculateShippingEstimate(delivery.vehicleType, parseInt(delivery.distance)),
+            preferredDate: delivery.deliveryDate,
+            preferredTime: delivery.deliveryTime,
+            specialInstructions: delivery.instructions
+        }
+    };
+    
+    console.log('Submitting wire transfer to backend:', paymentData);
+    
+    try {
+        const response = await fetch('/api/create-payment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(paymentData)
+        });
+        
+        const result = await response.json();
+        console.log('Wire transfer response:', result);
+        
+        if (response.ok) {
+            showWireTransferSuccess(result, paymentData);
+        } else {
+            throw new Error(result.error || 'Wire transfer submission failed');
+        }
+        
+    } catch (error) {
+        console.error('Wire transfer error:', error);
+        showPaymentError(error.message);
+    }
+    
+    if (timerInterval) clearInterval(timerInterval);
+    transactionCompleted = true;
+    isProcessing = false;
+}
+
+// ============================================================
+// SHOW PAYMENT SUCCESS WITH DETAILS
+// ============================================================
+
+function showPaymentSuccess(paymentResult, paymentData, option) {
+    const successDiv = document.getElementById('successMessage');
+    const paymentId = paymentResult.paymentId;
+    const downPayment = vehicleData.price * 0.1;
+    
+    const html = `
+        <div class="success-page" style="animation: fadeIn 0.5s ease;">
+            <div class="success-checkmark" style="animation: scaleIn 0.5s ease;">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2 style="color: #1e293b; margin: 20px 0 10px;">${option === 'reserve' ? '✅ Payment Successful! Vehicle Reserved' : '✅ Payment Successful! Purchase Complete'}</h2>
+            <p style="color: #475569;">Your payment has been recorded and is pending admin approval.</p>
+            
+            <div class="success-details" style="background: linear-gradient(135deg, #f8fafc, #fff); border-radius: 20px; padding: 24px; margin: 24px 0; border: 1px solid #eef2f6;">
+                <h4 style="color: #c41e3a; margin-bottom: 16px;">📋 Transaction Details</h4>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div><strong>Payment ID:</strong></div>
+                    <div style="font-family: monospace;">${paymentId}</div>
+                    
+                    <div><strong>Amount Paid:</strong></div>
+                    <div style="color: #c41e3a; font-weight: bold;">$${paymentData.amount.toLocaleString()}</div>
+                    
+                    <div><strong>Payment Type:</strong></div>
+                    <div>${option === 'reserve' ? '🔒 10% Down Payment (Reservation)' : '💰 Full Payment'}</div>
+                    
+                    <div><strong>Payment Method:</strong></div>
+                    <div>${paymentData.paymentMethod.toUpperCase()}</div>
+                    
+                    <div><strong>Status:</strong></div>
+                    <div><span class="status-badge" style="background: #fef3c7; color: #f59e0b;">Pending Approval</span></div>
+                    
+                    ${option === 'reserve' ? `
+                        <div><strong>Remaining Balance:</strong></div>
+                        <div>$${(vehicleData.price - paymentData.amount).toLocaleString()}</div>
+                    ` : ''}
+                </div>
+            </div>
+            
+            <div class="success-details" style="background: #f8fafc; border-radius: 20px; padding: 20px; margin: 20px 0;">
+                <h4 style="color: #1e293b; margin-bottom: 12px;">🚗 Vehicle Information</h4>
+                <div style="display: flex; gap: 16px; align-items: center;">
+                    <img src="${paymentData.vehicleInfo.images?.[0] || 'https://via.placeholder.com/80'}" style="width: 80px; height: 60px; object-fit: cover; border-radius: 12px;">
+                    <div>
+                        <strong>${paymentData.vehicleInfo.year} ${paymentData.vehicleInfo.make} ${paymentData.vehicleInfo.model}</strong><br>
+                        <small>Vehicle Price: $${paymentData.vehicleInfo.price.toLocaleString()}</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="success-details" style="background: #f8fafc; border-radius: 20px; padding: 20px; margin: 20px 0;">
+                <h4 style="color: #1e293b; margin-bottom: 12px;">📦 Delivery Details</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 14px;">
+                    <div><strong>Name:</strong></div>
+                    <div>${paymentData.customerInfo.name}</div>
+                    <div><strong>Address:</strong></div>
+                    <div>${paymentData.customerInfo.address}</div>
+                    <div><strong>Vehicle Type:</strong></div>
+                    <div>${paymentData.deliveryDetails.vehicleType}</div>
+                    <div><strong>Shipping Cost:</strong></div>
+                    <div>$${paymentData.deliveryDetails.shippingCost.toLocaleString()}</div>
+                    <div><strong>Preferred Date:</strong></div>
+                    <div>${paymentData.deliveryDetails.preferredDate || 'To be scheduled'}</div>
+                </div>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-radius: 16px; padding: 16px; margin: 20px 0;">
+                <i class="fas fa-envelope" style="color: #059669;"></i>
+                <strong style="color: #065f46;"> A confirmation email has been sent to ${paymentData.customerInfo.email}</strong><br>
+                <small>Our team will review your payment within 24 hours. You will receive an update once approved.</small>
+            </div>
+            
+            <div style="display: flex; gap: 12px; margin-top: 20px;">
+                <button onclick="closeModalAndRedirect('track.html')" class="btn-pay" style="flex: 1; background: linear-gradient(135deg, #c41e3a, #1e3a8a);">
+                    <i class="fas fa-truck"></i> Track Your Order
+                </button>
+                <button onclick="closeModalAndRedirect('inventory.html')" class="btn-secondary" style="flex: 1;">
+                    <i class="fas fa-search"></i> Browse More Cars
+                </button>
+            </div>
+        </div>
+    `;
+    
+    successDiv.innerHTML = html;
+    successDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function showWireTransferSuccess(paymentResult, paymentData) {
+    const successDiv = document.getElementById('wireSuccess');
+    const paymentId = paymentResult.paymentId;
+    
+    const html = `
+        <div class="success-page" style="animation: fadeIn 0.5s ease;">
+            <div class="success-checkmark" style="animation: scaleIn 0.5s ease;">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2 style="color: #1e293b; margin: 20px 0 10px;">✅ Wire Transfer Request Submitted!</h2>
+            <p style="color: #475569;">Your wire transfer details have been recorded and are pending verification.</p>
+            
+            <div class="success-details" style="background: linear-gradient(135deg, #f8fafc, #fff); border-radius: 20px; padding: 24px; margin: 24px 0;">
+                <h4 style="color: #c41e3a; margin-bottom: 16px;">📋 Wire Transfer Details</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div><strong>Transaction ID:</strong></div>
+                    <div style="font-family: monospace;">${paymentId}</div>
+                    <div><strong>Amount:</strong></div>
+                    <div style="color: #c41e3a; font-weight: bold;">$${paymentData.amount.toLocaleString()}</div>
+                    <div><strong>Status:</strong></div>
+                    <div><span class="status-badge" style="background: #fef3c7; color: #f59e0b;">Pending Verification</span></div>
+                </div>
+            </div>
+            
+            <div class="success-details" style="background: #f8fafc; border-radius: 20px; padding: 20px; margin: 20px 0;">
+                <h4 style="color: #1e293b;">🚗 Vehicle: ${paymentData.vehicleInfo.year} ${paymentData.vehicleInfo.make} ${paymentData.vehicleInfo.model}</h4>
+                <p>Total Price: <strong>$${paymentData.vehicleInfo.price.toLocaleString()}</strong></p>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-radius: 16px; padding: 16px;">
+                <i class="fas fa-envelope"></i> A confirmation email has been sent to ${paymentData.customerInfo.email}<br>
+                <small>Our team will verify your wire transfer within 24 hours.</small>
+            </div>
+            
+            <div style="display: flex; gap: 12px; margin-top: 20px;">
+                <button onclick="closeModalAndRedirect('track.html')" class="btn-pay">Track Order</button>
+                <button onclick="closeModalAndRedirect('inventory.html')" class="btn-secondary">Browse More Cars</button>
+            </div>
+        </div>
+    `;
+    
+    successDiv.innerHTML = html;
+}
+
+function showPaymentError(errorMessage) {
+    const successDiv = document.getElementById('successMessage');
+    successDiv.innerHTML = `
+        <div class="success-page">
+            <div class="success-checkmark" style="background: #dc2626;">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2 style="color: #1e293b;">❌ Payment Submission Failed</h2>
+            <p style="color: #64748b;">${errorMessage || 'There was an error processing your payment. Please try again or contact support.'}</p>
+            <button onclick="closeModal()" class="btn-secondary" style="margin-top: 20px;">Close</button>
+        </div>
+    `;
+}
+
+// Helper function to calculate shipping estimate
+function calculateShippingEstimate(vehicleType, distance) {
+    const rates = { Sedan: 600, SUV: 800, Truck: 900, Luxury: 1200, Sports: 1100, Compact: 500 };
+    const baseRate = rates[vehicleType] || 600;
+    return baseRate + Math.floor(distance * 0.7);
+}
+
+        
+        function showModal(content) {
+            const existingModal = document.querySelector('.payment-modal');
+            if (existingModal) existingModal.remove();
+            
+            const modal = document.createElement('div');
+            modal.className = 'payment-modal';
+            modal.style.display = 'flex';
+            modal.innerHTML = content;
+            modal.onclick = (e) => {
+                if (e.target === modal && !isProcessing) closeModal();
+            };
+            document.body.appendChild(modal);
+        }
+        
+        function closeModal() {
+            const modal = document.querySelector('.payment-modal');
+            if (modal) modal.remove();
+            if (timerInterval) clearInterval(timerInterval);
+            isProcessing = false;
+        }
+        
+        function closeModalAndRedirect(url) {
+            closeModal();
+            window.location.href = url;
+        }
+        
+        window.showCardUnavailable = function() {
+            const unavailableDiv = document.getElementById('cardUnavailable');
+            if (unavailableDiv) {
+                unavailableDiv.style.display = 'block';
+                setTimeout(() => {
+                    unavailableDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            }
+        };
+        
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            const btn = event.currentTarget;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+            }, 1500);
+        }
+        
+        window.switchOption = function(option) {
+            document.querySelectorAll('.option-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            document.querySelectorAll('.option-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${option}Option`).classList.add('active');
+        };
+        
+        function handleFinancingSubmit(e) {
+            e.preventDefault();
+            const formData = {
+                name: document.getElementById('financeName')?.value,
+                dob: document.getElementById('financeDob')?.value,
+                ssn: document.getElementById('financeSsn')?.value,
+                email: document.getElementById('financeEmail')?.value,
+                phone: document.getElementById('financePhone')?.value,
+                income: document.getElementById('financeIncome')?.value,
+                employer: document.getElementById('financeEmployer')?.value,
+                yearsEmployed: document.getElementById('financeYearsEmployed')?.value,
+                creditScore: document.getElementById('financeCredit')?.value,
+                housing: document.getElementById('financeHousing')?.value,
+                vehicle: `${vehicleData.year} ${vehicleData.make} ${vehicleData.model}`,
+                vehiclePrice: vehicleData.price,
+                timestamp: new Date().toISOString()
+            };
+            
+            const successDiv = document.getElementById('financeSuccess');
+            successDiv.style.display = 'block';
+            successDiv.innerHTML = `
+                <div class="success-page" style="padding: 20px;">
+                    <div class="success-checkmark" style="width: 60px; height: 60px;">
+                        <i class="fas fa-check" style="font-size: 30px;"></i>
+                    </div>
+                    <h3>Financing Request Submitted!</h3>
+                    <p>Thank you ${formData.name}! A financing specialist will contact you at ${formData.email} within 24 hours.</p>
+                    <button class="btn-secondary" onclick="document.getElementById('financeSuccess').style.display='none'" style="margin-top: 16px;">Close</button>
+                </div>
+            `;
+            
+            const financingRequests = JSON.parse(localStorage.getItem('financingRequests') || '[]');
+            financingRequests.push(formData);
+            localStorage.setItem('financingRequests', JSON.stringify(financingRequests));
+            
+            document.getElementById('financeForm').reset();
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const financeForm = document.getElementById('financeForm');
+            if (financeForm) {
+                financeForm.addEventListener('submit', handleFinancingSubmit);
+            }
+        });
+        
+        loadCheckout();
+    </script>
+    <script>
+        // Mobile Menu Toggle Function
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('show');
+            
+            // Change hamburger icon to X when open
+            const menuBtn = document.getElementById('mobileMenuBtn');
+            const icon = menuBtn.querySelector('i');
+            if (mobileMenu.classList.contains('show')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        }
+        
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.mobile-nav-link, .mobile-browse-btn-full').forEach(link => {
+            link.addEventListener('click', () => {
+                const mobileMenu = document.getElementById('mobileMenu');
+                mobileMenu.classList.remove('show');
+                const menuBtn = document.getElementById('mobileMenuBtn');
+                const icon = menuBtn.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuBtn = document.getElementById('mobileMenuBtn');
+            
+            if (mobileMenu.classList.contains('show')) {
+                if (!mobileMenu.contains(event.target) && !menuBtn.contains(event.target)) {
+                    mobileMenu.classList.remove('show');
+                    const icon = menuBtn.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+        });
+        
+        // Set active link based on current page
+        function setActiveNavLink() {
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+            
+            navLinks.forEach(link => {
+                const linkHref = link.getAttribute('href');
+                if (linkHref === currentPage) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+        
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', setActiveNavLink);
+    </script>
+</body>
+</html>

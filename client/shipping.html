@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Vehicle Delivery Services - Lonestar Autos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #c41e3a;
+            --primary-dark: #a01830;
+            --secondary: #1e3a8a;
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --gold: #d4af37;
+            --gradient: linear-gradient(135deg, #c41e3a 0%, #1e3a8a 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #c41e3a, #1e3a8a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .shipping-hero {
+            padding: 120px 0 60px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shipping-hero:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1494976388531-d1058494cdd8?ixlib=rb-4.0.3') center/cover;
+            opacity: 0.1;
+        }
+
+        .shipping-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .shipping-hero p {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Shipping Info Banner */
+        .shipping-info-banner {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            padding: 16px 24px;
+            margin-top: -30px;
+            border-radius: 16px;
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .shipping-info-banner p {
+            color: #92400e;
+            font-weight: 500;
+        }
+
+        /* Delivery Options */
+        .delivery-options {
+            padding: 60px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--gray);
+            margin-bottom: 48px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .option-card {
+            background: white;
+            padding: 32px;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #eef2f6;
+            transition: all 0.3s;
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+
+        .option-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .option-icon i {
+            font-size: 2rem;
+            color: white;
+        }
+
+        .option-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+        }
+
+        .option-card p {
+            color: var(--gray);
+            margin-bottom: 16px;
+        }
+
+        .price-tag {
+            display: inline-block;
+            background: #f1f5f9;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-top: 12px;
+        }
+
+        /* Shipping Calculator */
+        .calculator-section {
+            background: white;
+            padding: 60px 0;
+            border-top: 1px solid #eef2f6;
+            border-bottom: 1px solid #eef2f6;
+        }
+
+        .calculator-card {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .calculator-card h3 {
+            text-align: center;
+            margin-bottom: 24px;
+            font-size: 1.5rem;
+        }
+
+        .calc-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .calc-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .calc-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .calc-group label {
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .calc-group input,
+        .calc-group select {
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .calc-group input:focus,
+        .calc-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .calc-result {
+            background: linear-gradient(135deg, #f1f5f9, #eef2ff);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .calc-result .estimate {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .calc-note {
+            font-size: 0.75rem;
+            color: var(--gray);
+            text-align: center;
+            margin-top: 12px;
+        }
+
+        /* Partners Section */
+        .partners-section {
+            padding: 60px 0;
+            background: white;
+        }
+
+        .partners-grid {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 48px;
+        }
+
+        .partner-card {
+            text-align: center;
+            padding: 20px 30px;
+            background: #f8fafc;
+            border-radius: 16px;
+            transition: all 0.3s;
+            min-width: 140px;
+        }
+
+        .partner-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .partner-card i {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+
+        .partner-card.dhl i { color: #ffcd00; }
+        .partner-card.ups i { color: #ffad00; }
+        .partner-card.fedex i { color: #4d148c; }
+        .partner-card.uship i { color: #0066cc; }
+
+        .partner-card h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .partner-card p {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 60px 0;
+            background: #f8fafc;
+        }
+
+        .faq-grid {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            border: 1px solid #eef2f6;
+        }
+
+        .faq-question {
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .faq-question i {
+            color: var(--primary);
+            transition: transform 0.3s;
+        }
+
+        .faq-question.active i {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            padding: 0 24px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        .faq-answer.active {
+            padding: 0 24px 20px 24px;
+            max-height: 500px;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--darker);
+            color: white;
+            padding: 48px 0 24px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section a {
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #94a3b8;
+        }
+
+        /* ========== MOBILE RESPONSIVE STYLES ========== */
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+            
+            .navbar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+            }
+            
+            .nav-content {
+                padding: 0.75rem 0;
+            }
+            
+            .logo-text {
+                font-size: 1.2rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .shipping-hero {
+                padding: 100px 0 40px;
+            }
+            
+            .shipping-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .shipping-hero p {
+                font-size: 1rem;
+            }
+            
+            .shipping-info-banner {
+                margin-top: -20px;
+                padding: 12px 16px;
+                font-size: 0.85rem;
+            }
+            
+            .delivery-options {
+                padding: 40px 0;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .options-grid {
+                gap: 20px;
+            }
+            
+            .option-card {
+                padding: 24px;
+            }
+            
+            .calculator-card {
+                padding: 24px;
+            }
+            
+            .calc-row {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .calc-group input,
+            .calc-group select {
+                padding: 10px 14px;
+                font-size: 16px;
+            }
+            
+            .calc-result .estimate {
+                font-size: 1.5rem;
+            }
+            
+            .partners-grid {
+                gap: 16px;
+            }
+            
+            .partner-card {
+                padding: 15px 20px;
+                min-width: 100px;
+            }
+            
+            .partner-card i {
+                font-size: 2rem;
+            }
+            
+            .partner-card h4 {
+                font-size: 1rem;
+            }
+            
+            .faq-question {
+                padding: 16px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .faq-answer {
+                font-size: 0.85rem;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .option-card h3 {
+                font-size: 1.1rem;
+            }
+            
+            .option-icon {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .option-icon i {
+                font-size: 1.5rem;
+            }
+            
+            .price-tag {
+                font-size: 0.85rem;
+            }
+            
+            .calculator-card h3 {
+                font-size: 1.2rem;
+            }
+        }
+        
+        /* Touch-friendly improvements */
+        @media (max-width: 768px) {
+            button,
+            .btn-primary,
+            .nav-links a,
+            .option-card,
+            .partner-card,
+            .faq-question {
+                cursor: pointer;
+                -webkit-tap-highlight-color: transparent;
+            }
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+
+          /* ========== ENHANCED NAVBAR STYLES ========== */
+    
+    .navbar {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(10px);
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .nav-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        position: relative;
+    }
+    
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .logo-img {
+        height: 45px;
+        width: auto;
+    }
+    
+    .logo-text {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #c41e3a 0%, #1e3a8a 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.5px;
+    }
+    
+    /* Desktop Navigation Links */
+    .nav-links {
+        display: flex;
+        gap: 32px;
+        align-items: center;
+    }
+    
+    .nav-links a {
+        text-decoration: none;
+        color: #1e293b;
+        font-weight: 500;
+        transition: color 0.3s;
+        font-size: 0.95rem;
+    }
+    
+    .nav-links a:hover,
+    .nav-links a.active {
+        color: #c41e3a;
+    }
+    
+    .nav-links .btn-primary {
+        background: linear-gradient(135deg, #c41e3a, #1e3a8a);
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 30px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.3s, box-shadow 0.3s;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 0.9rem;
+    }
+    
+    .nav-links .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px rgba(196, 30, 58, 0.4);
+    }
+    
+    /* Mobile Menu Button */
+    .mobile-menu-btn {
+        display: none;
+        font-size: 1.8rem;
+        cursor: pointer;
+        color: #1e293b;
+        transition: color 0.3s;
+        z-index: 1001;
+    }
+    
+    .mobile-menu-btn:hover {
+        color: #c41e3a;
+    }
+    
+    /* Mobile Dropdown Menu */
+    .mobile-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        border-radius: 0 0 20px 20px;
+        padding: 20px;
+        flex-direction: column;
+        gap: 12px;
+        z-index: 999;
+        animation: slideDown 0.3s ease;
+    }
+    
+    .mobile-menu.show {
+        display: flex;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .mobile-nav-link {
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #1e293b;
+        font-weight: 500;
+        border-radius: 12px;
+        transition: all 0.3s;
+        font-size: 1rem;
+    }
+    
+    .mobile-nav-link:hover,
+    .mobile-nav-link.active {
+        background: #f8fafc;
+        color: #c41e3a;
+    }
+    
+    .mobile-browse-btn-full {
+        text-align: center;
+        margin-top: 8px;
+        background: linear-gradient(135deg, #c41e3a, #1e3a8a);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        display: block;
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .nav-links {
+            display: none;
+        }
+        
+        .mobile-menu-btn {
+            display: block;
+        }
+        
+        .logo-text {
+            font-size: 1.2rem;
+        }
+        
+        .logo-img {
+            height: 35px;
+        }
+        
+        .nav-content {
+            padding: 0.75rem 0;
+        }
+    }
+    
+    /* Small Mobile Devices */
+    @media (max-width: 480px) {
+        .logo-text {
+            font-size: 1rem;
+        }
+        
+        .mobile-nav-link {
+            padding: 10px 14px;
+            font-size: 0.9rem;
+        }
+    }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <div class="logo-text">LONESTAR AUTOS</div>
+                </div>
+                
+                <!-- Desktop Navigation Links -->
+                <div class="nav-links" id="navLinks">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="inventory.html" class="nav-link">Inventory</a>
+                    <a href="about.html" class="nav-link">About Us</a>
+                    <a href="shipping.html" class="nav-link">Shipping</a>
+                    <a href="contact.html" class="nav-link">Contact</a>
+                    <a href="track.html" class="nav-link">Track Delivery</a>
+                    <a href="#inventory" class="btn-primary mobile-browse-btn">Browse Cars</a>
+                </div>
+                
+                <!-- Mobile Hamburger Menu Button -->
+                <div class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+            
+            <!-- Mobile Dropdown Menu -->
+            <div class="mobile-menu" id="mobileMenu">
+                <a href="index.html" class="mobile-nav-link">Home</a>
+                <a href="inventory.html" class="mobile-nav-link">Inventory</a>
+                <a href="about.html" class="mobile-nav-link">About Us</a>
+                <a href="shipping.html" class="mobile-nav-link">Shipping</a>
+                <a href="contact.html" class="mobile-nav-link">Contact</a>
+                <a href="track.html" class="mobile-nav-link">Track Delivery</a>
+                <a href="#inventory" class="btn-primary mobile-browse-btn-full">Browse Cars</a>
+            </div>
+        </div>
+    </nav>
+    
+    
+
+    <section class="shipping-hero">
+        <div class="container">
+            <h1>Vehicle Delivery Services</h1>
+            <p>Your car, delivered safely to your doorstep anywhere in the US</p>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="shipping-info-banner">
+            <p><i class="fas fa-info-circle"></i> Shipping costs are calculated based on your vehicle type and delivery distance. Use our calculator below to get an estimate.</p>
+        </div>
+    </div>
+
+    <section class="delivery-options">
+        <div class="container">
+            <h2 class="section-title">Our <span style="color: var(--primary);">Delivery Options</span></h2>
+            <p class="section-subtitle">Choose the shipping method that works best for you</p>
+            <div class="options-grid">
+                <div class="option-card">
+                    <div class="option-icon"><i class="fas fa-truck"></i></div>
+                    <h3>Standard Delivery</h3>
+                    <p>5-10 business days nationwide</p>
+                    <p>Fully insured • GPS tracked</p>
+                    <div class="price-tag">Starting at $500</div>
+                </div>
+                <div class="option-card">
+                    <div class="option-icon"><i class="fas fa-rocket"></i></div>
+                    <h3>Express Delivery</h3>
+                    <p>2-3 business days nationwide</p>
+                    <p>Priority handling • Expedited shipping</p>
+                    <div class="price-tag">Starting at $800</div>
+                </div>
+                <div class="option-card">
+                    <div class="option-icon"><i class="fas fa-gem"></i></div>
+                    <h3>White-Glove Service</h3>
+                    <p>Premium enclosed transport</p>
+                    <p>Climate-controlled • Luxury vehicles</p>
+                    <div class="price-tag">Starting at $1,200</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shipping Calculator -->
+    <section class="calculator-section">
+        <div class="container">
+            <div class="calculator-card">
+                <h3><i class="fas fa-calculator"></i> Shipping Cost Estimator</h3>
+                <div class="calc-form">
+                    <div class="calc-row">
+                        <div class="calc-group">
+                            <label>Vehicle Type</label>
+                            <select id="vehicleType">
+                                <option value="Sedan">Sedan</option>
+                                <option value="SUV">SUV / Crossover</option>
+                                <option value="Truck">Truck / Pickup</option>
+                                <option value="Luxury">Luxury / Premium</option>
+                                <option value="Sports">Sports / Performance</option>
+                                <option value="Compact">Compact / Economy</option>
+                            </select>
+                        </div>
+                        <div class="calc-group">
+                            <label>Distance (miles)</label>
+                            <input type="number" id="distance" placeholder="Enter distance from Houston, TX" value="500">
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="calculateShipping()" style="background: linear-gradient(135deg, #c41e3a, #1e3a8a);">Calculate Estimate</button>
+                    <div class="calc-result" id="calcResult">
+                        <p>Estimated Shipping Cost</p>
+                        <div class="estimate" id="shippingEstimate">$--</div>
+                        <p class="calc-note">*Final price confirmed at checkout based on exact location</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shipping Partners -->
+    <section class="partners-section">
+        <div class="container">
+            <h2 class="section-title">Trusted <span style="color: var(--primary);">Shipping Partners</span></h2>
+            <p class="section-subtitle">We partner with the world's most reliable carriers</p>
+            <div class="partners-grid">
+                <div class="partner-card dhl">
+                    <i class="fas fa-box"></i>
+                    <h4>DHL</h4>
+                    <p>International Shipping</p>
+                </div>
+                <div class="partner-card ups">
+                    <i class="fas fa-truck-fast"></i>
+                    <h4>UPS</h4>
+                    <p>Express Delivery</p>
+                </div>
+                <div class="partner-card fedex">
+                    <i class="fas fa-shipping-fast"></i>
+                    <h4>FedEx</h4>
+                    <p>Priority Shipping</p>
+                </div>
+                <div class="partner-card uship">
+                    <i class="fas fa-truck-moving"></i>
+                    <h4>uShip</h4>
+                    <p>Vehicle Transport</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <h2 class="section-title">Frequently Asked <span style="color: var(--primary);">Questions</span></h2>
+            <p class="section-subtitle">Everything you need to know about vehicle shipping</p>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>How is shipping cost calculated?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Shipping costs are based on two main factors: your vehicle type (size/weight) and delivery distance. Larger vehicles and longer distances increase the cost. Use our shipping calculator above to get an estimate.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>How long does delivery take?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Standard delivery takes 5-10 business days nationwide. Express delivery is available for 2-3 business days. Delivery times may vary based on weather, traffic, and other factors.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>Is my vehicle insured during transport?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Yes! All vehicles shipped through our partners are fully insured for the full value of the vehicle. You'll receive insurance documentation with your shipping confirmation.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>Can I track my vehicle in real-time?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Absolutely! Once your vehicle is shipped, you'll receive a tracking number to monitor your delivery in real-time via our tracking page. GPS updates are provided every 30 minutes.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>What if my vehicle is damaged during shipping?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        In the rare event of damage, our insurance coverage protects you. Document any damage upon delivery and contact us within 48 hours to file a claim.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>Do you offer international shipping?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Yes! We offer international shipping to select countries. Contact our support team for a custom quote and shipping timeline.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Lonestar Autos</h4>
+                    <p>Premium car dealership offering luxury, sports, and everyday vehicles with nationwide delivery.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="inventory.html">Inventory</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="shipping.html">Shipping</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="track.html">Track Delivery</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Financing Disclosure</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> 1-888-LONESTAR</li>
+                        <li><i class="fas fa-envelope"></i> shipping@lonestarautos.com</li>
+                        <li><i class="fas fa-clock"></i> Mon-Sat: 9am-8pm EST</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Lonestar Autos. All rights reserved. | Premium Car Dealership & Nationwide Delivery</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Shipping calculator
+        function calculateShipping() {
+            const vehicleType = document.getElementById('vehicleType').value;
+            const distance = parseInt(document.getElementById('distance').value) || 0;
+            
+            const rates = {
+                'Sedan': { base: 500, perMile: 0.65 },
+                'SUV': { base: 700, perMile: 0.85 },
+                'Truck': { base: 800, perMile: 0.95 },
+                'Luxury': { base: 1000, perMile: 1.1 },
+                'Sports': { base: 900, perMile: 1.0 },
+                'Compact': { base: 450, perMile: 0.6 }
+            };
+            
+            const rate = rates[vehicleType] || rates['Sedan'];
+            let cost = rate.base + (distance * rate.perMile);
+            
+            // Add express option? Not included in basic calculator
+            cost = Math.round(cost);
+            
+            document.getElementById('shippingEstimate').textContent = `$${cost.toLocaleString()}`;
+        }
+        
+        // FAQ Toggle
+        function toggleFAQ(element) {
+            element.classList.toggle('active');
+            const answer = element.nextElementSibling;
+            answer.classList.toggle('active');
+        }
+        
+        // Calculate on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            calculateShipping();
+            
+            // Add input listeners for real-time calculation
+            document.getElementById('vehicleType').addEventListener('change', calculateShipping);
+            document.getElementById('distance').addEventListener('input', calculateShipping);
+        });
+
+         // Mobile Menu Toggle Function
+    function toggleMobileMenu() {
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenu.classList.toggle('show');
+        
+        // Change hamburger icon to X when open
+        const menuBtn = document.getElementById('mobileMenuBtn');
+        const icon = menuBtn.querySelector('i');
+        if (mobileMenu.classList.contains('show')) {
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-times');
+        } else {
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+        }
+    }
+    
+    // Close mobile menu when clicking a link
+    document.querySelectorAll('.mobile-nav-link, .mobile-browse-btn-full').forEach(link => {
+        link.addEventListener('click', () => {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.remove('show');
+            const menuBtn = document.getElementById('mobileMenuBtn');
+            const icon = menuBtn.querySelector('i');
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+        });
+    });
+    
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuBtn = document.getElementById('mobileMenuBtn');
+        
+        if (mobileMenu.classList.contains('show')) {
+            if (!mobileMenu.contains(event.target) && !menuBtn.contains(event.target)) {
+                mobileMenu.classList.remove('show');
+                const icon = menuBtn.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        }
+    });
+    
+    // Set active link based on current page
+    function setActiveNavLink() {
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+        
+        navLinks.forEach(link => {
+            const linkHref = link.getAttribute('href');
+            if (linkHref === currentPage) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+    }
+    
+    // Run on page load
+    document.addEventListener('DOMContentLoaded', setActiveNavLink);
+    </script>
+</body>
+</html>

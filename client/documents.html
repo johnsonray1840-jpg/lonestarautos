@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Documents - Lonestar Autos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f1f5f9; }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        .upload-card { background: white; border-radius: 24px; padding: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h1 { background: linear-gradient(135deg, #c41e3a, #1e3a8a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 1rem; }
+        .btn-primary { background: linear-gradient(135deg, #c41e3a, #1e3a8a); color: white; padding: 12px 24px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; width: 100%; }
+        .file-info { margin-top: 10px; font-size: 0.8rem; color: #64748b; }
+        .success { background: #d1fae5; color: #059669; padding: 12px; border-radius: 8px; margin-top: 20px; }
+        .error { background: #fee2e2; color: #dc2626; padding: 12px; border-radius: 8px; margin-top: 20px; }
+        /* ========== ENHANCED NAVBAR STYLES ========== */
+    
+    .navbar {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(10px);
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .nav-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        position: relative;
+    }
+    
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .logo-img {
+        height: 45px;
+        width: auto;
+    }
+    
+    .logo-text {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #c41e3a 0%, #1e3a8a 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.5px;
+    }
+    
+    /* Desktop Navigation Links */
+    .nav-links {
+        display: flex;
+        gap: 32px;
+        align-items: center;
+    }
+    
+    .nav-links a {
+        text-decoration: none;
+        color: #1e293b;
+        font-weight: 500;
+        transition: color 0.3s;
+        font-size: 0.95rem;
+    }
+    
+    .nav-links a:hover,
+    .nav-links a.active {
+        color: #c41e3a;
+    }
+    
+    .nav-links .btn-primary {
+        background: linear-gradient(135deg, #c41e3a, #1e3a8a);
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 30px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.3s, box-shadow 0.3s;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 0.9rem;
+    }
+    
+    .nav-links .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px rgba(196, 30, 58, 0.4);
+    }
+    
+    /* Mobile Menu Button */
+    .mobile-menu-btn {
+        display: none;
+        font-size: 1.8rem;
+        cursor: pointer;
+        color: #1e293b;
+        transition: color 0.3s;
+        z-index: 1001;
+    }
+    
+    .mobile-menu-btn:hover {
+        color: #c41e3a;
+    }
+    
+    /* Mobile Dropdown Menu */
+    .mobile-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        border-radius: 0 0 20px 20px;
+        padding: 20px;
+        flex-direction: column;
+        gap: 12px;
+        z-index: 999;
+        animation: slideDown 0.3s ease;
+    }
+    
+    .mobile-menu.show {
+        display: flex;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .mobile-nav-link {
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #1e293b;
+        font-weight: 500;
+        border-radius: 12px;
+        transition: all 0.3s;
+        font-size: 1rem;
+    }
+    
+    .mobile-nav-link:hover,
+    .mobile-nav-link.active {
+        background: #f8fafc;
+        color: #c41e3a;
+    }
+    
+    .mobile-browse-btn-full {
+        text-align: center;
+        margin-top: 8px;
+        background: linear-gradient(135deg, #c41e3a, #1e3a8a);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        display: block;
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .nav-links {
+            display: none;
+        }
+        
+        .mobile-menu-btn {
+            display: block;
+        }
+        
+        .logo-text {
+            font-size: 1.2rem;
+        }
+        
+        .logo-img {
+            height: 35px;
+        }
+        
+        .nav-content {
+            padding: 0.75rem 0;
+        }
+    }
+    
+    /* Small Mobile Devices */
+    @media (max-width: 480px) {
+        .logo-text {
+            font-size: 1rem;
+        }
+        
+        .mobile-nav-link {
+            padding: 10px 14px;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <div class="logo-text">LONESTAR AUTOS</div>
+                </div>
+                
+                <!-- Desktop Navigation Links -->
+                <div class="nav-links" id="navLinks">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="inventory.html" class="nav-link">Inventory</a>
+                    <a href="about.html" class="nav-link">About Us</a>
+                    <a href="shipping.html" class="nav-link">Shipping</a>
+                    <a href="contact.html" class="nav-link">Contact</a>
+                    <a href="track.html" class="nav-link">Track Delivery</a>
+                    <a href="#inventory" class="btn-primary mobile-browse-btn">Browse Cars</a>
+                </div>
+                
+                <!-- Mobile Hamburger Menu Button -->
+                <div class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+            
+            <!-- Mobile Dropdown Menu -->
+            <div class="mobile-menu" id="mobileMenu">
+                <a href="index.html" class="mobile-nav-link">Home</a>
+                <a href="inventory.html" class="mobile-nav-link">Inventory</a>
+                <a href="about.html" class="mobile-nav-link">About Us</a>
+                <a href="shipping.html" class="mobile-nav-link">Shipping</a>
+                <a href="contact.html" class="mobile-nav-link">Contact</a>
+                <a href="track.html" class="mobile-nav-link">Track Delivery</a>
+                <a href="#inventory" class="btn-primary mobile-browse-btn-full">Browse Cars</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="upload-card">
+            <h1><i class="fas fa-file-upload"></i> Upload Vehicle Documents</h1>
+            <p>Please upload your insurance, registration, or other required documents for your vehicle shipment.</p>
+            
+            <form id="uploadForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>Tracking Number *</label>
+                    <input type="text" id="trackingNumber" placeholder="Enter your tracking number" required>
+                </div>
+                <div class="form-group">
+                    <label>Customer Email *</label>
+                    <input type="email" id="customerEmail" placeholder="Email used for purchase" required>
+                </div>
+                <div class="form-group">
+                    <label>Document Type *</label>
+                    <select id="documentType" required>
+                        <option value="insurance">Insurance Certificate</option>
+                        <option value="registration">Vehicle Registration</option>
+                        <option value="bill_of_lading">Bill of Lading</option>
+                        <option value="inspection">Inspection Report</option>
+                        <option value="other">Other Document</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Select File *</label>
+                    <input type="file" id="documentFile" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
+                    <div class="file-info">Accepted: PDF, JPG, PNG, DOC (Max 10MB)</div>
+                </div>
+                <div class="form-group">
+                    <label>Notes (Optional)</label>
+                    <textarea id="notes" rows="3" placeholder="Any additional information..."></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Upload Document</button>
+            </form>
+            <div id="result"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const trackingNumber = document.getElementById('trackingNumber').value;
+            const customerEmail = document.getElementById('customerEmail').value;
+            
+            // First verify tracking number
+            const verifyResponse = await fetch(`/api/track/${trackingNumber}`);
+            if (!verifyResponse.ok) {
+                document.getElementById('result').innerHTML = '<div class="error">❌ Invalid tracking number. Please check and try again.</div>';
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('shipmentId', (await verifyResponse.json())._id);
+            formData.append('customerEmail', customerEmail);
+            formData.append('documentType', document.getElementById('documentType').value);
+            formData.append('notes', document.getElementById('notes').value);
+            formData.append('document', document.getElementById('documentFile').files[0]);
+            
+            const response = await fetch('/api/documents/upload', { method: 'POST', body: formData });
+            
+            if (response.ok) {
+                document.getElementById('result').innerHTML = '<div class="success">✅ Document uploaded successfully! Our team will review it shortly.</div>';
+                document.getElementById('uploadForm').reset();
+            } else {
+                document.getElementById('result').innerHTML = '<div class="error">❌ Upload failed. Please try again.</div>';
+            }
+        });
+    </script>
+    <script>
+        // Mobile Menu Toggle Function
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('show');
+            
+            // Change hamburger icon to X when open
+            const menuBtn = document.getElementById('mobileMenuBtn');
+            const icon = menuBtn.querySelector('i');
+            if (mobileMenu.classList.contains('show')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        }
+        
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.mobile-nav-link, .mobile-browse-btn-full').forEach(link => {
+            link.addEventListener('click', () => {
+                const mobileMenu = document.getElementById('mobileMenu');
+                mobileMenu.classList.remove('show');
+                const menuBtn = document.getElementById('mobileMenuBtn');
+                const icon = menuBtn.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuBtn = document.getElementById('mobileMenuBtn');
+            
+            if (mobileMenu.classList.contains('show')) {
+                if (!mobileMenu.contains(event.target) && !menuBtn.contains(event.target)) {
+                    mobileMenu.classList.remove('show');
+                    const icon = menuBtn.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+        });
+        
+        // Set active link based on current page
+        function setActiveNavLink() {
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+            
+            navLinks.forEach(link => {
+                const linkHref = link.getAttribute('href');
+                if (linkHref === currentPage) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+        
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', setActiveNavLink);
+    </script>
+</body>
+</html>

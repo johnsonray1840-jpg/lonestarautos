@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Lonestar Autos - Premium Car Dealership | Buy & Ship Nationwide</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ========== ALL EXISTING STYLES REMAIN INTACT ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #c41e3a;
+            --primary-dark: #a01830;
+            --secondary: #1e3a8a;
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --gold: #d4af37;
+            --gradient: linear-gradient(135deg, #c41e3a 0%, #1e3a8a 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-img {
+            height: 45px;
+            width: auto;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(196, 30, 58, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        .btn-large {
+            padding: 14px 36px;
+            font-size: 1.1rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 140px 0 80px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1494976388531-d1058494cdd8?ixlib=rb-4.0.3') center/cover;
+            opacity: 0.15;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            color: white;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #c41e3a, #d4af37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-description {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 32px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 48px;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--gold);
+        }
+
+        .stat-label {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+        }
+
+        /* Recent Inventory Section - Clean and Limited */
+        .recent-inventory-section {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--gray);
+            margin-bottom: 48px;
+            font-size: 1.1rem;
+        }
+
+        .vehicles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 32px;
+            margin-bottom: 48px;
+        }
+
+        .vehicle-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #eef2f6;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);
+        }
+
+        .vehicle-image {
+            height: 220px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .vehicle-status {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: rgba(0,0,0,0.7);
+            color: white;
+        }
+
+        .vehicle-status.available { background: #10b981; }
+        .vehicle-status.sold { background: #dc2626; }
+        .vehicle-status.reserved { background: #f59e0b; }
+
+        .vehicle-info {
+            padding: 20px;
+        }
+
+        .vehicle-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .vehicle-price {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 8px 0;
+        }
+
+        .downpayment-info {
+            background: linear-gradient(135deg, #fefce8, #fef9c3);
+            border-radius: 12px;
+            padding: 10px;
+            margin: 12px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .downpayment-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #854d0e;
+        }
+
+        .downpayment-amount {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #c41e3a;
+        }
+
+        .vehicle-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 12px 0;
+            color: var(--gray);
+            font-size: 0.8rem;
+        }
+
+        .vehicle-details span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-small {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            width: 100%;
+            text-align: center;
+            border-radius: 12px;
+            margin-top: 8px;
+        }
+
+        .btn-outline-small {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            width: 100%;
+            text-align: center;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+        }
+
+        .btn-outline-small:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .view-all-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn-view-all {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 14px 42px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-view-all:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Shipping Services Section */
+        .shipping-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .shipping-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .shipping-content h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .shipping-features {
+            list-style: none;
+            margin-top: 24px;
+        }
+
+        .shipping-features li {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .shipping-features i {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .shipping-image {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .shipping-image i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        /* Partners Section */
+        .partners-section {
+            padding: 60px 0;
+            background: white;
+            border-top: 1px solid #eef2f6;
+            border-bottom: 1px solid #eef2f6;
+        }
+
+        .partners-grid {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 48px;
+        }
+
+        .partner-card {
+            text-align: center;
+            padding: 20px 30px;
+            background: #f8fafc;
+            border-radius: 16px;
+            transition: all 0.3s;
+            min-width: 140px;
+        }
+
+        .partner-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .partner-card i {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+
+        .partner-card.dhl i { color: #ffcd00; }
+        .partner-card.ups i { color: #ffad00; }
+        .partner-card.fedex i { color: #4d148c; }
+
+        .partner-card h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .partner-card p {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+        }
+
+        .faq-grid {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            border: 1px solid #eef2f6;
+            transition: all 0.3s;
+        }
+
+        .faq-item:hover {
+            border-color: var(--primary);
+        }
+
+        .faq-question {
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark);
+        }
+
+        .faq-question i {
+            color: var(--primary);
+            transition: transform 0.3s;
+        }
+
+        .faq-question.active i {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            padding: 0 24px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        .faq-answer.active {
+            padding: 0 24px 20px 24px;
+            max-height: 500px;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 32px;
+            border-radius: 20px;
+            text-align: center;
+            transition: transform 0.3s;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--gradient);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+
+        .feature-icon i {
+            font-size: 32px;
+            color: white;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+        }
+
+        /* Trust Badges */
+        .trust-badges {
+            padding: 40px 0;
+            background: var(--dark);
+            color: white;
+        }
+
+        .badges-grid {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1rem;
+        }
+
+        .badge i {
+            font-size: 1.5rem;
+            color: var(--gold);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--darker);
+            color: white;
+            padding: 48px 0 24px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section a {
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #94a3b8;
+        }
+
+        /* ========== MOBILE RESPONSIVE STYLES ========== */
+        
+        @media (max-width: 1024px) {
+            .container {
+                padding: 0 20px;
+            }
+            .vehicles-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+            
+            .navbar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+            }
+            
+            .nav-content {
+                padding: 0.75rem 0;
+            }
+            
+            .logo-text {
+                font-size: 1.2rem;
+            }
+            
+            .logo-img {
+                height: 35px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .hero {
+                padding: 100px 0 60px;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-description {
+                font-size: 1rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .hero-stats {
+                gap: 24px;
+                flex-wrap: wrap;
+            }
+            
+            .stat-number {
+                font-size: 1.5rem;
+            }
+            
+            .stat-label {
+                font-size: 0.75rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .section-subtitle {
+                font-size: 0.9rem;
+                margin-bottom: 32px;
+            }
+            
+            .vehicles-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .shipping-grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+            
+            .shipping-content h2 {
+                font-size: 1.5rem;
+            }
+            
+            .shipping-features li {
+                font-size: 0.9rem;
+            }
+            
+            .shipping-image {
+                padding: 30px;
+            }
+            
+            .partners-grid {
+                gap: 16px;
+            }
+            
+            .partner-card {
+                padding: 15px 20px;
+                min-width: 100px;
+            }
+            
+            .faq-question {
+                padding: 16px 20px;
+                font-size: 1rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .badges-grid {
+                gap: 24px;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 1.6rem;
+            }
+            
+            .vehicle-title {
+                font-size: 1.1rem;
+            }
+            
+            .vehicle-price {
+                font-size: 1.2rem;
+            }
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        .loading-vehicles {
+            text-align: center;
+            padding: 60px;
+            color: var(--gray);
+        }
+        
+        .loading-vehicles i {
+            font-size: 2rem;
+            margin-bottom: 16px;
+            color: var(--primary);
+        }
+
+        /* ========== ENHANCED NAVBAR STYLES ========== */
+    
+    .navbar {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(10px);
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .nav-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        position: relative;
+    }
+    
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .logo-img {
+        height: 45px;
+        width: auto;
+    }
+    
+    .logo-text {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #c41e3a 0%, #1e3a8a 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.5px;
+    }
+    
+    /* Desktop Navigation Links */
+    .nav-links {
+        display: flex;
+        gap: 32px;
+        align-items: center;
+    }
+    
+    .nav-links a {
+        text-decoration: none;
+        color: #1e293b;
+        font-weight: 500;
+        transition: color 0.3s;
+        font-size: 0.95rem;
+    }
+    
+    .nav-links a:hover,
+    .nav-links a.active {
+        color: #c41e3a;
+    }
+    
+    .nav-links .btn-primary {
+        background: linear-gradient(135deg, #c41e3a, #1e3a8a);
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 30px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.3s, box-shadow 0.3s;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 0.9rem;
+    }
+    
+    .nav-links .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px rgba(196, 30, 58, 0.4);
+    }
+    
+    /* Mobile Menu Button */
+    .mobile-menu-btn {
+        display: none;
+        font-size: 1.8rem;
+        cursor: pointer;
+        color: #1e293b;
+        transition: color 0.3s;
+        z-index: 1001;
+    }
+    
+    .mobile-menu-btn:hover {
+        color: #c41e3a;
+    }
+    
+    /* Mobile Dropdown Menu */
+    .mobile-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        border-radius: 0 0 20px 20px;
+        padding: 20px;
+        flex-direction: column;
+        gap: 12px;
+        z-index: 999;
+        animation: slideDown 0.3s ease;
+    }
+    
+    .mobile-menu.show {
+        display: flex;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .mobile-nav-link {
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #1e293b;
+        font-weight: 500;
+        border-radius: 12px;
+        transition: all 0.3s;
+        font-size: 1rem;
+    }
+    
+    .mobile-nav-link:hover,
+    .mobile-nav-link.active {
+        background: #f8fafc;
+        color: #c41e3a;
+    }
+    
+    .mobile-browse-btn-full {
+        text-align: center;
+        margin-top: 8px;
+        background: linear-gradient(135deg, #c41e3a, #1e3a8a);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        display: block;
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .nav-links {
+            display: none;
+        }
+        
+        .mobile-menu-btn {
+            display: block;
+        }
+        
+        .logo-text {
+            font-size: 1.2rem;
+        }
+        
+        .logo-img {
+            height: 35px;
+        }
+        
+        .nav-content {
+            padding: 0.75rem 0;
+        }
+    }
+    
+    /* Small Mobile Devices */
+    @media (max-width: 480px) {
+        .logo-text {
+            font-size: 1rem;
+        }
+        
+        .mobile-nav-link {
+            padding: 10px 14px;
+            font-size: 0.9rem;
+        }
+    }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <div class="logo-text"></div>
+                </div>
+                
+                <!-- Desktop Navigation Links -->
+                <div class="nav-links" id="navLinks">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="inventory.html" class="nav-link">Inventory</a>
+                    <a href="about.html" class="nav-link">About Us</a>
+                    <a href="shipping.html" class="nav-link">Shipping</a>
+                    <a href="contact.html" class="nav-link">Contact</a>
+                    <a href="track.html" class="nav-link">Track Delivery</a>
+                    <a href="#inventory" class="btn-primary mobile-browse-btn">Browse Cars</a>
+                </div>
+                
+                <!-- Mobile Hamburger Menu Button -->
+                <div class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+            
+            <!-- Mobile Dropdown Menu -->
+            <div class="mobile-menu" id="mobileMenu">
+                <a href="index.html" class="mobile-nav-link">Home</a>
+                <a href="inventory.html" class="mobile-nav-link">Inventory</a>
+                <a href="about.html" class="mobile-nav-link">About Us</a>
+                <a href="shipping.html" class="mobile-nav-link">Shipping</a>
+                <a href="contact.html" class="mobile-nav-link">Contact</a>
+                <a href="track.html" class="mobile-nav-link">Track Delivery</a>
+                <a href="#inventory" class="btn-primary mobile-browse-btn-full">Browse Cars</a>
+            </div>
+        </div>
+    </nav>
+    
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    Premium Luxury & <span class="gradient-text">Performance Vehicles</span>
+                </h1>
+                <p class="hero-description">
+                    Experience excellence with Lonestar Autos - Your trusted dealership for luxury, sports, and everyday vehicles. 
+                    We deliver nationwide with white-glove service to your doorstep.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#inventory" class="btn-primary btn-large">View Inventory</a>
+                    <a href="shipping.html" class="btn-outline btn-large">Learn About Shipping</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">Vehicles Sold</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">50</div>
+                        <div class="stat-label">States Covered</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">Customer Support</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Inventory Section - Shows only 8 most recent vehicles -->
+    <section id="inventory" class="recent-inventory-section">
+        <div class="container">
+            <h2 class="section-title">Recently Added <span class="gradient-text">Vehicles</span></h2>
+            <p class="section-subtitle">Discover our newest arrivals - fresh inventory added weekly</p>
+            
+            <div class="vehicles-grid" id="recentVehiclesGrid">
+                <div class="loading-vehicles">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading vehicles...</p>
+                </div>
+            </div>
+            
+            <div class="view-all-container">
+                <a href="inventory.html" class="btn-view-all">
+                    <i class="fas fa-car"></i> View All Inventory
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shipping Services Section -->
+    <section class="shipping-section">
+        <div class="container">
+            <div class="shipping-grid">
+                <div class="shipping-content">
+                    <h2>Nationwide & Worldwide <span class="gradient-text">Vehicle Delivery</span></h2>
+                    <p>When you purchase from Lonestar Autos, we handle the delivery. Our trusted shipping partners ensure your vehicle arrives safely at your doorstep, anywhere in the USA or internationally. Shipping costs are calculated based on your vehicle type and delivery location.</p>
+                    <ul class="shipping-features">
+                        <li><i class="fas fa-check-circle"></i> Real-time tracking from purchase to delivery</li>
+                        <li><i class="fas fa-check-circle"></i> Fully insured transport</li>
+                        <li><i class="fas fa-check-circle"></i> White-glove doorstep service</li>
+                        <li><i class="fas fa-check-circle"></i> International shipping available</li>
+                        <li><i class="fas fa-check-circle"></i> Custom shipping quotes based on location & vehicle</li>
+                    </ul>
+                    <a href="shipping.html" class="btn-primary" style="margin-top: 24px; display: inline-block;">Get Shipping Quote</a>
+                </div>
+                <div class="shipping-image">
+                    <i class="fas fa-shipping-fast"></i>
+                    <h3 style="margin: 20px 0;">Doorstep Delivery</h3>
+                    <p>Your vehicle delivered safely to your home or office</p>
+                    <div style="margin-top: 30px;">
+                        <i class="fas fa-map-marker-alt" style="font-size: 2rem;"></i>
+                        <i class="fas fa-truck" style="font-size: 2rem; margin: 0 20px;"></i>
+                        <i class="fas fa-home" style="font-size: 2rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Partners Section -->
+    <section class="partners-section">
+        <div class="container">
+            <h2 class="section-title">Trusted <span class="gradient-text">Shipping Partners</span></h2>
+            <p class="section-subtitle">We partner with the world's most reliable carriers</p>
+            <div class="partners-grid">
+                <div class="partner-card dhl">
+                    <i class="fas fa-box"></i>
+                    <h4>DHL</h4>
+                    <p>International Shipping</p>
+                </div>
+                <div class="partner-card ups">
+                    <i class="fas fa-truck-fast"></i>
+                    <h4>UPS</h4>
+                    <p>Express Delivery</p>
+                </div>
+                <div class="partner-card fedex">
+                    <i class="fas fa-shipping-fast"></i>
+                    <h4>FedEx</h4>
+                    <p>Priority Shipping</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <h2 class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
+            <p class="section-subtitle">Everything you need to know about buying and shipping with Lonestar Autos</p>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>How does vehicle shipping work?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        After purchasing your vehicle, our team coordinates with our shipping partners to arrange delivery. You'll receive a tracking number and real-time updates. Shipping costs are calculated based on your location and vehicle type. Most deliveries take 3-10 business days depending on distance.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>How is shipping cost calculated?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Shipping costs depend on two main factors: your vehicle type (size/weight) and delivery distance. When you proceed to checkout, you'll enter your delivery address and vehicle details to get an accurate shipping estimate. Final costs are confirmed before payment.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>Can I finance my vehicle purchase?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Yes! We offer flexible financing options for qualified buyers. You can request financing during checkout by selecting the "Request Financing" option. Our finance partners work with all credit types and will contact you within 24 hours with approval details.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>What is the reservation process?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        You can reserve any vehicle with a 10% down payment. This holds the vehicle for 7 days while you complete financing or arrange full payment. If you change your mind, you have 48 hours for a full refund. The remaining balance is due upon delivery.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>Is my vehicle insured during transport?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Absolutely! All vehicles shipped through our partners are fully insured for the full value of the vehicle. You'll receive insurance documentation with your shipping confirmation.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>What payment methods do you accept?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        For down payments and reservations, we accept PayPal, Venmo, and Cash App. For full payments, wire transfer is available. Card payments are temporarily unavailable due to enhanced security measures.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Why Choose <span class="gradient-text">Lonestar Autos</span></h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h3>Certified Pre-Owned</h3>
+                    <p>Every vehicle undergoes rigorous inspection and certification process.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3>Nationwide Delivery</h3>
+                    <p>Competitive shipping rates with real-time tracking. Custom quotes based on your location.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Financing Available</h3>
+                    <p>Flexible financing options with competitive rates for all credit types.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>24/7 Support</h3>
+                    <p>Dedicated support team available around the clock for your needs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Badges -->
+    <section class="trust-badges">
+        <div class="container">
+            <div class="badges-grid">
+                <div class="badge">
+                    <i class="fas fa-star"></i>
+                    <span>4.9/5 Customer Rating</span>
+                </div>
+                <div class="badge">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>ASE Certified Mechanics</span>
+                </div>
+                <div class="badge">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Secure Payments</span>
+                </div>
+                <div class="badge">
+                    <i class="fas fa-globe"></i>
+                    <span>Worldwide Shipping</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Lonestar Autos</h4>
+                    <p>Premium car dealership offering luxury, sports, and everyday vehicles with nationwide delivery.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="inventory.html">Inventory</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="shipping.html">Shipping</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="track.html">Track Delivery</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#" id="privacyLink">Privacy Policy</a></li>
+                        <li><a href="#" id="termsLink">Terms & Conditions</a></li>
+                        <li><a href="#">Financing Disclosure</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> 1-888-LONESTAR</li>
+                        <li><i class="fas fa-envelope"></i> sales@lonestarautos.com</li>
+                        <li><i class="fas fa-clock"></i> Mon-Sat: 9am-8pm EST</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Lonestar Autos. All rights reserved. | Premium Car Dealership & Nationwide Delivery</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ========== ALL JAVASCRIPT ==========
+        
+        let recentVehicles = [];
+        
+        // Toggle FAQ functionality
+        function toggleFAQ(element) {
+            element.classList.toggle('active');
+            const answer = element.nextElementSibling;
+            answer.classList.toggle('active');
+        }
+        
+        // Load only recent vehicles (last 8 added)
+        async function loadRecentVehicles() {
+            const container = document.getElementById('recentVehiclesGrid');
+            if (!container) return;
+            
+            container.innerHTML = '<div class="loading-vehicles"><i class="fas fa-spinner fa-spin"></i><p>Loading vehicles...</p></div>';
+            
+            try {
+                const response = await fetch('/api/inventory');
+                const vehicles = await response.json();
+                
+                if (!vehicles || vehicles.length === 0) {
+                    displaySampleVehicles(container);
+                    return;
+                }
+                
+                // Get the most recent 8 vehicles (based on createdAt date)
+                const sortedVehicles = [...vehicles].sort((a, b) => {
+                    return new Date(b.createdAt) - new Date(a.createdAt);
+                });
+                
+                recentVehicles = sortedVehicles.slice(0, 8);
+                displayRecentVehicles(recentVehicles);
+                
+            } catch (error) {
+                console.error('Error loading vehicles:', error);
+                displaySampleVehicles(container);
+            }
+        }
+        
+        function displayRecentVehicles(vehicles) {
+            const container = document.getElementById('recentVehiclesGrid');
+            if (!container) return;
+            
+            if (!vehicles || vehicles.length === 0) {
+                container.innerHTML = '<div class="no-results"><i class="fas fa-car-side fa-2x"></i><p>No vehicles available</p></div>';
+                return;
+            }
+            
+            container.innerHTML = vehicles.map(vehicle => {
+                const downPayment = (vehicle.price || 0) * 0.1;
+                const statusClass = (vehicle.status || 'Available').toLowerCase();
+                const imageUrl = vehicle.images?.[0] || 'https://via.placeholder.com/400x300?text=No+Image';
+                
+                return `
+                    <div class="vehicle-card">
+                        <div class="vehicle-image" style="background-image: url('${imageUrl}')">
+                            <span class="vehicle-status ${statusClass}">${vehicle.status || 'Available'}</span>
+                        </div>
+                        <div class="vehicle-info">
+                            <h3 class="vehicle-title">${vehicle.year} ${vehicle.make} ${vehicle.model}</h3>
+                            <div class="vehicle-price">$${(vehicle.price || 0).toLocaleString()}</div>
+                            <div class="downpayment-info">
+                                <span class="downpayment-label">💰 Reserve with 10% down:</span>
+                                <span class="downpayment-amount">$${downPayment.toLocaleString()}</span>
+                            </div>
+                            <div class="vehicle-details">
+                                <span><i class="fas fa-tachometer-alt"></i> ${vehicle.mileage || 'N/A'}</span>
+                                <span><i class="fas fa-engine"></i> ${vehicle.engine || 'N/A'}</span>
+                                <span><i class="fas fa-palette"></i> ${vehicle.color || 'N/A'}</span>
+                            </div>
+                            <div class="vehicle-details">
+                                <span><i class="fas fa-cog"></i> ${vehicle.transmission || 'Automatic'}</span>
+                                <span><i class="fas fa-gas-pump"></i> ${vehicle.fuelType || 'Gasoline'}</span>
+                            </div>
+                            ${vehicle.description ? `<p style="color: var(--gray); font-size: 0.75rem; margin: 8px 0;">${vehicle.description.substring(0, 80)}${vehicle.description.length > 80 ? '...' : ''}</p>` : ''}
+                            <button class="btn-primary btn-small" onclick="viewVehicle('${vehicle._id}')">
+                                <i class="fas fa-shopping-cart"></i> Reserve Now
+                            </button>
+                            <button class="btn-outline-small" onclick="viewDetails('${vehicle._id}')">
+                                <i class="fas fa-info-circle"></i> View Details
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function displaySampleVehicles(container) {
+            const sampleVehicles = [
+                { _id: 'sample1', year: 2023, make: 'Porsche', model: '911 Carrera', price: 159999, mileage: '8,234 mi', engine: '3.0L Twin-Turbo', color: 'White', transmission: 'Automatic', fuelType: 'Premium Gasoline', status: 'Available', image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500' },
+                { _id: 'sample2', year: 2024, make: 'Mercedes-Benz', model: 'S-Class', price: 129999, mileage: '2,145 mi', engine: '4.0L V8', color: 'Black', transmission: 'Automatic', fuelType: 'Premium Gasoline', status: 'Available', image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=500' },
+                { _id: 'sample3', year: 2022, make: 'BMW', model: 'M5 Competition', price: 109999, mileage: '15,432 mi', engine: '4.4L V8', color: 'Blue', transmission: 'Automatic', fuelType: 'Premium Gasoline', status: 'Available', image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=500' },
+                { _id: 'sample4', year: 2023, make: 'Range Rover', model: 'Sport', price: 119999, mileage: '5,678 mi', engine: '3.0L I6', color: 'Silver', transmission: 'Automatic', fuelType: 'Premium Gasoline', status: 'Available', image: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=500' },
+                { _id: 'sample5', year: 2021, make: 'Ferrari', model: 'F8 Tributo', price: 329999, mileage: '3,200 mi', engine: '3.9L V8', color: 'Red', transmission: 'Automatic', fuelType: 'Premium Gasoline', status: 'Available', image: 'https://images.unsplash.com/photo-1592198084033-aade902d1aae?w=500' },
+                { _id: 'sample6', year: 2022, make: 'Lamborghini', model: 'Huracan', price: 289999, mileage: '4,500 mi', engine: '5.2L V10', color: 'Green', transmission: 'Automatic', fuelType: 'Premium Gasoline', status: 'Reserved', image: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=500' },
+                { _id: 'sample7', year: 2024, make: 'Tesla', model: 'Model S Plaid', price: 89999, mileage: '1,200 mi', engine: 'Tri-Motor Electric', color: 'Silver', transmission: 'Automatic', fuelType: 'Electric', status: 'Available', image: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=500' },
+                { _id: 'sample8', year: 2023, make: 'Chevrolet', model: 'Corvette Z06', price: 119999, mileage: '2,800 mi', engine: '5.5L V8', color: 'Blue', transmission: 'Automatic', fuelType: 'Premium Gasoline', status: 'Available', image: 'https://images.unsplash.com/photo-1580274455191-1c62238fa333?w=500' }
+            ];
+            
+            container.innerHTML = sampleVehicles.map(vehicle => {
+                const downPayment = vehicle.price * 0.1;
+                return `
+                    <div class="vehicle-card">
+                        <div class="vehicle-image" style="background-image: url('${vehicle.image}')">
+                            <span class="vehicle-status ${vehicle.status.toLowerCase()}">${vehicle.status}</span>
+                        </div>
+                        <div class="vehicle-info">
+                            <h3 class="vehicle-title">${vehicle.year} ${vehicle.make} ${vehicle.model}</h3>
+                            <div class="vehicle-price">$${vehicle.price.toLocaleString()}</div>
+                            <div class="downpayment-info">
+                                <span class="downpayment-label">💰 Reserve with 10% down:</span>
+                                <span class="downpayment-amount">$${downPayment.toLocaleString()}</span>
+                            </div>
+                            <div class="vehicle-details">
+                                <span><i class="fas fa-tachometer-alt"></i> ${vehicle.mileage}</span>
+                                <span><i class="fas fa-engine"></i> ${vehicle.engine}</span>
+                                <span><i class="fas fa-palette"></i> ${vehicle.color}</span>
+                            </div>
+                            <div class="vehicle-details">
+                                <span><i class="fas fa-cog"></i> ${vehicle.transmission}</span>
+                                <span><i class="fas fa-gas-pump"></i> ${vehicle.fuelType}</span>
+                            </div>
+                            <button class="btn-primary btn-small" onclick="viewVehicle('${vehicle._id}')">Reserve Now</button>
+                            <button class="btn-outline-small" onclick="viewDetails('${vehicle._id}')">View Details</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function viewVehicle(vehicleId) {
+            window.location.href = `/checkout.html?id=${vehicleId}`;
+        }
+        
+        function viewDetails(vehicleId) {
+            window.location.href = `/car-details.html?id=${vehicleId}`;
+        }
+        
+        // Privacy and Terms links
+        document.getElementById('privacyLink')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('Privacy Policy: We protect your data with industry-standard encryption. We never share your information with third parties without consent.');
+        });
+        
+        document.getElementById('termsLink')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('Terms & Conditions: All vehicles are sold as-is with warranty options available. Financing subject to approval. Shipping terms apply.');
+        });
+        
+        // Initialize
+        loadRecentVehicles();
+    </script>
+    <script>
+        // Mobile Menu Toggle Function
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('show');
+            
+            // Change hamburger icon to X when open
+            const menuBtn = document.getElementById('mobileMenuBtn');
+            const icon = menuBtn.querySelector('i');
+            if (mobileMenu.classList.contains('show')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        }
+        
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.mobile-nav-link, .mobile-browse-btn-full').forEach(link => {
+            link.addEventListener('click', () => {
+                const mobileMenu = document.getElementById('mobileMenu');
+                mobileMenu.classList.remove('show');
+                const menuBtn = document.getElementById('mobileMenuBtn');
+                const icon = menuBtn.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuBtn = document.getElementById('mobileMenuBtn');
+            
+            if (mobileMenu.classList.contains('show')) {
+                if (!mobileMenu.contains(event.target) && !menuBtn.contains(event.target)) {
+                    mobileMenu.classList.remove('show');
+                    const icon = menuBtn.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+        });
+        
+        // Set active link based on current page
+        function setActiveNavLink() {
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+            
+            navLinks.forEach(link => {
+                const linkHref = link.getAttribute('href');
+                if (linkHref === currentPage) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+        
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', setActiveNavLink);
+    </script>
+</body>
+</html>

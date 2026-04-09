@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation Confirmed - Lonestar Autos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .success-card {
+            background: white;
+            max-width: 600px;
+            margin: 20px;
+            padding: 48px;
+            border-radius: 32px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            animation: slideUp 0.5s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            animation: scaleIn 0.3s ease 0.2s both;
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        .checkmark i {
+            font-size: 40px;
+            color: white;
+        }
+        h1 {
+            color: #1e293b;
+            margin-bottom: 16px;
+        }
+        .reservation-number {
+            background: #f1f5f9;
+            padding: 16px;
+            border-radius: 12px;
+            margin: 24px 0;
+            font-family: monospace;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .details {
+            text-align: left;
+            background: #f8fafc;
+            padding: 24px;
+            border-radius: 16px;
+            margin: 24px 0;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #c41e3a, #1e3a8a);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 8px;
+            transition: transform 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: #c41e3a;
+            border: 2px solid #c41e3a;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 8px;
+            transition: all 0.3s;
+        }
+        .btn-secondary:hover {
+            background: #c41e3a;
+            color: white;
+        }
+        .countdown {
+            background: #fef3c7;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-card">
+        <div class="checkmark">
+            <i class="fas fa-check"></i>
+        </div>
+        <h1>Reservation Confirmed! 🎉</h1>
+        <p>Your vehicle has been reserved with a 10% down payment.</p>
+        
+        <div class="reservation-number" id="reservationNumber">
+            Loading...
+        </div>
+        
+        <div class="details" id="detailsContainer">
+            <h3>Reservation Details</h3>
+            <div class="detail-row">
+                <span>Vehicle:</span>
+                <strong id="vehicleName">-</strong>
+            </div>
+            <div class="detail-row">
+                <span>Down Payment Paid:</span>
+                <strong id="downPayment" style="color: #10b981;">-</strong>
+            </div>
+            <div class="detail-row">
+                <span>Remaining Balance:</span>
+                <strong id="remainingBalance">-</strong>
+            </div>
+            <div class="detail-row">
+                <span>Reservation Expires:</span>
+                <strong id="expiresAt">-</strong>
+            </div>
+        </div>
+        
+        <div class="countdown" id="countdownTimer">
+            <i class="fas fa-hourglass-half"></i> You have <strong id="daysLeft">7</strong> days to complete your purchase
+        </div>
+        
+        <div>
+            <a href="checkout.html?id=" id="completePurchaseBtn" class="btn-primary">Complete Purchase</a>
+            <a href="inventory.html" class="btn-secondary">Browse More Cars</a>
+        </div>
+        
+        <p style="margin-top: 24px; font-size: 0.85rem; color: #64748b;">
+            <i class="fas fa-envelope"></i> A confirmation email has been sent to your email address.<br>
+            Our team will contact you within 24 hours to arrange delivery.
+        </p>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const reservationId = urlParams.get('id');
+
+        async function loadReservation() {
+            if (!reservationId) {
+                window.location.href = 'inventory.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/reservation/${reservationId}`);
+                const data = await response.json();
+                
+                document.getElementById('reservationNumber').textContent = data.reservationNumber;
+                document.getElementById('vehicleName').textContent = data.vehicleInfo.title;
+                document.getElementById('downPayment').textContent = `$${data.downPayment.toLocaleString()}`;
+                document.getElementById('remainingBalance').textContent = `$${data.remainingBalance.toLocaleString()}`;
+                
+                const expiryDate = new Date(data.expiresAt);
+                document.getElementById('expiresAt').textContent = expiryDate.toLocaleDateString();
+                
+                // Calculate days left
+                const today = new Date();
+                const daysLeft = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+                document.getElementById('daysLeft').textContent = daysLeft;
+                
+                // Update complete purchase button link
+                const purchaseBtn = document.getElementById('completePurchaseBtn');
+                purchaseBtn.href = `checkout.html?id=${data.vehicleId}`;
+                
+                // Add countdown timer
+                if (daysLeft <= 3) {
+                    document.querySelector('.countdown').style.background = '#fee2e2';
+                    document.querySelector('.countdown').style.color = '#dc2626';
+                }
+                
+            } catch (error) {
+                console.error('Error loading reservation:', error);
+                document.getElementById('reservationNumber').textContent = 'Error loading reservation';
+            }
+        }
+
+        loadReservation();
+    </script>
+</body>
+</html>

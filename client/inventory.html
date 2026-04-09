@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Inventory - Lonestar Autos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+
+        /* Add to inventory.html styles */
+.downpayment-info {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    padding: 10px;
+    border-radius: 8px;
+    margin: 12px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.downpayment-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #92400e;
+}
+
+.downpayment-amount {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #c41e3a;
+}
+
+.image-count {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #c41e3a;
+            --primary-dark: #a01830;
+            --secondary: #1e3a8a;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --gold: #d4af37;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        /* Hero */
+        .inventory-hero {
+            padding: 120px 0 60px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .inventory-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        /* Filters */
+        .filters {
+            background: white;
+            padding: 24px;
+            margin-top: -30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group select, .filter-group input {
+            padding: 10px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+
+        /* Loading Spinner */
+        .loading {
+            text-align: center;
+            padding: 60px;
+            font-size: 1.2rem;
+            color: var(--gray);
+        }
+
+        .loading i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        /* Vehicle Grid */
+        .vehicles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .vehicle-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .vehicle-image {
+            height: 220px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .vehicle-status {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(0,0,0,0.8);
+            color: white;
+        }
+
+        .vehicle-status.sold {
+            background: #dc2626;
+        }
+
+        .vehicle-status.available {
+            background: #10b981;
+        }
+
+        .vehicle-status.reserved {
+            background: #f59e0b;
+        }
+
+        .vehicle-info {
+            padding: 20px;
+        }
+
+        .vehicle-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        .vehicle-price {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 12px 0;
+        }
+
+        .vehicle-details {
+            display: flex;
+            gap: 16px;
+            margin: 16px 0;
+            color: var(--gray);
+            font-size: 0.85rem;
+            flex-wrap: wrap;
+        }
+
+        .vehicle-details span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-small {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            width: 100%;
+            text-align: center;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-small:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-small.sold-out {
+            background: var(--gray);
+            cursor: not-allowed;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px;
+            background: white;
+            border-radius: 16px;
+            color: var(--gray);
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            color: var(--primary);
+        }
+
+        .footer {
+            background: #0f172a;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            .vehicles-grid {
+                grid-template-columns: 1fr;
+            }
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-group select, .filter-group input {
+                width: 100%;
+            }
+        }
+
+        /* ========== ENHANCED NAVBAR STYLES ========== */
+    
+    .navbar {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(10px);
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .nav-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        position: relative;
+    }
+    
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .logo-img {
+        height: 45px;
+        width: auto;
+    }
+    
+    .logo-text {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #c41e3a 0%, #1e3a8a 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.5px;
+    }
+    
+    /* Desktop Navigation Links */
+    .nav-links {
+        display: flex;
+        gap: 32px;
+        align-items: center;
+    }
+    
+    .nav-links a {
+        text-decoration: none;
+        color: #1e293b;
+        font-weight: 500;
+        transition: color 0.3s;
+        font-size: 0.95rem;
+    }
+    
+    .nav-links a:hover,
+    .nav-links a.active {
+        color: #c41e3a;
+    }
+    
+    .nav-links .btn-primary {
+        background: linear-gradient(135deg, #c41e3a, #1e3a8a);
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 30px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.3s, box-shadow 0.3s;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 0.9rem;
+    }
+    
+    .nav-links .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px rgba(196, 30, 58, 0.4);
+    }
+    
+    /* Mobile Menu Button */
+    .mobile-menu-btn {
+        display: none;
+        font-size: 1.8rem;
+        cursor: pointer;
+        color: #1e293b;
+        transition: color 0.3s;
+        z-index: 1001;
+    }
+    
+    .mobile-menu-btn:hover {
+        color: #c41e3a;
+    }
+    
+    /* Mobile Dropdown Menu */
+    .mobile-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        border-radius: 0 0 20px 20px;
+        padding: 20px;
+        flex-direction: column;
+        gap: 12px;
+        z-index: 999;
+        animation: slideDown 0.3s ease;
+    }
+    
+    .mobile-menu.show {
+        display: flex;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .mobile-nav-link {
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #1e293b;
+        font-weight: 500;
+        border-radius: 12px;
+        transition: all 0.3s;
+        font-size: 1rem;
+    }
+    
+    .mobile-nav-link:hover,
+    .mobile-nav-link.active {
+        background: #f8fafc;
+        color: #c41e3a;
+    }
+    
+    .mobile-browse-btn-full {
+        text-align: center;
+        margin-top: 8px;
+        background: linear-gradient(135deg, #c41e3a, #1e3a8a);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        display: block;
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .nav-links {
+            display: none;
+        }
+        
+        .mobile-menu-btn {
+            display: block;
+        }
+        
+        .logo-text {
+            font-size: 1.2rem;
+        }
+        
+        .logo-img {
+            height: 35px;
+        }
+        
+        .nav-content {
+            padding: 0.75rem 0;
+        }
+    }
+    
+    /* Small Mobile Devices */
+    @media (max-width: 480px) {
+        .logo-text {
+            font-size: 1rem;
+        }
+        
+        .mobile-nav-link {
+            padding: 10px 14px;
+            font-size: 0.9rem;
+        }
+    }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <div class="logo-text">LONESTAR AUTOS</div>
+                </div>
+                
+                <!-- Desktop Navigation Links -->
+                <div class="nav-links" id="navLinks">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="inventory.html" class="nav-link">Inventory</a>
+                    <a href="about.html" class="nav-link">About Us</a>
+                    <a href="shipping.html" class="nav-link">Shipping</a>
+                    <a href="contact.html" class="nav-link">Contact</a>
+                    <a href="track.html" class="nav-link">Track Delivery</a>
+                    <a href="#inventory" class="btn-primary mobile-browse-btn">Browse Cars</a>
+                </div>
+                
+                <!-- Mobile Hamburger Menu Button -->
+                <div class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+            
+            <!-- Mobile Dropdown Menu -->
+            <div class="mobile-menu" id="mobileMenu">
+                <a href="index.html" class="mobile-nav-link">Home</a>
+                <a href="inventory.html" class="mobile-nav-link">Inventory</a>
+                <a href="about.html" class="mobile-nav-link">About Us</a>
+                <a href="shipping.html" class="mobile-nav-link">Shipping</a>
+                <a href="contact.html" class="mobile-nav-link">Contact</a>
+                <a href="track.html" class="mobile-nav-link">Track Delivery</a>
+                <a href="#inventory" class="btn-primary mobile-browse-btn-full">Browse Cars</a>
+            </div>
+        </div>
+    </nav>
+    
+
+    <section class="inventory-hero">
+        <div class="container">
+            <h1>Our Vehicle Inventory</h1>
+            <p>Discover luxury, performance, and everyday vehicles delivered to your doorstep</p>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="filters">
+            <div class="filter-group">
+                <select id="filterMake">
+                    <option value="">All Makes</option>
+                    <option value="Porsche">Porsche</option>
+                    <option value="Mercedes-Benz">Mercedes-Benz</option>
+                    <option value="BMW">BMW</option>
+                    <option value="Range Rover">Range Rover</option>
+                    <option value="Ferrari">Ferrari</option>
+                    <option value="Lamborghini">Lamborghini</option>
+                    <option value="Tesla">Tesla</option>
+                    <option value="Toyota">Toyota</option>
+                    <option value="Honda">Honda</option>
+                </select>
+                <select id="filterYear">
+                    <option value="">All Years</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                </select>
+                <select id="filterStatus">
+                    <option value="">All Status</option>
+                    <option value="Available">Available</option>
+                    <option value="Sold">Sold</option>
+                    <option value="Reserved">Reserved</option>
+                </select>
+                <select id="filterPrice">
+                    <option value="">Price Range</option>
+                    <option value="0-50000">Under $50,000</option>
+                    <option value="50000-100000">$50,000 - $100,000</option>
+                    <option value="100000-150000">$100,000 - $150,000</option>
+                    <option value="150000-999999">$150,000+</option>
+                </select>
+                <button class="btn-primary" onclick="filterVehicles()">Apply Filters</button>
+                <button class="btn-primary" onclick="resetFilters()" style="background: var(--gray);">Reset</button>
+            </div>
+        </div>
+
+        <div id="inventoryContainer">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading vehicles...</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Lonestar Autos. Premium Car Dealership & Nationwide Delivery.</p>
+        </div>
+    </footer>
+
+    <script>
+        let allVehicles = [];
+
+        // Fetch vehicles from API
+        async function fetchVehicles() {
+            try {
+                const response = await fetch('/api/inventory');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch vehicles');
+                }
+                allVehicles = await response.json();
+                console.log('Vehicles loaded:', allVehicles.length);
+                displayVehicles(allVehicles);
+            } catch (error) {
+                console.error('Error fetching vehicles:', error);
+                document.getElementById('inventoryContainer').innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Unable to load vehicles</h3>
+                        <p>Please check your connection or try again later.</p>
+                        <button class="btn-primary" onclick="fetchVehicles()" style="margin-top: 16px;">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+
+// Update the displayVehicles function in inventory.html
+function displayVehicles(vehicles) {
+    const container = document.getElementById('inventoryContainer');
+    
+    if (!vehicles || vehicles.length === 0) {
+        container.innerHTML = `
+            <div class="no-results">
+                <i class="fas fa-car-side"></i>
+                <h3>No vehicles found</h3>
+                <p>Check back soon for new inventory or adjust your filters.</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="vehicles-grid">
+            ${vehicles.map(vehicle => {
+                const downPayment = vehicle.price * 0.1;
+                return `
+                <div class="vehicle-card">
+                    <div class="vehicle-image" style="background-image: url('${vehicle.images && vehicle.images[0] ? vehicle.images[0] : 'https://via.placeholder.com/400x300?text=No+Image'}')">
+                        <span class="vehicle-status ${vehicle.status.toLowerCase()}">${vehicle.status}</span>
+                        ${vehicle.images && vehicle.images.length > 1 ? '<span class="image-count"><i class="fas fa-images"></i> ' + vehicle.images.length + '</span>' : ''}
+                    </div>
+                    <div class="vehicle-info">
+                        <h3 class="vehicle-title">${vehicle.year} ${vehicle.make} ${vehicle.model}</h3>
+                        <div class="vehicle-price">$${vehicle.price.toLocaleString()}</div>
+                        
+                        <!-- Down Payment Display -->
+                        <div class="downpayment-info">
+                            <span class="downpayment-label">💰 Reserve with 10% down:</span>
+                            <span class="downpayment-amount">$${downPayment.toLocaleString()}</span>
+                        </div>
+                        
+                        <div class="vehicle-details">
+                            <span><i class="fas fa-tachometer-alt"></i> ${vehicle.mileage || 'N/A'}</span>
+                            <span><i class="fas fa-engine"></i> ${vehicle.engine ? vehicle.engine.split(' ').slice(0, 2).join(' ') : 'N/A'}</span>
+                            <span><i class="fas fa-palette"></i> ${vehicle.color || 'N/A'}</span>
+                        </div>
+                        <div class="vehicle-details">
+                            <span><i class="fas fa-cog"></i> ${vehicle.transmission || 'Automatic'}</span>
+                            <span><i class="fas fa-gas-pump"></i> ${vehicle.fuelType || 'Gasoline'}</span>
+                        </div>
+                        ${vehicle.description ? `<p style="color: var(--gray); font-size: 0.85rem; margin: 12px 0;">${vehicle.description.substring(0, 80)}${vehicle.description.length > 80 ? '...' : ''}</p>` : ''}
+                        <div style="display: flex; gap: 10px; margin-top: 16px;">
+                            <button class="btn-small" onclick="viewCarDetails('${vehicle._id}')" style="flex: 1; background: #1e3a8a;">
+                                <i class="fas fa-info-circle"></i> Read More
+                            </button>
+                            <button class="btn-small ${vehicle.status === 'Sold' ? 'sold-out' : ''}" 
+                                onclick="${vehicle.status === 'Sold' ? '' : `purchaseVehicle('${vehicle._id}')`}"
+                                ${vehicle.status === 'Sold' ? 'disabled' : ''}
+                                style="flex: 1; background: #c41e3a;">
+                                ${vehicle.status === 'Sold' ? 'Sold Out' : '<i class="fas fa-shopping-cart"></i> Reserve Now'}
+                            </button>
+                        </div>
+                        <div style="margin-top: 12px; font-size: 0.7rem; color: #64748b; text-align: center;">
+                            <i class="fas fa-lock"></i> 10% down payment reserves your vehicle
+                        </div>
+                    </div>
+                </div>
+            `}).join('')}
+        </div>
+    `;
+}
+
+// Update the purchase function
+function purchaseVehicle(vehicleId) {
+    window.location.href = `/checkout.html?id=${vehicleId}`;
+}
+
+// Add these functions to inventory.html
+function viewCarDetails(vehicleId) {
+    window.location.href = `/car-details.html?id=${vehicleId}`;
+}
+
+function inquireAboutCar(vehicleId) {
+    // Redirect to checkout with down payment
+    window.location.href = `/checkout.html?id=${vehicleId}`;
+}
+
+
+        // Filter vehicles
+        function filterVehicles() {
+            const make = document.getElementById('filterMake').value;
+            const year = document.getElementById('filterYear').value;
+            const status = document.getElementById('filterStatus').value;
+            const priceRange = document.getElementById('filterPrice').value;
+            
+            let filtered = [...allVehicles];
+            
+            if (make) {
+                filtered = filtered.filter(v => v.make === make);
+            }
+            
+            if (year) {
+                filtered = filtered.filter(v => v.year === parseInt(year));
+            }
+            
+            if (status) {
+                filtered = filtered.filter(v => v.status === status);
+            }
+            
+            if (priceRange) {
+                const [min, max] = priceRange.split('-').map(Number);
+                filtered = filtered.filter(v => v.price >= min && v.price <= max);
+            }
+            
+            displayVehicles(filtered);
+        }
+
+        // Reset all filters
+        function resetFilters() {
+            document.getElementById('filterMake').value = '';
+            document.getElementById('filterYear').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterPrice').value = '';
+            displayVehicles(allVehicles);
+        }
+
+        // Handle car inquiry
+        function inquireAboutCar(vehicleId) {
+            const vehicle = allVehicles.find(v => v._id === vehicleId);
+            if (vehicle) {
+                // Store selected vehicle in localStorage for the inquiry form
+                localStorage.setItem('selectedVehicle', JSON.stringify(vehicle));
+                // Show inquiry modal or redirect to contact page with pre-filled info
+                const message = `I'm interested in the ${vehicle.year} ${vehicle.make} ${vehicle.model} priced at $${vehicle.price.toLocaleString()}. Please contact me about purchasing and delivery options.`;
+                window.location.href = `/contact?vehicle=${encodeURIComponent(vehicle.title)}&message=${encodeURIComponent(message)}`;
+            } else {
+                alert('Please contact us for more information about this vehicle.');
+            }
+        }
+
+        // Add event listeners for filter changes
+        document.getElementById('filterMake').addEventListener('change', filterVehicles);
+        document.getElementById('filterYear').addEventListener('change', filterVehicles);
+        document.getElementById('filterStatus').addEventListener('change', filterVehicles);
+        document.getElementById('filterPrice').addEventListener('change', filterVehicles);
+
+        // Load vehicles on page load
+        document.addEventListener('DOMContentLoaded', fetchVehicles);
+    </script>
+    <script>
+        // Mobile Menu Toggle Function
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('show');
+            
+            // Change hamburger icon to X when open
+            const menuBtn = document.getElementById('mobileMenuBtn');
+            const icon = menuBtn.querySelector('i');
+            if (mobileMenu.classList.contains('show')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        }
+        
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.mobile-nav-link, .mobile-browse-btn-full').forEach(link => {
+            link.addEventListener('click', () => {
+                const mobileMenu = document.getElementById('mobileMenu');
+                mobileMenu.classList.remove('show');
+                const menuBtn = document.getElementById('mobileMenuBtn');
+                const icon = menuBtn.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuBtn = document.getElementById('mobileMenuBtn');
+            
+            if (mobileMenu.classList.contains('show')) {
+                if (!mobileMenu.contains(event.target) && !menuBtn.contains(event.target)) {
+                    mobileMenu.classList.remove('show');
+                    const icon = menuBtn.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+        });
+        
+        // Set active link based on current page
+        function setActiveNavLink() {
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+            
+            navLinks.forEach(link => {
+                const linkHref = link.getAttribute('href');
+                if (linkHref === currentPage) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+        
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', setActiveNavLink);
+    </script>
+</body>
+</html>
