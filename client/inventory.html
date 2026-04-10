@@ -638,8 +638,7 @@
         }
 
 
-// Update the displayVehicles function in inventory.html
-function displayVehicles(vehicles) {
+        function displayVehicles(vehicles) {
     const container = document.getElementById('inventoryContainer');
     
     if (!vehicles || vehicles.length === 0) {
@@ -669,7 +668,7 @@ function displayVehicles(vehicles) {
                         
                         <!-- Down Payment Display -->
                         <div class="downpayment-info">
-                            <span class="downpayment-label">💰 Reserve with 10% down:</span>
+                            <span class="downpayment-label">💰 10% Down Payment Required:</span>
                             <span class="downpayment-amount">$${downPayment.toLocaleString()}</span>
                         </div>
                         
@@ -685,17 +684,17 @@ function displayVehicles(vehicles) {
                         ${vehicle.description ? `<p style="color: var(--gray); font-size: 0.85rem; margin: 12px 0;">${vehicle.description.substring(0, 80)}${vehicle.description.length > 80 ? '...' : ''}</p>` : ''}
                         <div style="display: flex; gap: 10px; margin-top: 16px;">
                             <button class="btn-small" onclick="viewCarDetails('${vehicle._id}')" style="flex: 1; background: #1e3a8a;">
-                                <i class="fas fa-info-circle"></i> Read More
+                                <i class="fas fa-info-circle"></i> Learn More
                             </button>
                             <button class="btn-small ${vehicle.status === 'Sold' ? 'sold-out' : ''}" 
                                 onclick="${vehicle.status === 'Sold' ? '' : `purchaseVehicle('${vehicle._id}')`}"
                                 ${vehicle.status === 'Sold' ? 'disabled' : ''}
                                 style="flex: 1; background: #c41e3a;">
-                                ${vehicle.status === 'Sold' ? 'Sold Out' : '<i class="fas fa-shopping-cart"></i> Reserve Now'}
+                                ${vehicle.status === 'Sold' ? 'Sold Out' : 'Pay 10% Down Payment'}
                             </button>
                         </div>
                         <div style="margin-top: 12px; font-size: 0.7rem; color: #64748b; text-align: center;">
-                            <i class="fas fa-lock"></i> 10% down payment reserves your vehicle
+                            <i class="fas fa-file-signature"></i> Down payment secures your vehicle. Balance due before delivery.
                         </div>
                     </div>
                 </div>

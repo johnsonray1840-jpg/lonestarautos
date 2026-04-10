@@ -15,6 +15,8 @@ const fs = require('fs');
 const http = require('http');
 const socketIo = require('socket.io');
 const turf = require('@turf/turf');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 // Load environment variables
 dotenv.config();
@@ -96,6 +98,57 @@ const upload = multer({
     cb(new Error('Only images and documents are allowed'));
   }
 });
+
+// Configure Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+  });
+  
+  // Configure Cloudinary storage for vehicle images
+  const cloudinaryStorage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+      folder: 'lonestarautos/vehicles',
+      allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+      transformation: [{ width: 1200, height: 800, crop: 'limit' }]
+    }
+  });
+  
+  // Keep multer diskStorage for documents (PDF, DOC, etc.)
+  // Keep your existing upload variable for documents
+  const documentUpload = multer({ 
+    storage: multer.diskStorage({
+      destination: (req, file, cb) => cb(null, uploadDir),
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + '-' + file.originalname);
+      }
+    }),
+    limits: { fileSize: 10 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+      const allowedTypes = /jpeg|jpg|png|gif|webp|pdf|doc|docx/;
+      const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+      const mimetype = allowedTypes.test(file.mimetype);
+      if (mimetype && extname) return cb(null, true);
+      cb(new Error('Only images and documents are allowed'));
+    }
+  });
+  
+  // NEW: For vehicle images only (uses Cloudinary)
+  const imageUpload = multer({ 
+    storage: cloudinaryStorage,
+    limits: { fileSize: 10 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+      const allowedTypes = /jpeg|jpg|png|gif|webp/;
+      const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+      const mimetype = allowedTypes.test(file.mimetype);
+      if (mimetype && extname) return cb(null, true);
+      cb(new Error('Only image files are allowed'));
+    }
+  });
+  
 
 // ============================================================
 // EMAIL CONFIGURATION
@@ -489,19 +542,261 @@ async function sendEmail(to, subject, htmlContent) {
     }
 }
 
+
+// ============================================================
+// PROFESSIONAL PAYMENT NOTIFICATION EMAIL - PREMIUM VERSION
+// ============================================================
+
 async function sendPaymentNotificationEmail(to, payment, status, reason = null) {
     let subject = '';
     let htmlContent = '';
     
     if (status === 'pending') {
-        subject = '🔔 Payment Request Received - Lonestar Autos';
-        htmlContent = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Payment Request Received</title><style>body{font-family:Arial,sans-serif;margin:0;padding:0;background:#f5f7fa;}.container{max-width:600px;margin:0 auto;background:white;border-radius:24px;overflow:hidden;box-shadow:0 20px 35px -10px rgba(0,0,0,0.1);}.header{background:linear-gradient(135deg,#c41e3a,#1e3a8a);padding:40px 30px;text-align:center;color:white;}.content{padding:40px 30px;}.payment-box{background:#fef3c7;border-left:4px solid #f59e0b;padding:20px;border-radius:12px;margin:24px 0;}.amount{color:#c41e3a;font-size:24px;font-weight:bold;}</style></head><body><div class="container"><div class="header"><h1>Lonestar Autos</h1><p>Premium Vehicle Dealership</p></div><div class="content"><h2>Hello ${payment.customerInfo.name},</h2><p>Your payment request has been submitted and is pending admin approval.</p><div class="payment-box"><p><strong>Payment ID:</strong> ${payment.paymentId}</p><p><strong>Amount:</strong> <span class="amount">$${payment.amount.toLocaleString()}</span></p><p><strong>Payment Type:</strong> ${payment.paymentType === 'down_payment' ? '🔒 10% Down Payment' : '💰 Full Payment'}</p><p><strong>Payment Method:</strong> ${payment.paymentMethod.toUpperCase()}</p><p><strong>Status:</strong> Pending Approval</p></div><p>Our team will review your payment within 24 hours.</p></div></div></body></html>`;
-    } else if (status === 'approved') {
-        subject = '✅ Payment Approved! - Lonestar Autos';
-        htmlContent = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Payment Approved</title><style>body{font-family:Arial,sans-serif;margin:0;padding:0;background:#f5f7fa;}.container{max-width:600px;margin:0 auto;background:white;border-radius:24px;overflow:hidden;box-shadow:0 20px 35px -10px rgba(0,0,0,0.1);}.header{background:linear-gradient(135deg,#10b981,#059669);padding:40px 30px;text-align:center;color:white;}.success-box{background:#d1fae5;padding:20px;border-radius:12px;margin:24px 0;}</style></head><body><div class="container"><div class="header"><h1>✅ Payment Approved!</h1></div><div class="content"><h2>Congratulations ${payment.customerInfo.name}!</h2><p>Your payment has been approved and processed successfully.</p><div class="success-box"><p><strong>Payment ID:</strong> ${payment.paymentId}</p><p><strong>Amount:</strong> $${payment.amount.toLocaleString()}</p><p><strong>Vehicle:</strong> ${payment.vehicleInfo.title}</p><p><strong>Payment Method:</strong> ${payment.paymentMethod.toUpperCase()}</p></div><p>${payment.paymentType === 'down_payment' ? 'Your vehicle has been reserved for 7 days.' : 'Your purchase is complete!'}</p></div></div></body></html>`;
-    } else if (status === 'rejected') {
-        subject = '⚠️ Payment Update Required - Lonestar Autos';
-        htmlContent = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Payment Update</title><style>body{font-family:Arial,sans-serif;margin:0;padding:0;background:#f5f7fa;}.container{max-width:600px;margin:0 auto;background:white;border-radius:24px;overflow:hidden;box-shadow:0 20px 35px -10px rgba(0,0,0,0.1);}.header{background:linear-gradient(135deg,#dc2626,#b91c1c);padding:40px 30px;text-align:center;color:white;}.error-box{background:#fee2e2;padding:20px;border-radius:12px;margin:24px 0;}</style></head><body><div class="container"><div class="header"><h1>Payment Update</h1></div><div class="content"><h2>Hello ${payment.customerInfo.name},</h2><p>Your payment request was not approved.</p><div class="error-box"><p><strong>Reason:</strong> ${reason || 'Payment verification failed'}</p></div><p>Please contact support.</p></div></div></body></html>`;
+        subject = `🔔 Down Payment Request - ${payment.vehicleInfo.title} | Lonestar Autos`;
+        htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Down Payment Request - Lonestar Autos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', Helvetica, Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; line-height: 1.5; }
+        .container { max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 35px -10px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #c41e3a 0%, #1e3a8a 100%); padding: 32px 24px; text-align: center; }
+        .header h1 { color: white; font-size: 24px; margin-bottom: 8px; }
+        .header p { color: rgba(255,255,255,0.9); font-size: 14px; }
+        .content { padding: 32px 28px; }
+        .info-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 20px; border-radius: 16px; margin: 20px 0; }
+        .payment-details { background: #f8fafc; border-radius: 16px; padding: 20px; margin: 20px 0; border: 1px solid #eef2f6; }
+        .payment-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eef2f6; }
+        .payment-row:last-child { border-bottom: none; }
+        .amount { font-size: 22px; font-weight: 800; color: #c41e3a; }
+        .vehicle-card { display: flex; gap: 16px; background: #f8fafc; border-radius: 16px; padding: 16px; margin: 20px 0; align-items: center; }
+        .vehicle-img { width: 80px; height: 60px; object-fit: cover; border-radius: 12px; background: #e2e8f0; }
+        .next-steps { background: #d1fae5; border-radius: 16px; padding: 20px; margin: 20px 0; border-left: 4px solid #10b981; }
+        .step { display: flex; gap: 12px; margin: 12px 0; align-items: flex-start; }
+        .step-number { width: 28px; height: 28px; background: #10b981; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+        .button { display: inline-block; background: linear-gradient(135deg, #c41e3a, #1e3a8a); color: white; padding: 14px 32px; text-decoration: none; border-radius: 40px; font-weight: 600; margin-top: 20px; transition: transform 0.2s; }
+        .button:hover { transform: translateY(-2px); }
+        .footer { background: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #eef2f6; color: #64748b; font-size: 12px; }
+        .footer a { color: #c41e3a; text-decoration: none; }
+        hr { margin: 20px 0; border: none; border-top: 1px solid #eef2f6; }
+        @media (max-width: 480px) { .content { padding: 24px 20px; } .vehicle-card { flex-direction: column; text-align: center; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔔 Down Payment Request</h1>
+            <p>Your vehicle is waiting for you</p>
+        </div>
+        <div class="content">
+            <h2 style="margin-bottom: 16px;">Hello ${payment.customerInfo.name},</h2>
+            <p>Your down payment request has been submitted and is pending admin approval. Once approved, your vehicle will be secured and legal documents will be sent to you.</p>
+            
+            <div class="info-box">
+                <p style="font-weight: 600; margin-bottom: 8px;">⏳ Status: Pending Review</p>
+                <p style="font-size: 13px;">Our team will review your payment within 24 hours. You will receive an email once approved.</p>
+            </div>
+            
+            <div class="payment-details">
+                <h3 style="margin-bottom: 16px;">📋 Payment Summary</h3>
+                <div class="payment-row"><span>Payment ID:</span><strong>${payment.paymentId}</strong></div>
+                <div class="payment-row"><span>Amount:</span><strong class="amount">$${payment.amount.toLocaleString()}</strong></div>
+                <div class="payment-row"><span>Payment Type:</span><strong>🔒 10% Down Payment</strong></div>
+                <div class="payment-row"><span>Payment Method:</span><strong>${payment.paymentMethod.toUpperCase()}</strong></div>
+                <div class="payment-row"><span>Status:</span><strong style="color: #f59e0b;">Pending Approval</strong></div>
+            </div>
+            
+            <div class="vehicle-card">
+                <img src="${payment.vehicleInfo.images?.[0] || 'https://via.placeholder.com/80'}" class="vehicle-img" alt="${payment.vehicleInfo.title}">
+                <div>
+                    <strong>${payment.vehicleInfo.title}</strong><br>
+                    Total Price: $${payment.totalPrice.toLocaleString()}<br>
+                    Remaining Balance: $${(payment.totalPrice - payment.amount).toLocaleString()}
+                </div>
+            </div>
+            
+            <div class="next-steps">
+                <h3 style="margin-bottom: 12px;">📋 What Happens Next?</h3>
+                <div class="step"><div class="step-number">1</div><div><strong>Admin Approval</strong><br>Our team verifies your payment within 24 hours.</div></div>
+                <div class="step"><div class="step-number">2</div><div><strong>Legal Documents</strong><br>You'll receive the Purchase Agreement via email.</div></div>
+                <div class="step"><div class="step-number">3</div><div><strong>Electronic Signature</strong><br>Review and sign the documents online.</div></div>
+                <div class="step"><div class="step-number">4</div><div><strong>Delivery Scheduling</strong><br>Once documents are signed, we arrange delivery.</div></div>
+            </div>
+            
+            <div style="text-align: center;">
+                <a href="https://lonestarautos.onrender.com/track" class="button">📦 Track Your Order</a>
+            </div>
+            
+            <hr>
+            
+            <p style="font-size: 12px; color: #64748b; text-align: center;">
+                <strong>Questions?</strong> Call us at <a href="tel:1888LONESTAR" style="color: #c41e3a;">1-888-LONESTAR</a> or reply to this email.<br>
+                Our team is available Monday-Saturday, 9am-8pm EST.
+            </p>
+        </div>
+        <div class="footer">
+            <p>Lonestar Autos - Premium Vehicle Delivery</p>
+            <p>&copy; 2026 Lonestar Autos. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>`;
+    } 
+    else if (status === 'approved') {
+        subject = `✅ Down Payment Approved - ${payment.vehicleInfo.title} | Lonestar Autos`;
+        htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Down Payment Approved - Lonestar Autos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', Helvetica, Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; line-height: 1.5; }
+        .container { max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 35px -10px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 32px 24px; text-align: center; }
+        .header h1 { color: white; font-size: 24px; margin-bottom: 8px; }
+        .header p { color: rgba(255,255,255,0.9); font-size: 14px; }
+        .content { padding: 32px 28px; }
+        .success-box { background: #d1fae5; border-left: 4px solid #10b981; padding: 20px; border-radius: 16px; margin: 20px 0; }
+        .payment-details { background: #f8fafc; border-radius: 16px; padding: 20px; margin: 20px 0; border: 1px solid #eef2f6; }
+        .payment-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eef2f6; }
+        .payment-row:last-child { border-bottom: none; }
+        .amount { font-size: 22px; font-weight: 800; color: #10b981; }
+        .vehicle-card { display: flex; gap: 16px; background: #f8fafc; border-radius: 16px; padding: 16px; margin: 20px 0; align-items: center; }
+        .vehicle-img { width: 80px; height: 60px; object-fit: cover; border-radius: 12px; background: #e2e8f0; }
+        .legal-docs { background: #fef3c7; border-radius: 16px; padding: 20px; margin: 20px 0; border-left: 4px solid #f59e0b; }
+        .step { display: flex; gap: 12px; margin: 12px 0; align-items: flex-start; }
+        .step-number { width: 28px; height: 28px; background: #f59e0b; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+        .button { display: inline-block; background: linear-gradient(135deg, #c41e3a, #1e3a8a); color: white; padding: 14px 32px; text-decoration: none; border-radius: 40px; font-weight: 600; margin-top: 20px; transition: transform 0.2s; }
+        .button:hover { transform: translateY(-2px); }
+        .footer { background: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #eef2f6; color: #64748b; font-size: 12px; }
+        .footer a { color: #c41e3a; text-decoration: none; }
+        hr { margin: 20px 0; border: none; border-top: 1px solid #eef2f6; }
+        @media (max-width: 480px) { .content { padding: 24px 20px; } .vehicle-card { flex-direction: column; text-align: center; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✅ Down Payment Approved!</h1>
+            <p>Your vehicle is now secured</p>
+        </div>
+        <div class="content">
+            <h2 style="margin-bottom: 16px;">Congratulations ${payment.customerInfo.name}!</h2>
+            <p>Your down payment has been <strong>approved and processed successfully</strong>. Your vehicle is now secured and no longer available to other buyers.</p>
+            
+            <div class="success-box">
+                <p style="font-weight: 600; margin-bottom: 8px;">🎉 What This Means:</p>
+                <p>Your vehicle is reserved for you for the next <strong>7 days</strong>. During this time, we will send you the legal documents to complete your purchase.</p>
+            </div>
+            
+            <div class="payment-details">
+                <h3 style="margin-bottom: 16px;">💰 Payment Confirmation</h3>
+                <div class="payment-row"><span>Payment ID:</span><strong>${payment.paymentId}</strong></div>
+                <div class="payment-row"><span>Down Payment:</span><strong class="amount">$${payment.amount.toLocaleString()}</strong></div>
+                <div class="payment-row"><span>Remaining Balance:</span><strong>$${(payment.totalPrice - payment.amount).toLocaleString()}</strong></div>
+                <div class="payment-row"><span>Payment Method:</span><strong>${payment.paymentMethod.toUpperCase()}</strong></div>
+                <div class="payment-row"><span>Status:</span><strong style="color: #10b981;">✓ Approved</strong></div>
+            </div>
+            
+            <div class="vehicle-card">
+                <img src="${payment.vehicleInfo.images?.[0] || 'https://via.placeholder.com/80'}" class="vehicle-img" alt="${payment.vehicleInfo.title}">
+                <div>
+                    <strong>${payment.vehicleInfo.title}</strong><br>
+                    Total Price: $${payment.totalPrice.toLocaleString()}
+                </div>
+            </div>
+            
+            <div class="legal-docs">
+                <h3 style="margin-bottom: 12px;">📋 Legal Documents - Action Required</h3>
+                <p>Within the next <strong>24 hours</strong>, you will receive an email containing:</p>
+                <div class="step"><div class="step-number">📄</div><div><strong>Purchase Agreement</strong><br>Legal contract outlining the terms of your vehicle purchase.</div></div>
+                <div class="step"><div class="step-number">✍️</div><div><strong>Electronic Signature Request</strong><br>Instructions to digitally sign your documents.</div></div>
+                <div class="step"><div class="step-number">📦</div><div><strong>Delivery Confirmation</strong><br>Once documents are signed, we will schedule your delivery.</div></div>
+                <p style="margin-top: 12px; font-size: 13px; color: #92400e;"><strong>⚠️ Important:</strong> Your vehicle is held for 7 days. Please complete the document signing to avoid cancellation.</p>
+            </div>
+            
+            <div style="text-align: center;">
+                <a href="https://lonestarautos.onrender.com/track" class="button">📦 Track Your Order</a>
+            </div>
+            
+            <hr>
+            
+            <p style="font-size: 12px; color: #64748b; text-align: center;">
+                <strong>Questions?</strong> Call us at <a href="tel:1888LONESTAR" style="color: #c41e3a;">1-888-LONESTAR</a> or reply to this email.<br>
+                Our team is available Monday-Saturday, 9am-8pm EST.
+            </p>
+        </div>
+        <div class="footer">
+            <p>Lonestar Autos - Premium Vehicle Delivery</p>
+            <p>&copy; 2026 Lonestar Autos. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>`;
+    } 
+    else if (status === 'rejected') {
+        subject = `⚠️ Payment Update Required - ${payment.vehicleInfo.title} | Lonestar Autos`;
+        htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Update - Lonestar Autos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', Helvetica, Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; line-height: 1.5; }
+        .container { max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 35px -10px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); padding: 32px 24px; text-align: center; }
+        .header h1 { color: white; font-size: 24px; margin-bottom: 8px; }
+        .header p { color: rgba(255,255,255,0.9); font-size: 14px; }
+        .content { padding: 32px 28px; }
+        .error-box { background: #fee2e2; border-left: 4px solid #dc2626; padding: 20px; border-radius: 16px; margin: 20px 0; }
+        .button { display: inline-block; background: linear-gradient(135deg, #c41e3a, #1e3a8a); color: white; padding: 14px 32px; text-decoration: none; border-radius: 40px; font-weight: 600; margin-top: 20px; transition: transform 0.2s; }
+        .footer { background: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #eef2f6; color: #64748b; font-size: 12px; }
+        .footer a { color: #c41e3a; text-decoration: none; }
+        hr { margin: 20px 0; border: none; border-top: 1px solid #eef2f6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚠️ Payment Update Required</h1>
+            <p>Action needed to complete your purchase</p>
+        </div>
+        <div class="content">
+            <h2 style="margin-bottom: 16px;">Hello ${payment.customerInfo.name},</h2>
+            <p>We regret to inform you that your payment request could not be approved at this time.</p>
+            
+            <div class="error-box">
+                <p><strong>Reason:</strong> ${reason || 'Payment verification failed'}</p>
+                <p style="margin-top: 12px;">Please contact our support team to resolve this issue and complete your purchase.</p>
+            </div>
+            
+            <div style="text-align: center;">
+                <a href="https://lonestarautos.onrender.com/contact" class="button">📞 Contact Support</a>
+            </div>
+            
+            <hr>
+            
+            <p style="font-size: 12px; color: #64748b; text-align: center;">
+                <strong>Need immediate assistance?</strong> Call us at <a href="tel:1888LONESTAR" style="color: #c41e3a;">1-888-LONESTAR</a>
+            </p>
+        </div>
+        <div class="footer">
+            <p>Lonestar Autos - Premium Vehicle Delivery</p>
+            <p>&copy; 2026 Lonestar Autos. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>`;
     }
     
     return await sendEmail(to, subject, htmlContent);
@@ -2270,34 +2565,52 @@ app.get('/api/admin/inventory', adminAuth, async (req, res) => {
   }
 });
 
-app.post('/api/admin/inventory', adminAuth, upload.array('images', 10), async (req, res) => {
+app.post('/api/admin/inventory', adminAuth, imageUpload.array('images', 10), async (req, res) => {
     try {
-      let vehicleData = JSON.parse(req.body.data);
-      const images = req.files ? req.files.map(file => `/uploads/${file.filename}`) : [];
-      const downPayment = vehicleData.price * 0.1;
-      const inventory = new Inventory({ ...vehicleData, images, downPayment, updatedAt: Date.now() });
-      await inventory.save();
-      res.status(201).json(inventory);
+        // req.files now contains Cloudinary file objects
+        const images = req.files ? req.files.map(file => file.path) : [];
+        
+        let vehicleData = JSON.parse(req.body.data);
+        const downPayment = vehicleData.price * 0.1;
+        
+        const inventory = new Inventory({ 
+            ...vehicleData, 
+            images,  // Cloudinary URLs
+            downPayment, 
+            updatedAt: Date.now() 
+        });
+        
+        await inventory.save();
+        res.status(201).json(inventory);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+        console.error('Upload error:', error);
+        res.status(500).json({ error: error.message });
     }
 });
 
-app.put('/api/admin/inventory/:id', adminAuth, upload.array('images', 10), async (req, res) => {
+app.put('/api/admin/inventory/:id', adminAuth, imageUpload.array('images', 10), async (req, res) => {
     try {
-      let updateData;
-      if (req.files && req.files.length > 0) {
-        const newImages = req.files.map(file => `/uploads/${file.filename}`);
-        const existingData = JSON.parse(req.body.data);
-        updateData = { ...existingData, images: [...(existingData.existingImages || []), ...newImages], updatedAt: Date.now() };
-      } else {
-        updateData = { ...JSON.parse(req.body.data), updatedAt: Date.now() };
-      }
-      if (updateData.price) updateData.downPayment = updateData.price * 0.1;
-      const inventory = await Inventory.findByIdAndUpdate(req.params.id, updateData, { new: true });
-      res.json(inventory);
+        let updateData = JSON.parse(req.body.data);
+        
+        // Get existing vehicle to preserve old images if needed
+        const existingVehicle = await Inventory.findById(req.params.id);
+        
+        // Process new images from Cloudinary
+        const newImages = req.files ? req.files.map(file => file.path) : [];
+        
+        // Combine existing images (from form) with new uploads
+        const existingImages = updateData.existingImages || [];
+        const allImages = [...existingImages, ...newImages];
+        
+        updateData.images = allImages;
+        if (updateData.price) updateData.downPayment = updateData.price * 0.1;
+        updateData.updatedAt = Date.now();
+        
+        const inventory = await Inventory.findByIdAndUpdate(req.params.id, updateData, { new: true });
+        res.json(inventory);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+        console.error('Update error:', error);
+        res.status(500).json({ error: error.message });
     }
 });
 
