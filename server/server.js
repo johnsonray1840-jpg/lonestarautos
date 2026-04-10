@@ -24,6 +24,11 @@ const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'moving too fast cant keep up';
 
 // ============================================================
+// BASE URL CONFIGURATION
+// ============================================================
+const BASE_URL = process.env.BASE_URL || 'http://${BASE_URL}';
+
+// ============================================================
 // MONGODB CONNECTION
 // ============================================================
 mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://evelyndantonio62:92939184@cluster0.tndfw.mongodb.net/lonestarautos?retryWrites=true&w=majority&appName=Cluster0')
@@ -602,7 +607,7 @@ async function sendPauseEmail(shipment, reason, currentProgress, currentLocation
                   <p style="margin: 20px 0;">We will notify you immediately when your shipment resumes. If you have any questions, please contact our support team.</p>
                   
                   <div style="text-align: center;">
-                      <a href="http://localhost:3000/track?number=${shipment.trackingNumber}" class="button">📡 Track Live Location</a>
+                      <a href="${BASE_URL}/track?number=${shipment.trackingNumber}" class="button">📡 Track Live Location</a>
                   </div>
               </div>
               <div class="footer">
@@ -681,7 +686,7 @@ async function sendResumeEmail(shipment, progress, remainingDays, eta) {
                   <div class="tracking-number">${shipment.trackingNumber}</div>
                   
                   <div style="text-align: center;">
-                      <a href="http://localhost:3000/track?number=${shipment.trackingNumber}" class="button">📍 Track Live Location</a>
+                      <a href="${BASE_URL}/track?number=${shipment.trackingNumber}" class="button">📍 Track Live Location</a>
                   </div>
               </div>
               <div class="footer">
@@ -739,7 +744,7 @@ async function sendHoldEmail(shipment, reason, progress, currentLocation) {
                   <p style="margin: 20px 0;">Please contact our support team to resolve this hold and resume your delivery.</p>
                   
                   <div style="text-align: center;">
-                      <a href="http://localhost:3000/track?number=${shipment.trackingNumber}" class="button">📡 Check Status</a>
+                      <a href="${BASE_URL}/track?number=${shipment.trackingNumber}" class="button">📡 Check Status</a>
                   </div>
               </div>
               <div class="footer">
@@ -799,7 +804,7 @@ async function sendSeizeEmail(shipment, reason, progress, currentLocation) {
                   </p>
                   
                   <div style="text-align: center;">
-                      <a href="http://localhost:3000/contact" class="button">Contact Support Now</a>
+                      <a href="${BASE_URL}/contact" class="button">Contact Support Now</a>
                   </div>
               </div>
               <div class="footer">
@@ -864,7 +869,7 @@ async function sendReleaseEmail(shipment, reason, newStatus, progress) {
                   <p>Your vehicle delivery will now proceed as scheduled. You can track your shipment in real-time using the button below.</p>
                   
                   <div style="text-align: center;">
-                      <a href="http://localhost:3000/track?number=${shipment.trackingNumber}" class="button">📍 Track Live Location</a>
+                      <a href="${BASE_URL}/track?number=${shipment.trackingNumber}" class="button">📍 Track Live Location</a>
                   </div>
               </div>
               <div class="footer">
@@ -889,7 +894,7 @@ async function sendShipmentUpdateEmail(to, shipment, eventType, data) {
   let htmlContent = '';
   
   const progress = Math.round(shipment.tracking?.progress || 0);
-  const trackingLink = `http://localhost:3000/track?number=${shipment.trackingNumber}`;
+  const trackingLink = `${BASE_URL}/track?number=${shipment.trackingNumber}`;
   
   if (eventType === 'in-transit') {
       subject = `🚚 Your Vehicle is on the Way! - Lonestar Autos`;
@@ -957,7 +962,7 @@ async function sendShipmentUpdateEmail(to, shipment, eventType, data) {
                       <p>Your vehicle has been successfully delivered to:</p>
                       <p><strong>${data.location || shipment.deliveryLocation?.address}</strong></p>
                       <p>We hope you enjoy your new vehicle from Lonestar Autos!</p>
-                      <a href="http://localhost:3000" class="button">Rate Your Experience</a>
+                      <a href="http://${BASE_URL}" class="button">Rate Your Experience</a>
                   </div>
                   <div class="footer"><p>Lonestar Autos - Thank you for choosing us!</p></div>
               </div>
@@ -1296,7 +1301,7 @@ async function sendMilestoneEmail(shipment, milestone) {
                   <div class="tracking-number">${shipment.trackingNumber}</div>
                   
                   <div style="text-align: center;">
-                      <a href="http://localhost:3000/track?number=${shipment.trackingNumber}" class="button">📍 Track Live Vehicle</a>
+                      <a href="${BASE_URL}/track?number=${shipment.trackingNumber}" class="button">📍 Track Live Vehicle</a>
                   </div>
                   
                   <hr style="margin: 24px 0; border: none; border-top: 1px solid #eef2f6;">
@@ -2096,7 +2101,7 @@ class GPSSimulationEngine {
                         </div>
                         
                         <div style="text-align: center;">
-                            <a href="http://localhost:3000/track?number=${shipment.trackingNumber}" class="button">
+                            <a href="${BASE_URL}/track?number=${shipment.trackingNumber}" class="button">
                                 <i class="fas fa-map-marker-alt"></i> Track Live
                             </a>
                         </div>
@@ -2160,7 +2165,7 @@ class GPSSimulationEngine {
                             <p>Your vehicle has been successfully delivered to:</p>
                             <p><strong>${shipment.deliveryLocation.address}</strong></p>
                             <p>We hope you enjoy your new vehicle from Lonestar Autos!</p>
-                            <a href="http://localhost:3000" class="button">Rate Your Experience</a>
+                            <a href="http://${BASE_URL}" class="button">Rate Your Experience</a>
                         </div>
                     </div>
                 </body>
@@ -2481,7 +2486,7 @@ app.post('/api/admin/shipments/:id/send-order-email', adminAuth, async (req, res
                           <p><strong>To:</strong> ${shipment.deliveryLocation?.city || 'N/A'}, ${shipment.deliveryLocation?.state || 'N/A'}</p>
                       </div>
                       <div style="text-align: center;">
-                          <a href="http://localhost:3000/track?number=${shipment.trackingNumber}" style="background: #c41e3a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 40px;">Track Your Vehicle</a>
+                          <a href="${BASE_URL}/track?number=${shipment.trackingNumber}" style="background: #c41e3a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 40px;">Track Your Vehicle</a>
                       </div>
                   </div>
                   <div style="background: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #64748b;">
