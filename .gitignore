@@ -2,4 +2,6 @@
 .env
 .reset-admin-password.js
 .init-db.js
-.ad-sample-vehicles.js
+.ad-sample-vehicles.jsnode_modules/
+.env
+uploads/
