@@ -488,11 +488,13 @@
 
         <div class="admin-tabs">
             <button class="tab-btn active" data-tab="analytics">📊 Analytics</button>
+            <button class="tab-btn" data-tab="makes">🏭 Vehicle Makes</button>
             <button class="tab-btn" data-tab="inventory">🚗 Inventory</button>
             <button class="tab-btn" data-tab="shipments">📦 Shipments</button>
             <button class="tab-btn" data-tab="reservations">💰 Reservations</button>
             <button class="tab-btn" data-tab="payments">💳 Payments</button>
             <button class="tab-btn" data-tab="payment-methods">💳 Payment Methods</button>
+            <button class="tab-btn" data-tab="customers">👥 Customer Records</button>
             <button class="tab-btn" data-tab="financing">📋 Financing</button>
             <button class="tab-btn" data-tab="documents">📄 Documents</button>
             <button class="tab-btn" data-tab="gps">📍 GPS Tracking</button>
@@ -526,6 +528,69 @@
                 </table>
             </div>
         </div>
+
+
+        <!-- Vehicle Makes Tab -->
+<div id="makesTab" class="tab-content">
+    <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <h3>Vehicle Makes Management</h3>
+        <button id="addMakeBtn" class="btn btn-primary">+ Add New Make</button>
+    </div>
+    <div class="table-container">
+        <table id="makesTable">
+            <thead>
+                <tr><th>Make Name</th><th>Country</th><th>Founded</th><th>Status</th><th>Vehicles</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="makesList">
+                <tr><td colspan="6">Loading vehicle makes...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Make Modal -->
+<div id="makeModal" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <h3 id="makeModalTitle">Add Vehicle Make</h3>
+        <form id="makeForm">
+            <input type="hidden" id="makeId">
+            <div class="form-group">
+                <label>Make Name *</label>
+                <input type="text" id="make" list="makeOptions" required placeholder="Type or select a make">
+                <datalist id="makeOptions">
+                    <!-- Populated dynamically -->
+                </datalist>
+                <small>You can type a new make - it will be added automatically</small>
+            </div>
+            <div class="form-group">
+                <label>Country of Origin</label>
+                <input type="text" id="makeCountry" placeholder="e.g., Germany, Japan, USA">
+            </div>
+            <div class="form-group">
+                <label>Founded Year</label>
+                <input type="number" id="makeFounded" placeholder="e.g., 1931">
+            </div>
+            <div class="form-group">
+                <label>Logo URL (Optional)</label>
+                <input type="url" id="makeLogoUrl" placeholder="https://example.com/logo.png">
+            </div>
+            <div class="form-group">
+                <label>Display Order</label>
+                <input type="number" id="makeDisplayOrder" value="0">
+            </div>
+            <div class="form-group">
+                <label>Active</label>
+                <select id="makeIsActive">
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Make</button>
+            <button type="button" onclick="closeMakeModal()" class="btn btn-danger">Cancel</button>
+        </form>
+    </div>
+</div>
+
 
         <!-- Inventory Tab -->
         <div id="inventoryTab" class="tab-content">
@@ -736,6 +801,47 @@
     </div>
 </div>
 
+<!-- Customer Records Tab -->
+<div id="customersTab" class="tab-content">
+    <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <h3>Customer Records (48-Month Retention Required by Texas Law)</h3>
+        <button class="btn btn-primary" onclick="exportCustomerData()">
+            <i class="fas fa-download"></i> Export to CSV
+        </button>
+    </div>
+    <div class="table-container">
+        <table id="customersTable">
+            <thead>
+                <tr>
+                    <th>Sale ID</th>
+                    <th>Customer</th>
+                    <th>Vehicle</th>
+                    <th>Sale Date</th>
+                    <th>Documents</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="customersList">
+                <tr><td colspan="6">Loading customer records...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Customer Details Modal -->
+<div id="customerDetailsModal" class="modal">
+    <div class="modal-content" style="max-width: 800px; max-height: 85vh; overflow-y: auto;">
+        <div class="modal-header">
+            <h3>Customer Details</h3>
+            <span class="close" onclick="closeCustomerModal()">&times;</span>
+        </div>
+        <div id="customerDetailsContent"></div>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button onclick="closeCustomerModal()" class="btn btn-secondary">Close</button>
+        </div>
+    </div>
+</div>
+
 
         <!-- Financing Tab -->
         <div id="financingTab" class="tab-content">
@@ -820,7 +926,13 @@
             <h3 id="modalTitle">Add Vehicle</h3>
             <form id="vehicleForm" enctype="multipart/form-data">
                 <div class="form-row">
-                    <div class="form-group"><label>Make *</label><input type="text" id="make" required></div>
+                    <div class="form-group">
+                        <label>Make *</label>
+                        <select id="makeName" required>
+                            <option value="">Select Make...</option>
+                            <!-- Options will be loaded dynamically -->
+                        </select>
+                    </div>
                     <div class="form-group"><label>Model *</label><input type="text" id="model" required></div>
                 </div>
                 <div class="form-row">
@@ -857,7 +969,7 @@
                 </div>
                 <div class="form-group">
                     <label>Vehicle Images (Multiple - First image is main thumbnail)</label>
-                    <input type="file" id="images" multiple accept="image/*" onchange="previewMultipleImages()">
+                    <input type="file" id="images" name="images" multiple accept="image/*" onchange="previewMultipleImages()">
                     <div id="multipleImagePreview" class="image-preview"></div>
                     <small>Upload multiple images. First image will be the main thumbnail on inventory page.</small>
                 </div>
@@ -1201,6 +1313,10 @@
             console.log('Loading analytics...');
             loadAnalytics();
         }
+        if (tabName === 'makes') {
+            console.log('Loading vehicle makes...');
+            loadVehicleMakes();
+        }   
         if (tabName === 'inventory') {
             console.log('Loading inventory...');
             loadInventory();
@@ -1221,6 +1337,10 @@
             console.log('Loading payment-methods...');
             loadPaymentMethods();
         }
+        if (tabName === 'customers') {
+            console.log('Loading customer records...');
+            loadCustomerRecords();
+       }    
         if (tabName === 'financing') {
             console.log('Loading financing...');
             loadFinancing();
@@ -2003,6 +2123,235 @@ document.getElementById('vehicleForm').addEventListener('submit', async (e) => {
 });
 
 
+
+
+
+
+// ============================================================
+// CUSTOMER RECORDS MANAGEMENT
+// ============================================================
+
+async function loadCustomerRecords() {
+    console.log('🔍 Loading customer records...');
+    
+    try {
+        const response = await fetch('/api/admin/customers', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const customers = await response.json();
+        console.log('📋 Customer records loaded:', customers.length);
+        
+        const tbody = document.getElementById('customersList');
+        if (!customers || customers.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No customer records found. Customers will appear after making payments.</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = customers.map(c => `
+            <tr>
+                <td><strong>${c.saleId || 'N/A'}</strong><br><small>${c.paymentId || 'N/A'}</small></td>
+                <td>
+                    ${c.customerName || 'N/A'}<br>
+                    <small>${c.customerEmail || 'N/A'}</small><br>
+                    <small>${c.customerPhone || 'N/A'}</small>
+                  </div>
+                </td>
+                <td>
+                    ${c.vehicleYear || ''} ${c.vehicleMake || ''} ${c.vehicleModel || ''}<br>
+                    <small>$${(c.vehiclePrice || 0).toLocaleString()}</small>
+                 </td>
+                <td>${c.saleDate ? new Date(c.saleDate).toLocaleDateString() : 'N/A'}</td>
+                <td>
+                    <span class="status-badge ${c.odometerDisclosureSigned ? 'status-available' : 'status-pending'}">
+                        ${c.odometerDisclosureSigned ? '✓ Signed' : 'Pending'}
+                    </span><br>
+                    <span class="status-badge ${c.salesContractSigned ? 'status-available' : 'status-pending'}">
+                        ${c.salesContractSigned ? '✓ Signed' : 'Pending'}
+                    </span>
+                 </td>
+                <td>
+                    <button class="btn btn-info btn-sm" onclick="viewCustomerDetails('${c._id}')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteCustomerRecord('${c._id}', '${c.saleId}')">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                 </td>
+             </tr>
+        `).join('');
+        
+    } catch (error) {
+        console.error('Error loading customer records:', error);
+        document.getElementById('customersList').innerHTML = `<tr><td colspan="6" style="text-align: center; color: red;">Error loading records: ${error.message}</td></tr>`;
+    }
+}
+
+async function viewCustomerDetails(id) {
+    try {
+        const response = await fetch(`/api/admin/customers/${id}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const c = await response.json();
+        
+        const content = `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h4>Customer Information</h4>
+                    <p><strong>Name:</strong> ${c.customerName}</p>
+                    <p><strong>Email:</strong> ${c.customerEmail}</p>
+                    <p><strong>Phone:</strong> ${c.customerPhone}</p>
+                    <p><strong>Address:</strong> ${c.customerAddress}, ${c.customerCity}, ${c.customerState} ${c.customerZip}</p>
+                    <p><strong>Driver's License:</strong> ${c.driversLicenseNumber} (${c.driversLicenseState})</p>
+                    <p><strong>Date of Birth:</strong> ${new Date(c.dateOfBirth).toLocaleDateString()}</p>
+                </div>
+                <div>
+                    <h4>Vehicle Information</h4>
+                    <p><strong>Vehicle:</strong> ${c.vehicleYear} ${c.vehicleMake} ${c.vehicleModel}</p>
+                    <p><strong>Total Price:</strong> $${c.vehiclePrice.toLocaleString()}</p>
+                    <p><strong>Down Payment:</strong> $${c.downPayment.toLocaleString()}</p>
+                    <p><strong>Remaining Balance:</strong> $${c.remainingBalance.toLocaleString()}</p>
+                    <p><strong>Sale Date:</strong> ${new Date(c.saleDate).toLocaleString()}</p>
+                    <p><strong>Sale ID:</strong> ${c.saleId}</p>
+                    <p><strong>Payment ID:</strong> ${c.paymentId}</p>
+                </div>
+            </div>
+            <hr>
+            <div>
+                <h4>Photo ID</h4>
+                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                    <div>
+                        <p><strong>Front Side:</strong></p>
+                        <img src="${c.photoIdFrontUrl}" style="max-width: 250px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    </div>
+                    <div>
+                        <p><strong>Back Side:</strong></p>
+                        <img src="${c.photoIdBackUrl}" style="max-width: 250px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div>
+                <h4>Document Status</h4>
+                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                    <button class="btn ${c.odometerDisclosureSigned ? 'btn-success' : 'btn-warning'}" 
+                            onclick="toggleDocumentSigning('${c._id}', 'odometer', ${!c.odometerDisclosureSigned})">
+                        ${c.odometerDisclosureSigned ? '✓ Odometer Disclosure Signed' : 'Mark Odometer Disclosure as Signed'}
+                    </button>
+                    <button class="btn ${c.salesContractSigned ? 'btn-success' : 'btn-warning'}" 
+                            onclick="toggleDocumentSigning('${c._id}', 'contract', ${!c.salesContractSigned})">
+                        ${c.salesContractSigned ? '✓ Sales Contract Signed' : 'Mark Sales Contract as Signed'}
+                    </button>
+                </div>
+                ${c.documentsSentAt ? `<p><small>Documents sent: ${new Date(c.documentsSentAt).toLocaleString()}</small></p>` : ''}
+                ${c.documentsSignedAt ? `<p><small>Documents signed: ${new Date(c.documentsSignedAt).toLocaleString()}</small></p>` : ''}
+            </div>
+        `;
+        
+        document.getElementById('customerDetailsContent').innerHTML = content;
+        document.getElementById('customerDetailsModal').style.display = 'block';
+        
+    } catch (error) {
+        showNotification('Error loading customer details', 'error');
+    }
+}
+
+async function toggleDocumentSigning(id, type, signed) {
+    try {
+        const body = type === 'odometer' ? { odometerSigned: signed } : { contractSigned: signed };
+        const response = await fetch(`/api/admin/customers/${id}/sign-documents`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(body)
+        });
+        
+        if (response.ok) {
+            showNotification(`Document status updated`, 'success');
+            viewCustomerDetails(id);
+            loadCustomerRecords();
+        } else {
+            showNotification('Update failed', 'error');
+        }
+    } catch (error) {
+        showNotification('Error updating document status', 'error');
+    }
+}
+
+async function deleteCustomerRecord(id, saleId) {
+    if (confirm(`⚠️ Delete customer record ${saleId}? This action cannot be undone.`)) {
+        try {
+            const response = await fetch(`/api/admin/customers/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            if (response.ok) {
+                showNotification(`Customer record ${saleId} deleted`, 'success');
+                loadCustomerRecords();
+            } else {
+                showNotification('Delete failed', 'error');
+            }
+        } catch (error) {
+            showNotification('Error deleting record', 'error');
+        }
+    }
+}
+
+function exportCustomerData() {
+    fetch('/api/admin/customers', {
+        headers: { 'Authorization': `Bearer ${token}` }
+    })
+    .then(r => r.json())
+    .then(customers => {
+        const headers = ['Sale ID', 'Customer Name', 'Email', 'Phone', 'Vehicle', 'Price', 'Sale Date', 'DL Number', 'DL State', 'Address', 'City', 'State', 'ZIP', 'Odometer Signed', 'Contract Signed'];
+        const rows = customers.map(c => [
+            c.saleId,
+            c.customerName,
+            c.customerEmail,
+            c.customerPhone,
+            `${c.vehicleYear} ${c.vehicleMake} ${c.vehicleModel}`,
+            c.vehiclePrice,
+            new Date(c.saleDate).toLocaleDateString(),
+            c.driversLicenseNumber,
+            c.driversLicenseState,
+            c.customerAddress,
+            c.customerCity,
+            c.customerState,
+            c.customerZip,
+            c.odometerDisclosureSigned ? 'Yes' : 'No',
+            c.salesContractSigned ? 'Yes' : 'No'
+        ]);
+        
+        const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `customer_records_${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        showNotification('CSV export started', 'success');
+    })
+    .catch(err => {
+        console.error('Export error:', err);
+        showNotification('Export failed', 'error');
+    });
+}
+
+function closeCustomerModal() {
+    document.getElementById('customerDetailsModal').style.display = 'none';
+}
+
+
+
 // ============================================================
 // VIEW SHIPMENT DETAILS - ADD THIS FUNCTION
 // ============================================================
@@ -2237,6 +2586,254 @@ function closeDetailsModal() {
     if (modal) {
         modal.remove();
     }
+}
+
+
+// ============================================================
+// VEHICLE MAKES MANAGEMENT - COMPLETE
+// ============================================================
+
+// Save make (Create or Update)
+document.getElementById('makeForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    console.log('🔧 Make form submitted');
+    
+    const id = document.getElementById('makeId').value;
+    const makeData = {
+        name: document.getElementById('make').value,
+        country: document.getElementById('makeCountry').value,
+        founded: parseInt(document.getElementById('makeFounded').value) || null,
+        logoUrl: document.getElementById('makeLogoUrl').value,
+        displayOrder: parseInt(document.getElementById('makeDisplayOrder').value) || 0,
+        isActive: document.getElementById('makeIsActive').value === 'true'
+    };
+    
+    console.log('📦 Make data:', makeData);
+    
+    const url = id ? `/api/admin/vehicle-makes/${id}` : '/api/admin/vehicle-makes';
+    const method = id ? 'PUT' : 'POST';
+    
+    // Show loading state
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Saving...';
+    submitBtn.disabled = true;
+    
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(makeData)
+        });
+        
+        const result = await response.json();
+        console.log('📡 Response:', result);
+        
+        if (response.ok) {
+            showNotification(`Make "${makeData.name}" saved successfully!`, 'success');
+            closeMakeModal();
+            loadVehicleMakes(); // Refresh the list
+        } else {
+            showNotification(result.error || 'Save failed', 'error');
+        }
+    } catch (error) {
+        console.error('❌ Save error:', error);
+        showNotification('Error saving make: ' + error.message, 'error');
+    } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    }
+});
+
+// Load vehicle makes into SELECT dropdown (not datalist)
+async function loadMakeOptions() {
+    console.log('🔍 loadMakeOptions STARTED');
+    
+    const makeSelect = document.getElementById('makeName');
+    console.log('📌 Make select element:', makeSelect);
+    
+    if (!makeSelect) {
+        console.error('❌ Make select element NOT FOUND!');
+        return;
+    }
+    
+    try {
+        console.log('📡 Fetching /api/vehicle-makes...');
+        const response = await fetch('/api/vehicle-makes');
+        console.log('📡 Response status:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const makes = await response.json();
+        console.log('📋 Makes received:', makes);
+        
+        // Clear existing options
+        makeSelect.innerHTML = '<option value="">Select Make...</option>';
+        
+        // Add options
+        if (makes && makes.length > 0) {
+            makes.forEach(make => {
+                const option = document.createElement('option');
+                option.value = make.name;
+                option.textContent = make.name;
+                makeSelect.appendChild(option);
+                console.log(`   Added option: ${make.name}`);
+            });
+            console.log(`✅ Added ${makes.length} makes to dropdown`);
+        } else {
+            console.warn('⚠️ No makes found in database');
+            makeSelect.innerHTML += '<option disabled>No makes found. Add makes in Vehicle Makes tab</option>';
+        }
+        
+    } catch (error) {
+        console.error('❌ Error loading make options:', error);
+        makeSelect.innerHTML = '<option value="">Error loading makes</option>';
+    }
+}
+
+// Load all vehicle makes for admin table
+async function loadVehicleMakes() {
+    console.log('🔍 Loading vehicle makes...');
+    
+    try {
+        const response = await fetch('/api/admin/vehicle-makes', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const makes = await response.json();
+        console.log('📋 Makes loaded:', makes.length);
+        
+        // Get vehicle counts for each make
+        const inventoryResponse = await fetch('/api/admin/inventory', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const vehicles = await inventoryResponse.json();
+        
+        const makeCounts = {};
+        vehicles.forEach(v => {
+            makeCounts[v.make] = (makeCounts[v.make] || 0) + 1;
+        });
+        
+        const tbody = document.getElementById('makesList');
+        if (!makes || makes.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No vehicle makes found. Click "Add New Make" to get started. </td>';
+            return;
+        }
+        
+        tbody.innerHTML = makes.map(m => `
+            <tr>
+                <td><strong>${escapeHtml(m.name)}</strong></td>
+                <td>${m.country || '—'}</div>
+                <td>${m.founded || '—'}</div>
+                <td><span class="status-badge ${m.isActive ? 'status-available' : 'status-sold'}">${m.isActive ? 'Active' : 'Inactive'}</span></td>
+                <td>${makeCounts[m.name] || 0}</div>
+                <td>
+                    <button class="btn btn-primary btn-sm" onclick="editMake('${m._id}')">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteMake('${m._id}', '${escapeHtml(m.name)}')">Delete</button>
+                 </div>
+              </tr>
+        `).join('');
+        
+    } catch (error) {
+        console.error('Error loading makes:', error);
+        document.getElementById('makesList').innerHTML = `<table><td colspan="6" style="color: red;">Error loading makes: ${error.message}</div></tr>`;
+    }
+}
+
+// Edit make
+async function editMake(id) {
+    console.log('✏️ Editing make:', id);
+    
+    try {
+        const response = await fetch(`/api/admin/vehicle-makes/${id}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const make = await response.json();
+        console.log('📦 Make data:', make);
+        
+        document.getElementById('makeId').value = make._id;
+        document.getElementById('make').value = make.name;
+        document.getElementById('makeCountry').value = make.country || '';
+        document.getElementById('makeFounded').value = make.founded || '';
+        document.getElementById('makeLogoUrl').value = make.logoUrl || '';
+        document.getElementById('makeDisplayOrder').value = make.displayOrder || 0;
+        document.getElementById('makeIsActive').value = make.isActive ? 'true' : 'false';
+        document.getElementById('makeModalTitle').textContent = 'Edit Vehicle Make';
+        document.getElementById('makeModal').style.display = 'block';
+        
+    } catch (error) {
+        console.error('Error loading make:', error);
+        showNotification('Error loading make: ' + error.message, 'error');
+    }
+}
+
+// Delete make
+async function deleteMake(id, name) {
+    if (confirm(`Delete "${name}"? This will only work if no vehicles use this make.`)) {
+        console.log('🗑️ Deleting make:', id);
+        
+        try {
+            const response = await fetch(`/api/admin/vehicle-makes/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                showNotification(`"${name}" deleted successfully`, 'success');
+                loadVehicleMakes();
+                loadMakeOptions(); // Update the datalist
+            } else {
+                showNotification(result.error || 'Delete failed', 'error');
+            }
+        } catch (error) {
+            console.error('Delete error:', error);
+            showNotification('Error deleting make', 'error');
+        }
+    }
+}
+
+// Close make modal
+function closeMakeModal() {
+    document.getElementById('makeModal').style.display = 'none';
+    document.getElementById('makeForm').reset();
+    document.getElementById('makeId').value = '';
+    document.getElementById('makeModalTitle').textContent = 'Add Vehicle Make';
+}
+
+// Open add make modal
+document.getElementById('addMakeBtn')?.addEventListener('click', () => {
+    console.log('➕ Opening add make modal');
+    document.getElementById('makeModal').style.display = 'block';
+    document.getElementById('makeModalTitle').textContent = 'Add Vehicle Make';
+    document.getElementById('makeForm').reset();
+    document.getElementById('makeId').value = '';
+});
+
+// Helper function to escape HTML
+function escapeHtml(text) {
+    if (!text) return '';
+    return text.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
 }
 
 
@@ -2685,83 +3282,94 @@ function closeEditShipmentModal() {
         // VEHICLE ACTIONS
         // ============================================================
         window.editVehicle = async (id) => {
-            console.log('Editing vehicle with ID:', id);
-            currentVehicleId = id;
-            
-            try {
-                const response = await fetch(`/api/inventory/${id}`);
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-                
-                const v = await response.json();
-                
-                document.getElementById('make').value = v.make || '';
-                document.getElementById('model').value = v.model || '';
-                document.getElementById('year').value = v.year || '';
-                document.getElementById('price').value = v.price || '';
-                document.getElementById('mileage').value = v.mileage || '';
-                document.getElementById('engine').value = v.engine || '';
-                document.getElementById('color').value = v.color || '';
-                document.getElementById('transmission').value = v.transmission || 'Automatic';
-                document.getElementById('fuelType').value = v.fuelType || 'Premium Gasoline';
-                document.getElementById('drivetrain').value = v.drivetrain || 'AWD';
-                document.getElementById('horsepower').value = v.horsepower || '';
-                document.getElementById('condition').value = v.condition || 'Certified Pre-Owned';
-                document.getElementById('status').value = v.status || 'Available';
-                document.getElementById('featured').value = v.featured ? 'true' : 'false';
-                document.getElementById('description').value = v.description || '';
-                document.getElementById('features').value = v.features ? v.features.join(', ') : '';
-                
-                const previewDiv = document.getElementById('multipleImagePreview');
-                if (previewDiv) {
-                    previewDiv.innerHTML = '';
-                    if (v.images && v.images.length > 0) {
-                        v.images.forEach((img, index) => {
-                            const container = document.createElement('div');
-                            container.style.position = 'relative';
-                            container.style.display = 'inline-block';
-                            container.style.margin = '5px';
-                            
-                            const imgElement = document.createElement('img');
-                            imgElement.src = img;
-                            imgElement.style.width = '80px';
-                            imgElement.style.height = '80px';
-                            imgElement.style.objectFit = 'cover';
-                            imgElement.style.borderRadius = '8px';
-                            imgElement.style.border = index === 0 ? '3px solid #c41e3a' : '1px solid #e2e8f0';
-                            container.appendChild(imgElement);
-                            
-                            if (index === 0) {
-                                const badge = document.createElement('span');
-                                badge.textContent = 'Main';
-                                badge.style.position = 'absolute';
-                                badge.style.bottom = '-8px';
-                                badge.style.left = '50%';
-                                badge.style.transform = 'translateX(-50%)';
-                                badge.style.background = '#c41e3a';
-                                badge.style.color = 'white';
-                                badge.style.fontSize = '10px';
-                                badge.style.padding = '2px 6px';
-                                badge.style.borderRadius = '10px';
-                                badge.style.whiteSpace = 'nowrap';
-                                container.appendChild(badge);
-                            }
-                            previewDiv.appendChild(container);
-                        });
+            console.log('✏️ Edit Vehicle clicked - loading makes first...');
+             currentVehicleId = id;
+
+    // Load makes first
+    await loadMakeOptions();
+    
+    try {
+        const response = await fetch(`/api/inventory/${id}`);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const v = await response.json();
+        console.log('📦 Vehicle data loaded:', v);
+        console.log('📦 Current make in database:', v.make);
+        
+        // Set form values
+        const makeSelect = document.getElementById('makeName');
+        makeSelect.value = v.make || '';
+        console.log('📦 Set make dropdown to:', makeSelect.value);
+        document.getElementById('model').value = v.model || '';
+        document.getElementById('year').value = v.year || '';
+        document.getElementById('price').value = v.price || '';
+        document.getElementById('mileage').value = v.mileage || '';
+        document.getElementById('engine').value = v.engine || '';
+        document.getElementById('color').value = v.color || '';
+        document.getElementById('transmission').value = v.transmission || 'Automatic';
+        document.getElementById('fuelType').value = v.fuelType || 'Premium Gasoline';
+        document.getElementById('drivetrain').value = v.drivetrain || 'AWD';
+        document.getElementById('horsepower').value = v.horsepower || '';
+        document.getElementById('condition').value = v.condition || 'Certified Pre-Owned';
+        document.getElementById('status').value = v.status || 'Available';
+        document.getElementById('featured').value = v.featured ? 'true' : 'false';
+        document.getElementById('description').value = v.description || '';
+        document.getElementById('features').value = v.features ? v.features.join(', ') : '';
+        
+        // Verify make was set correctly
+        console.log('Set make to:', document.getElementById('make').value);
+        
+        // Handle images preview
+        const previewDiv = document.getElementById('multipleImagePreview');
+        if (previewDiv) {
+            previewDiv.innerHTML = '';
+            if (v.images && v.images.length > 0) {
+                v.images.forEach((img, index) => {
+                    const container = document.createElement('div');
+                    container.style.position = 'relative';
+                    container.style.display = 'inline-block';
+                    container.style.margin = '5px';
+                    
+                    const imgElement = document.createElement('img');
+                    imgElement.src = img;
+                    imgElement.style.width = '80px';
+                    imgElement.style.height = '80px';
+                    imgElement.style.objectFit = 'cover';
+                    imgElement.style.borderRadius = '8px';
+                    imgElement.style.border = index === 0 ? '3px solid #c41e3a' : '1px solid #e2e8f0';
+                    container.appendChild(imgElement);
+                    
+                    if (index === 0) {
+                        const badge = document.createElement('span');
+                        badge.textContent = 'Main';
+                        badge.style.position = 'absolute';
+                        badge.style.bottom = '-8px';
+                        badge.style.left = '50%';
+                        badge.style.transform = 'translateX(-50%)';
+                        badge.style.background = '#c41e3a';
+                        badge.style.color = 'white';
+                        badge.style.fontSize = '10px';
+                        badge.style.padding = '2px 6px';
+                        badge.style.borderRadius = '10px';
+                        container.appendChild(badge);
                     }
-                }
-                
-                document.getElementById('modalTitle').textContent = 'Edit Vehicle';
-                document.getElementById('vehicleModal').style.display = 'block';
-                
-                showNotification('Vehicle data loaded successfully', 'success');
-                
-            } catch (error) {
-                console.error('Error loading vehicle:', error);
-                alert('Error loading vehicle data: ' + error.message);
+                    previewDiv.appendChild(container);
+                });
             }
-        };
+        }
+        
+        document.getElementById('modalTitle').textContent = 'Edit Vehicle';
+        document.getElementById('vehicleModal').style.display = 'block';
+        
+        showNotification('Vehicle data loaded successfully', 'success');
+        
+    } catch (error) {
+        console.error('Error loading vehicle:', error);
+        alert('Error loading vehicle data: ' + error.message);
+    }
+};
 
         window.markSold = async (id) => {
             if (confirm('Mark this vehicle as sold?')) {
@@ -3160,7 +3768,7 @@ function closeEditShipmentModal() {
                     body: JSON.stringify({ 
                         approvedAmount: approvedAmount,
                         approvedTerms: terms,
-                        notes: `Approved by admin at ${new Date().toLocaleString()}`
+                        notes: `Approved by the finance department at ${new Date().toLocaleString()}`
                     })
                 });
                 
@@ -3265,13 +3873,20 @@ function closeEditShipmentModal() {
         // ============================================================
         // MODAL CONTROLS
         // ============================================================
-        document.getElementById('addVehicleBtn').addEventListener('click', () => {
-            currentVehicleId = null;
-            document.getElementById('vehicleForm').reset();
-            document.getElementById('multipleImagePreview').innerHTML = '';
-            document.getElementById('modalTitle').textContent = 'Add Vehicle';
-            document.getElementById('vehicleModal').style.display = 'block';
-        });
+        document.getElementById('addVehicleBtn').addEventListener('click', async () => {
+    console.log('➕ Add Vehicle button clicked - loading makes...');
+    currentVehicleId = null;
+    document.getElementById('vehicleForm').reset();
+    document.getElementById('multipleImagePreview').innerHTML = '';
+    document.getElementById('modalTitle').textContent = 'Add Vehicle';
+    
+    // Load makes BEFORE showing modal
+    await loadMakeOptions();
+    
+    // Then show modal
+    document.getElementById('vehicleModal').style.display = 'block';
+    console.log('📂 Vehicle modal opened');
+});
 
         document.getElementById('addShipmentBtn').addEventListener('click', () => {
             document.getElementById('createShipmentModal').style.display = 'block';
@@ -3404,72 +4019,85 @@ function closeCreateShipmentModal() {
 document.getElementById('addShipmentBtn').addEventListener('click', () => {
     document.getElementById('createShipmentModal').style.display = 'block';
 });
-        document.getElementById('vehicleForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Saving...';
-            submitBtn.disabled = true;
-            
-            try {
-                const formData = new FormData();
-                const vehicleData = {
-                    title: `${document.getElementById('year').value} ${document.getElementById('make').value} ${document.getElementById('model').value}`,
-                    make: document.getElementById('make').value,
-                    model: document.getElementById('model').value,
-                    year: parseInt(document.getElementById('year').value),
-                    price: parseFloat(document.getElementById('price').value),
-                    mileage: document.getElementById('mileage').value,
-                    engine: document.getElementById('engine').value,
-                    color: document.getElementById('color').value,
-                    transmission: document.getElementById('transmission').value,
-                    fuelType: document.getElementById('fuelType').value,
-                    drivetrain: document.getElementById('drivetrain').value,
-                    horsepower: document.getElementById('horsepower').value || '',
-                    condition: document.getElementById('condition').value,
-                    status: document.getElementById('status').value,
-                    featured: document.getElementById('featured').value === 'true',
-                    description: document.getElementById('description').value || '',
-                    features: document.getElementById('features').value ? document.getElementById('features').value.split(',').map(f => f.trim()).filter(f => f) : []
-                };
-                
-                formData.append('data', JSON.stringify(vehicleData));
-                
-                const files = document.getElementById('images').files;
-                for (let i = 0; i < files.length; i++) {
-                    formData.append('images', files[i]);
+document.getElementById('vehicleForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Saving...';
+    submitBtn.disabled = true;
+    
+    try {
+        const formData = new FormData();
+        const vehicleData = {
+            title: `${document.getElementById('year').value} ${document.getElementById('makeName').value} ${document.getElementById('model').value}`,
+            make: document.getElementById('makeName').value,  // ← This is the selected make
+            model: document.getElementById('model').value,
+            year: parseInt(document.getElementById('year').value),
+            price: parseFloat(document.getElementById('price').value),
+            mileage: document.getElementById('mileage').value,
+            engine: document.getElementById('engine').value,
+            color: document.getElementById('color').value,
+            transmission: document.getElementById('transmission').value,
+            fuelType: document.getElementById('fuelType').value,
+            drivetrain: document.getElementById('drivetrain').value,
+            horsepower: document.getElementById('horsepower').value || '',
+            condition: document.getElementById('condition').value,
+            status: document.getElementById('status').value,
+            featured: document.getElementById('featured').value === 'true',
+            description: document.getElementById('description').value || '',
+            features: document.getElementById('features').value ? document.getElementById('features').value.split(',').map(f => f.trim()).filter(f => f) : []
+        };
+        
+        // If editing, preserve existing images
+        if (currentVehicleId) {
+            const existingImages = [];
+            const previewImages = document.querySelectorAll('#multipleImagePreview img');
+            previewImages.forEach(img => {
+                if (img.src && !img.src.includes('blob:')) {
+                    existingImages.push(img.src);
                 }
-                
-                let url = '/api/admin/inventory';
-                let method = 'POST';
-                if (currentVehicleId) {
-                    url = `/api/admin/inventory/${currentVehicleId}`;
-                    method = 'PUT';
-                }
-                
-                const response = await fetch(url, {
-                    method: method,
-                    headers: { 'Authorization': `Bearer ${token}` },
-                    body: formData
-                });
-                
-                if (response.ok) {
-                    showNotification('Vehicle saved successfully!', 'success');
-                    closeVehicleModal();
-                    loadInventory();
-                    loadAnalytics();
-                } else {
-                    const error = await response.json();
-                    showNotification(error.error || 'Error saving vehicle', 'error');
-                }
-            } catch (error) {
-                console.error('Submission error:', error);
-                showNotification('Network error. Please try again.', 'error');
-            } finally {
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            }
+            });
+            vehicleData.existingImages = existingImages;
+        }
+        
+        formData.append('data', JSON.stringify(vehicleData));
+        
+        const files = document.getElementById('images').files;
+        for (let i = 0; i < files.length; i++) {
+            formData.append('images', files[i]);
+        }
+        
+        let url = '/api/admin/inventory';
+        let method = 'POST';
+        if (currentVehicleId) {
+            url = `/api/admin/inventory/${currentVehicleId}`;
+            method = 'PUT';
+        }
+        
+        const response = await fetch(url, {
+            method: method,
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
         });
+        
+        if (response.ok) {
+            showNotification('Vehicle saved successfully!', 'success');
+            closeVehicleModal();
+            loadInventory();  // Refresh inventory list
+            loadAnalytics();   // Refresh analytics
+            loadVehicleMakes(); // Refresh makes list (in case new make was added)
+        } else {
+            const error = await response.json();
+            showNotification(error.error || 'Error saving vehicle', 'error');
+        }
+    } catch (error) {
+        console.error('Submission error:', error);
+        showNotification('Network error. Please try again.', 'error');
+    } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    }
+});
 
         document.getElementById('shipmentForm').addEventListener('submit', async (e) => {
             e.preventDefault();

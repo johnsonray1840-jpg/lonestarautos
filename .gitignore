@@ -1,7 +1,32 @@
-.node_modules/
+# Dependencies
+node_modules/
+
+# Environment variables
 .env
-.reset-admin-password.js
-.init-db.js
-.ad-sample-vehicles.jsnode_modules/
-.env
+
+# Uploaded files
 uploads/
+
+# Database scripts (prevent accidental commits)
+reset-admin-password.js
+init-db.js
+add-sample-vehicles.js
+
+# OS files
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local env files
+.env.local
+.env.*.local
+
+# IDE files
+.vscode/
+.idea/
+
+# Build outputs
+dist/
+build/

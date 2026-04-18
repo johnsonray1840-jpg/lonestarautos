@@ -68,8 +68,8 @@ const simulationIntervals = new Map(); // Track running simulations
 // MIDDLEWARE
 // ============================================================
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.static(path.join(__dirname, '../client')));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
@@ -136,19 +136,23 @@ cloudinary.config({
     }
   });
   
-  // NEW: For vehicle images only (uses Cloudinary)
-  const imageUpload = multer({ 
+
+// For vehicle images - handles multiple files with field name 'images'
+const imageUpload = multer({ 
     storage: cloudinaryStorage,
-    limits: { fileSize: 10 * 1024 * 1024 },
+    limits: { fileSize: 10 * 1024 * 1024, files: 20 }, // Max 20 files
     fileFilter: (req, file, cb) => {
-      const allowedTypes = /jpeg|jpg|png|gif|webp/;
-      const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-      const mimetype = allowedTypes.test(file.mimetype);
-      if (mimetype && extname) return cb(null, true);
-      cb(new Error('Only image files are allowed'));
+        const allowedTypes = /jpeg|jpg|png|gif|webp/;
+        const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = allowedTypes.test(file.mimetype);
+        if (mimetype && extname) {
+            return cb(null, true);
+        }
+        cb(new Error('Only image files are allowed'));
     }
-  });
-  
+}).array('images', 20); // ← CRITICAL: 'images' must match form field name
+
+
 
 // ============================================================
 // EMAIL CONFIGURATION
@@ -462,16 +466,6 @@ const paymentSchema = new mongoose.Schema({
     updatedAt: { type: Date, default: Date.now }
   });
   
-// Create models
-const Admin = mongoose.model('Admin', adminSchema);
-const Inventory = mongoose.model('Inventory', inventorySchema);
-const Reservation = mongoose.model('Reservation', reservationSchema);
-const Shipment = mongoose.model('Shipment', shipmentSchema);
-const Document = mongoose.model('Document', documentSchema);
-const Analytics = mongoose.model('Analytics', analyticsSchema);
-const Payment = mongoose.model('Payment', paymentSchema);
-const Financing = mongoose.model('Financing', financingSchema);
-
 // 9. PAYMENT METHOD SCHEMA - Dynamic payment details
 const paymentMethodSchema = new mongoose.Schema({
     name: { 
@@ -502,8 +496,85 @@ const paymentMethodSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
   });
-  
-  const PaymentMethod = mongoose.model('PaymentMethod', paymentMethodSchema);
+
+  // 9. CUSTOMER INFO SCHEMA - Texas Law Compliance
+const customerInfoSchema = new mongoose.Schema({
+    saleId: { type: String, required: true, unique: true },
+    paymentId: { type: String, required: true },
+    vehicleId: { type: mongoose.Schema.Types.ObjectId, ref: 'Inventory', required: true },
+    trackingNumber: { type: String },
+    
+    // Customer Personal Information
+    customerName: { type: String, required: true },
+    customerEmail: { type: String, required: true },
+    customerPhone: { type: String, required: true },
+    customerAddress: { type: String, required: true },
+    customerCity: { type: String, required: true },
+    customerState: { type: String, required: true },
+    customerZip: { type: String, required: true },
+    
+    // Identification
+    driversLicenseNumber: { type: String, required: true },
+    driversLicenseState: { type: String, required: true, default: 'TX' },
+    dateOfBirth: { type: Date, required: true },
+    
+    // Vehicle Information
+    vehicleMake: { type: String, required: true },
+    vehicleModel: { type: String, required: true },
+    vehicleYear: { type: Number, required: true },
+    vehiclePrice: { type: Number, required: true },
+    downPayment: { type: Number, required: true },
+    remainingBalance: { type: Number, required: true },
+    
+    // Document URLs (stored in Cloudinary)
+    photoIdFrontUrl: { type: String, required: true },
+    photoIdBackUrl: { type: String, required: true },
+    
+    // Compliance Status
+    odometerDisclosureSigned: { type: Boolean, default: false },
+    salesContractSigned: { type: Boolean, default: false },
+    documentsSentAt: Date,
+    documentsSignedAt: Date,
+    
+    // Federal Compliance (for cash over $10,000)
+    tinProvided: { type: Boolean, default: false },
+    tinValue: { type: String },
+    form8300Filed: { type: Boolean, default: false },
+    
+    // Metadata
+    saleDate: { type: Date, default: Date.now },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now }
+});
+
+// 10. VEHICLE MAKE SCHEMA - Dynamic makes management
+const vehicleMakeSchema = new mongoose.Schema({
+    name: { type: String, required: true, unique: true, trim: true },
+    slug: { type: String, required: true, unique: true },
+    logoUrl: { type: String },
+    country: { type: String },
+    founded: { type: Number },
+    isActive: { type: Boolean, default: true },
+    displayOrder: { type: Number, default: 0 },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now }
+});
+
+
+
+  // Create models
+const Admin = mongoose.model('Admin', adminSchema);
+const Inventory = mongoose.model('Inventory', inventorySchema);
+const Reservation = mongoose.model('Reservation', reservationSchema);
+const Shipment = mongoose.model('Shipment', shipmentSchema);
+const Document = mongoose.model('Document', documentSchema);
+const Analytics = mongoose.model('Analytics', analyticsSchema);
+const Payment = mongoose.model('Payment', paymentSchema);
+const Financing = mongoose.model('Financing', financingSchema)
+const PaymentMethod = mongoose.model('PaymentMethod', paymentMethodSchema);
+const CustomerInfo = mongoose.model('CustomerInfo', customerInfoSchema);
+const VehicleMake = mongoose.model('VehicleMake', vehicleMakeSchema);
+
 
 
 // ============================================================
@@ -594,7 +665,7 @@ async function sendPaymentNotificationEmail(to, payment, status, reason = null) 
         </div>
         <div class="content">
             <h2 style="margin-bottom: 16px;">Hello ${payment.customerInfo.name},</h2>
-            <p>Your down payment request has been submitted and is pending admin approval. Once approved, your vehicle will be secured and legal documents will be sent to you.</p>
+            <p>Your down payment request has been submitted and is awaiting approval from the payment department. Once approved, your vehicle will be secured and legal documents will be sent to you.</p>
             
             <div class="info-box">
                 <p style="font-weight: 600; margin-bottom: 8px;">⏳ Status: Pending Review</p>
@@ -621,7 +692,7 @@ async function sendPaymentNotificationEmail(to, payment, status, reason = null) 
             
             <div class="next-steps">
                 <h3 style="margin-bottom: 12px;">📋 What Happens Next?</h3>
-                <div class="step"><div class="step-number">1</div><div><strong>Admin Approval</strong><br>Our team verifies your payment within 24 hours.</div></div>
+                <div class="step"><div class="step-number">1</div><div><strong>Approval From Payment Department</strong><br>Our team verifies your payment within 24 hours.</div></div>
                 <div class="step"><div class="step-number">2</div><div><strong>Legal Documents</strong><br>You'll receive the Purchase Agreement via email.</div></div>
                 <div class="step"><div class="step-number">3</div><div><strong>Electronic Signature</strong><br>Review and sign the documents online.</div></div>
                 <div class="step"><div class="step-number">4</div><div><strong>Delivery Scheduling</strong><br>Once documents are signed, we arrange delivery.</div></div>
@@ -2524,6 +2595,120 @@ app.post('/api/admin/login', async (req, res) => {
   }
 });
 
+
+// ============================================================
+// VEHICLE MAKE MANAGEMENT ROUTES
+// ============================================================
+
+// GET all makes (public - for inventory page)
+app.get('/api/vehicle-makes', async (req, res) => {
+    try {
+        const makes = await VehicleMake.find({ isActive: true }).sort({ displayOrder: 1, name: 1 });
+        res.json(makes);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// GET all makes (admin - includes inactive)
+app.get('/api/admin/vehicle-makes', adminAuth, async (req, res) => {
+    try {
+        const makes = await VehicleMake.find().sort({ name: 1 });
+        res.json(makes);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// CREATE new make (admin)
+app.post('/api/admin/vehicle-makes', adminAuth, async (req, res) => {
+    try {
+        const { name, logoUrl, country, founded, displayOrder } = req.body;
+        
+        if (!name) {
+            return res.status(400).json({ error: 'Make name is required' });
+        }
+        
+        // Create slug from name
+        const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        
+        const make = new VehicleMake({
+            name,
+            slug,
+            logoUrl: logoUrl || '',
+            country: country || '',
+            founded: founded || null,
+            displayOrder: displayOrder || 0,
+            isActive: true
+        });
+        
+        await make.save();
+        res.status(201).json(make);
+        
+    } catch (error) {
+        if (error.code === 11000) {
+            res.status(400).json({ error: 'Vehicle make already exists' });
+        } else {
+            res.status(500).json({ error: error.message });
+        }
+    }
+});
+
+// UPDATE make (admin)
+app.put('/api/admin/vehicle-makes/:id', adminAuth, async (req, res) => {
+    try {
+        const { name, logoUrl, country, founded, isActive, displayOrder } = req.body;
+        const make = await VehicleMake.findById(req.params.id);
+        
+        if (!make) {
+            return res.status(404).json({ error: 'Make not found' });
+        }
+        
+        if (name && name !== make.name) {
+            make.name = name;
+            make.slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        }
+        if (logoUrl !== undefined) make.logoUrl = logoUrl;
+        if (country !== undefined) make.country = country;
+        if (founded !== undefined) make.founded = founded;
+        if (isActive !== undefined) make.isActive = isActive;
+        if (displayOrder !== undefined) make.displayOrder = displayOrder;
+        
+        make.updatedAt = new Date();
+        await make.save();
+        
+        res.json(make);
+        
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// DELETE make (admin) - only if no vehicles use it
+app.delete('/api/admin/vehicle-makes/:id', adminAuth, async (req, res) => {
+    try {
+        const make = await VehicleMake.findById(req.params.id);
+        if (!make) {
+            return res.status(404).json({ error: 'Make not found' });
+        }
+        
+        // Check if any vehicles use this make
+        const vehiclesUsingMake = await Inventory.countDocuments({ make: make.name });
+        if (vehiclesUsingMake > 0) {
+            return res.status(400).json({ 
+                error: `Cannot delete "${make.name}" because ${vehiclesUsingMake} vehicle(s) use this make. Update or delete those vehicles first.` 
+            });
+        }
+        
+        await VehicleMake.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Vehicle make deleted successfully' });
+        
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
 // ============================================================
 // INVENTORY MANAGEMENT ROUTES (Public)
 // ============================================================
@@ -2552,6 +2737,100 @@ app.get('/api/inventory/:id', async (req, res) => {
 });
 
 
+// ============================================================
+// CUSTOMER PHOTO ID UPLOAD TO CLOUDINARY
+// ============================================================
+
+app.post('/api/upload-customer-id', async (req, res) => {
+    try {
+        const { imageData, side } = req.body;
+        
+        if (!imageData) {
+            return res.status(400).json({ error: 'No image data provided' });
+        }
+        
+        // Validate image data size (rough check)
+        if (imageData.length > 10 * 1024 * 1024) { // 10MB limit
+            return res.status(400).json({ error: 'Image too large. Please compress and try again.' });
+        }
+        
+        console.log(`📸 Uploading ${side} ID to Cloudinary...`);
+        
+        // Upload to Cloudinary with additional options
+        const result = await cloudinary.uploader.upload(imageData, {
+            folder: 'lonestarautos/customer-ids',
+            public_id: `customer_${Date.now()}_${side}`,
+            transformation: [
+                { width: 1000, height: 700, crop: 'limit' },
+                { quality: 'auto:good' }
+            ]
+        });
+        
+        console.log(`✅ ${side} ID uploaded successfully`);
+        res.json({ success: true, url: result.secure_url });
+        
+    } catch (error) {
+        console.error('ID upload error:', error);
+        res.status(500).json({ error: error.message || 'Upload failed' });
+    }
+});
+
+
+// ============================================================
+// CUSTOMER RECORDS MANAGEMENT (Admin Only)
+// ============================================================
+
+// GET all customer records
+app.get('/api/admin/customers', adminAuth, async (req, res) => {
+    try {
+        const customers = await CustomerInfo.find().sort({ saleDate: -1 });
+        res.json(customers);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// GET single customer record
+app.get('/api/admin/customers/:id', adminAuth, async (req, res) => {
+    try {
+        const customer = await CustomerInfo.findById(req.params.id);
+        if (!customer) return res.status(404).json({ error: 'Customer record not found' });
+        res.json(customer);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// DELETE customer record
+app.delete('/api/admin/customers/:id', adminAuth, async (req, res) => {
+    try {
+        const customer = await CustomerInfo.findByIdAndDelete(req.params.id);
+        if (!customer) return res.status(404).json({ error: 'Customer record not found' });
+        res.json({ message: 'Customer record deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Update document signing status
+app.put('/api/admin/customers/:id/sign-documents', adminAuth, async (req, res) => {
+    try {
+        const { odometerSigned, contractSigned } = req.body;
+        const customer = await CustomerInfo.findById(req.params.id);
+        if (!customer) return res.status(404).json({ error: 'Customer record not found' });
+        
+        if (odometerSigned !== undefined) customer.odometerDisclosureSigned = odometerSigned;
+        if (contractSigned !== undefined) customer.salesContractSigned = contractSigned;
+        if (odometerSigned || contractSigned) customer.documentsSignedAt = new Date();
+        
+        await customer.save();
+        res.json(customer);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
 
 // ============================================================
 // INVENTORY MANAGEMENT ROUTES (Admin)
@@ -2565,41 +2844,110 @@ app.get('/api/admin/inventory', adminAuth, async (req, res) => {
   }
 });
 
-app.post('/api/admin/inventory', adminAuth, imageUpload.array('images', 10), async (req, res) => {
+app.post('/api/admin/inventory', adminAuth, imageUpload, async (req, res) => {
     try {
-        // req.files now contains Cloudinary file objects
+        console.log('📸 Files received:', req.files ? req.files.length : 0);
+        console.log('📦 Body data:', req.body);
+        
+        // Parse vehicle data from form
+        let vehicleData;
+        try {
+            vehicleData = JSON.parse(req.body.data);
+        } catch (e) {
+            vehicleData = req.body;
+        }
+        
+        // ============================================================
+        // NEW: Ensure vehicle make exists in VehicleMake collection
+        // ============================================================
+        const makeName = vehicleData.make;
+        if (makeName) {
+            // Check if make already exists (case-insensitive)
+            let existingMake = await VehicleMake.findOne({ 
+                name: { $regex: new RegExp(`^${makeName}$`, 'i') } 
+            });
+            
+            if (!existingMake) {
+                // Create new make automatically
+                const slug = makeName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                existingMake = new VehicleMake({
+                    name: makeName,
+                    slug: slug,
+                    isActive: true,
+                    displayOrder: 999
+                });
+                await existingMake.save();
+                console.log(`📌 Auto-created new vehicle make: ${makeName}`);
+            }
+        }
+        
+        // Get Cloudinary URLs from uploaded files
         const images = req.files ? req.files.map(file => file.path) : [];
         
-        let vehicleData = JSON.parse(req.body.data);
         const downPayment = vehicleData.price * 0.1;
         
         const inventory = new Inventory({ 
             ...vehicleData, 
-            images,  // Cloudinary URLs
+            images, 
             downPayment, 
             updatedAt: Date.now() 
         });
         
         await inventory.save();
+        console.log(`✅ Vehicle saved with make: ${makeName}`);
         res.status(201).json(inventory);
+        
     } catch (error) {
         console.error('Upload error:', error);
         res.status(500).json({ error: error.message });
     }
 });
 
-app.put('/api/admin/inventory/:id', adminAuth, imageUpload.array('images', 10), async (req, res) => {
+
+
+app.put('/api/admin/inventory/:id', adminAuth, imageUpload, async (req, res) => {
     try {
-        let updateData = JSON.parse(req.body.data);
+        console.log('📸 Update - Files received:', req.files ? req.files.length : 0);
         
-        // Get existing vehicle to preserve old images if needed
+        let updateData;
+        try {
+            updateData = JSON.parse(req.body.data);
+        } catch (e) {
+            updateData = req.body;
+        }
+        
+        // ============================================================
+        // NEW: Ensure vehicle make exists in VehicleMake collection
+        // ============================================================
+        const makeName = updateData.make;
+        if (makeName) {
+            let existingMake = await VehicleMake.findOne({ 
+                name: { $regex: new RegExp(`^${makeName}$`, 'i') } 
+            });
+            
+            if (!existingMake) {
+                const slug = makeName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                existingMake = new VehicleMake({
+                    name: makeName,
+                    slug: slug,
+                    isActive: true,
+                    displayOrder: 999
+                });
+                await existingMake.save();
+                console.log(`📌 Auto-created new vehicle make: ${makeName}`);
+            }
+        }
+        
         const existingVehicle = await Inventory.findById(req.params.id);
+        if (!existingVehicle) {
+            return res.status(404).json({ error: 'Vehicle not found' });
+        }
         
         // Process new images from Cloudinary
         const newImages = req.files ? req.files.map(file => file.path) : [];
         
-        // Combine existing images (from form) with new uploads
-        const existingImages = updateData.existingImages || [];
+        // Combine existing images with new uploads
+        const existingImages = updateData.existingImages || existingVehicle.images || [];
         const allImages = [...existingImages, ...newImages];
         
         updateData.images = allImages;
@@ -2607,12 +2955,17 @@ app.put('/api/admin/inventory/:id', adminAuth, imageUpload.array('images', 10), 
         updateData.updatedAt = Date.now();
         
         const inventory = await Inventory.findByIdAndUpdate(req.params.id, updateData, { new: true });
+        console.log(`✅ Vehicle updated with make: ${makeName}`);
         res.json(inventory);
+        
     } catch (error) {
         console.error('Update error:', error);
         res.status(500).json({ error: error.message });
     }
 });
+
+
+
 
 app.delete('/api/admin/inventory/:id', adminAuth, async (req, res) => {
   try {
@@ -2867,7 +3220,7 @@ app.post('/api/admin/shipments/:id/pause', adminAuth, async (req, res) => {
       // Update shipment
       shipment.tracking.status = 'paused';
       shipment.tracking.pausedAt = new Date();
-      shipment.tracking.pauseReason = reason || 'Paused by admin';
+      shipment.tracking.pauseReason = reason || 'Paused by the shipping department';
       shipment.tracking.pausedProgress = currentProgress;
       shipment.tracking.pausedPosition = currentPosition;
       shipment.status = 'paused';
@@ -3564,7 +3917,7 @@ app.post('/api/admin/shipments/:id/manual-override', adminAuth, async (req, res)
           customProgress: progress,
           setBy: req.admin.email,
           setAt: new Date(),
-          reason: reason || 'Manual override by admin'
+          reason: reason || 'Manual override by the shipping department'
       };
       
       shipment.tracking.currentPosition = {
@@ -3579,7 +3932,7 @@ app.post('/api/admin/shipments/:id/manual-override', adminAuth, async (req, res)
           status: 'manual-override',
           timestamp: new Date(),
           location: `${lat.toFixed(4)}, ${lng.toFixed(4)}`,
-          description: `Position manually set by admin: ${reason || 'No reason provided'}`
+          description: `Position manually set by shipping department: ${reason || 'No reason provided'}`
       });
       
       await safeSaveShipment(shipment);
@@ -4141,11 +4494,68 @@ app.post('/api/create-payment', async (req, res) => {
       await payment.save();
       if (paymentType === 'down_payment') {
         const reservationNumber = `RES${Date.now()}${Math.floor(Math.random() * 1000)}`;
-        const reservation = new Reservation({ reservationNumber, vehicleId, vehicleInfo, customerInfo: { name: customerInfo.name, email: customerInfo.email, phone: customerInfo.phone, address: customerInfo.address }, downPayment: amount, totalPrice, remainingBalance, paymentStatus: 'pending', status: 'pending', deliveryDate: deliveryDetails.preferredDate, notes: `Payment pending admin approval. Payment ID: ${paymentId}` });
+        const reservation = new Reservation({ reservationNumber, vehicleId, vehicleInfo, customerInfo: { name: customerInfo.name, email: customerInfo.email, phone: customerInfo.phone, address: customerInfo.address }, downPayment: amount, totalPrice, remainingBalance, paymentStatus: 'pending', status: 'pending', deliveryDate: deliveryDetails.preferredDate, notes: `Payment is awaiting approval from the payment department. Payment ID: ${paymentId}` });
         await reservation.save();
         payment.reservationId = reservation._id;
         await payment.save();
       }
+
+       // ============================================================
+        // NEW: Create CustomerInfo record IMMEDIATELY
+        // ============================================================
+        try {
+            const vehicle = await Inventory.findById(vehicleId);
+            const saleId = `SALE-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+            
+            const customerRecord = new CustomerInfo({
+                saleId: saleId,
+                paymentId: payment.paymentId,
+                vehicleId: vehicleId,
+                trackingNumber: null,
+                
+                // Customer Personal Information
+                customerName: customerInfo.name,
+                customerEmail: customerInfo.email,
+                customerPhone: customerInfo.phone,
+                customerAddress: customerInfo.address,
+                customerCity: customerInfo.city || '',
+                customerState: customerInfo.state || 'TX',
+                customerZip: customerInfo.zip || '',
+                
+                // Identification
+                driversLicenseNumber: customerInfo.driversLicense || '',
+                driversLicenseState: customerInfo.driversLicenseState || 'TX',
+                dateOfBirth: customerInfo.dateOfBirth ? new Date(customerInfo.dateOfBirth) : null,
+                
+                // Vehicle Information
+                vehicleMake: vehicle?.make || vehicleInfo?.make || '',
+                vehicleModel: vehicle?.model || vehicleInfo?.model || '',
+                vehicleYear: vehicle?.year || vehicleInfo?.year || 0,
+                vehiclePrice: totalPrice,
+                downPayment: amount,
+                remainingBalance: totalPrice - amount,
+                
+                // Document URLs
+                photoIdFrontUrl: customerInfo.photoIdFrontUrl || '',
+                photoIdBackUrl: customerInfo.photoIdBackUrl || '',
+                
+                // Compliance Status
+                odometerDisclosureSigned: false,
+                salesContractSigned: false,
+                
+                saleDate: new Date(),
+                createdAt: new Date(),
+                updatedAt: new Date()
+            });
+            
+            await customerRecord.save();
+            console.log(`✅ Customer record created immediately for ${customerInfo.name} (${saleId})`);
+            
+        } catch (customerError) {
+            console.error('❌ Failed to create customer record:', customerError);
+            // Don't block payment creation if customer record fails
+        }
+
       await sendPaymentNotificationEmail(customerInfo.email, payment, 'pending');
       await sendAdminPaymentNotification(payment);
       res.json({ success: true, paymentId: payment.paymentId, status: 'pending', message: 'Payment request submitted for approval.' });
@@ -4175,20 +4585,90 @@ app.get('/api/admin/payments', adminAuth, async (req, res) => {
 });
 
 app.post('/api/admin/payments/:paymentId/approve', adminAuth, async (req, res) => {
-  try {
-    const payment = await Payment.findOne({ paymentId: req.params.paymentId });
-    if (!payment) return res.status(404).json({ error: 'Payment not found' });
-    payment.status = 'approved';
-    payment.approvedAt = new Date();
-    payment.adminNotes = req.body.notes || '';
-    await payment.save();
-    if (payment.paymentType === 'full_payment') await Inventory.findByIdAndUpdate(payment.vehicleId, { status: 'Sold' });
-    if (payment.reservationId) await Reservation.findByIdAndUpdate(payment.reservationId, { status: 'confirmed', paymentStatus: 'paid' });
-    await sendPaymentNotificationEmail(payment.customerInfo.email, payment, 'approved');
-    res.json({ success: true, payment });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    try {
+        const payment = await Payment.findOne({ paymentId: req.params.paymentId });
+        if (!payment) return res.status(404).json({ error: 'Payment not found' });
+        
+        payment.status = 'approved';
+        payment.approvedAt = new Date();
+        payment.adminNotes = req.body.notes || '';
+        await payment.save();
+        
+        if (payment.paymentType === 'full_payment') {
+            await Inventory.findByIdAndUpdate(payment.vehicleId, { status: 'Sold' });
+        }
+        
+        if (payment.reservationId) {
+            await Reservation.findByIdAndUpdate(payment.reservationId, { 
+                status: 'confirmed', 
+                paymentStatus: 'paid' 
+            });
+        }
+        
+        // ============================================================
+        // NEW: Create CustomerInfo record for Texas law compliance
+        // ============================================================
+        const vehicle = await Inventory.findById(payment.vehicleId);
+        
+        // Check if customer record already exists
+        const existingCustomer = await CustomerInfo.findOne({ paymentId: payment.paymentId });
+        
+        if (!existingCustomer && payment.customerInfo) {
+            const saleId = `SALE-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+            
+            const customerRecord = new CustomerInfo({
+                saleId: saleId,
+                paymentId: payment.paymentId,
+                vehicleId: payment.vehicleId,
+                trackingNumber: null, // Will be updated when shipment created
+                
+                // Customer Personal Information
+                customerName: payment.customerInfo.name,
+                customerEmail: payment.customerInfo.email,
+                customerPhone: payment.customerInfo.phone,
+                customerAddress: payment.customerInfo.address,
+                customerCity: payment.customerInfo.city || '',
+                customerState: payment.customerInfo.state || 'TX',
+                customerZip: payment.customerInfo.zip || '',
+                
+                // Identification
+                driversLicenseNumber: payment.customerInfo.driversLicense || '',
+                driversLicenseState: payment.customerInfo.driversLicenseState || 'TX',
+                dateOfBirth: payment.customerInfo.dateOfBirth ? new Date(payment.customerInfo.dateOfBirth) : null,
+                
+                // Vehicle Information
+                vehicleMake: vehicle?.make || payment.vehicleInfo?.make || '',
+                vehicleModel: vehicle?.model || payment.vehicleInfo?.model || '',
+                vehicleYear: vehicle?.year || payment.vehicleInfo?.year || 0,
+                vehiclePrice: payment.totalPrice,
+                downPayment: payment.amount,
+                remainingBalance: payment.remainingBalance,
+                
+                // Document URLs
+                photoIdFrontUrl: payment.customerInfo.photoIdFrontUrl || '',
+                photoIdBackUrl: payment.customerInfo.photoIdBackUrl || '',
+                
+                // Compliance Status
+                odometerDisclosureSigned: false,
+                salesContractSigned: false,
+                
+                saleDate: new Date(),
+                createdAt: new Date(),
+                updatedAt: new Date()
+            });
+            
+            await customerRecord.save();
+            console.log(`✅ Customer record created for ${payment.customerInfo.name} (${saleId})`);
+        }
+        
+        await sendPaymentNotificationEmail(payment.customerInfo.email, payment, 'approved');
+        
+        res.json({ success: true, payment });
+        
+    } catch (error) {
+        console.error('Approval error:', error);
+        res.status(500).json({ error: error.message });
+    }
 });
 
 app.post('/api/admin/payments/:paymentId/reject', adminAuth, async (req, res) => {
@@ -4391,6 +4871,28 @@ app.get('/api/admin/analytics', adminAuth, async (req, res) => {
       res.status(500).json({ error: error.message });
   }
 });
+
+// DEBUG: Check what data exists
+app.get('/api/admin/debug-payments', adminAuth, async (req, res) => {
+    try {
+        const payments = await Payment.find().sort({ createdAt: -1 }).limit(5);
+        
+        res.json({
+            paymentCount: payments.length,
+            payments: payments.map(p => ({
+                paymentId: p.paymentId,
+                status: p.status,
+                customerName: p.customerInfo?.name,
+                hasCustomerInfo: !!p.customerInfo,
+                customerInfoKeys: p.customerInfo ? Object.keys(p.customerInfo) : [],
+                createdAt: p.createdAt
+            }))
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 // ============================================================
 // INITIAL ADMIN CREATION

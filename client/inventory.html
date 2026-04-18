@@ -526,7 +526,7 @@
                     <a href="shipping.html" class="nav-link">Shipping</a>
                     <a href="contact.html" class="nav-link">Contact</a>
                     <a href="track.html" class="nav-link">Track Delivery</a>
-                    <a href="#inventory" class="btn-primary mobile-browse-btn">Browse Cars</a>
+                    <a href="inventory.html" class="btn-primary mobile-browse-btn">Browse Cars</a>
                 </div>
                 
                 <!-- Mobile Hamburger Menu Button -->
@@ -543,7 +543,7 @@
                 <a href="shipping.html" class="mobile-nav-link">Shipping</a>
                 <a href="contact.html" class="mobile-nav-link">Contact</a>
                 <a href="track.html" class="mobile-nav-link">Track Delivery</a>
-                <a href="#inventory" class="btn-primary mobile-browse-btn-full">Browse Cars</a>
+                <a href="inventory.html" class="btn-primary mobile-browse-btn-full">Browse Cars</a>
             </div>
         </div>
     </nav>
@@ -613,7 +613,41 @@
 
     <script>
         let allVehicles = [];
-
+        let allMakes = []; // NEW: Store makes from database
+    
+        // NEW: Load makes from database for filter
+        async function loadMakeFilters() {
+            try {
+                const response = await fetch('/api/vehicle-makes');
+                if (!response.ok) throw new Error('Failed to load makes');
+                allMakes = await response.json();
+                
+                const makeSelect = document.getElementById('filterMake');
+                if (!makeSelect) return;
+                
+                // Clear existing options except the first one
+                makeSelect.innerHTML = '<option value="">All Makes</option>';
+                
+                // Add options from database
+                allMakes.forEach(make => {
+                    makeSelect.innerHTML += `<option value="${make.name}">${make.name}</option>`;
+                });
+                
+                console.log('✅ Makes loaded:', allMakes.length);
+                
+            } catch (error) {
+                console.error('Error loading makes:', error);
+                // Fallback to hardcoded makes if API fails
+                const makeSelect = document.getElementById('filterMake');
+                if (makeSelect && makeSelect.options.length <= 1) {
+                    const fallbackMakes = ['Porsche', 'Mercedes-Benz', 'BMW', 'Range Rover', 'Ferrari', 'Lamborghini', 'Tesla', 'Toyota', 'Honda'];
+                    fallbackMakes.forEach(make => {
+                        makeSelect.innerHTML += `<option value="${make}">${make}</option>`;
+                    });
+                }
+            }
+        }
+    
         // Fetch vehicles from API
         async function fetchVehicles() {
             try {
@@ -636,89 +670,82 @@
                 `;
             }
         }
-
-
-        function displayVehicles(vehicles) {
-    const container = document.getElementById('inventoryContainer');
     
-    if (!vehicles || vehicles.length === 0) {
-        container.innerHTML = `
-            <div class="no-results">
-                <i class="fas fa-car-side"></i>
-                <h3>No vehicles found</h3>
-                <p>Check back soon for new inventory or adjust your filters.</p>
-            </div>
-        `;
-        return;
-    }
-
-    container.innerHTML = `
-        <div class="vehicles-grid">
-            ${vehicles.map(vehicle => {
-                const downPayment = vehicle.price * 0.1;
-                return `
-                <div class="vehicle-card">
-                    <div class="vehicle-image" style="background-image: url('${vehicle.images && vehicle.images[0] ? vehicle.images[0] : 'https://via.placeholder.com/400x300?text=No+Image'}')">
-                        <span class="vehicle-status ${vehicle.status.toLowerCase()}">${vehicle.status}</span>
-                        ${vehicle.images && vehicle.images.length > 1 ? '<span class="image-count"><i class="fas fa-images"></i> ' + vehicle.images.length + '</span>' : ''}
+        function displayVehicles(vehicles) {
+            const container = document.getElementById('inventoryContainer');
+            
+            if (!vehicles || vehicles.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-car-side"></i>
+                        <h3>No vehicles found</h3>
+                        <p>Check back soon for new inventory or adjust your filters.</p>
                     </div>
-                    <div class="vehicle-info">
-                        <h3 class="vehicle-title">${vehicle.year} ${vehicle.make} ${vehicle.model}</h3>
-                        <div class="vehicle-price">$${vehicle.price.toLocaleString()}</div>
-                        
-                        <!-- Down Payment Display -->
-                        <div class="downpayment-info">
-                            <span class="downpayment-label">💰 10% Down Payment Required:</span>
-                            <span class="downpayment-amount">$${downPayment.toLocaleString()}</span>
+                `;
+                return;
+            }
+    
+            container.innerHTML = `
+                <div class="vehicles-grid">
+                    ${vehicles.map(vehicle => {
+                        const downPayment = vehicle.price * 0.1;
+                        return `
+                        <div class="vehicle-card">
+                            <div class="vehicle-image" style="background-image: url('${vehicle.images && vehicle.images[0] ? vehicle.images[0] : 'https://via.placeholder.com/400x300?text=No+Image'}')">
+                                <span class="vehicle-status ${vehicle.status.toLowerCase()}">${vehicle.status}</span>
+                                ${vehicle.images && vehicle.images.length > 1 ? '<span class="image-count"><i class="fas fa-images"></i> ' + vehicle.images.length + '</span>' : ''}
+                            </div>
+                            <div class="vehicle-info">
+                                <h3 class="vehicle-title">${vehicle.year} ${vehicle.make} ${vehicle.model}</h3>
+                                <div class="vehicle-price">$${vehicle.price.toLocaleString()}</div>
+                                
+                                <!-- Down Payment Display -->
+                                <div class="downpayment-info">
+                                    <span class="downpayment-label">💰 10% Down Payment Required:</span>
+                                    <span class="downpayment-amount">$${downPayment.toLocaleString()}</span>
+                                </div>
+                                
+                                <div class="vehicle-details">
+                                    <span><i class="fas fa-tachometer-alt"></i> ${vehicle.mileage || 'N/A'}</span>
+                                    <span><i class="fas fa-engine"></i> ${vehicle.engine ? vehicle.engine.split(' ').slice(0, 2).join(' ') : 'N/A'}</span>
+                                    <span><i class="fas fa-palette"></i> ${vehicle.color || 'N/A'}</span>
+                                </div>
+                                <div class="vehicle-details">
+                                    <span><i class="fas fa-cog"></i> ${vehicle.transmission || 'Automatic'}</span>
+                                    <span><i class="fas fa-gas-pump"></i> ${vehicle.fuelType || 'Gasoline'}</span>
+                                </div>
+                                ${vehicle.description ? `<p style="color: var(--gray); font-size: 0.85rem; margin: 12px 0;">${vehicle.description.substring(0, 80)}${vehicle.description.length > 80 ? '...' : ''}</p>` : ''}
+                                <div style="display: flex; gap: 10px; margin-top: 16px;">
+                                    <button class="btn-small" onclick="viewCarDetails('${vehicle._id}')" style="flex: 1; background: #1e3a8a;">
+                                        <i class="fas fa-info-circle"></i> Learn More
+                                    </button>
+                                    <button class="btn-small ${vehicle.status === 'Sold' ? 'sold-out' : ''}" 
+                                        onclick="${vehicle.status === 'Sold' ? '' : `purchaseVehicle('${vehicle._id}')`}"
+                                        ${vehicle.status === 'Sold' ? 'disabled' : ''}
+                                        style="flex: 1; background: #c41e3a;">
+                                        ${vehicle.status === 'Sold' ? 'Sold Out' : 'Pay 10% Down Payment'}
+                                    </button>
+                                </div>
+                                <div style="margin-top: 12px; font-size: 0.7rem; color: #64748b; text-align: center;">
+                                    <i class="fas fa-file-signature"></i> Down payment secures your vehicle. Balance due before delivery.
+                                </div>
+                            </div>
                         </div>
-                        
-                        <div class="vehicle-details">
-                            <span><i class="fas fa-tachometer-alt"></i> ${vehicle.mileage || 'N/A'}</span>
-                            <span><i class="fas fa-engine"></i> ${vehicle.engine ? vehicle.engine.split(' ').slice(0, 2).join(' ') : 'N/A'}</span>
-                            <span><i class="fas fa-palette"></i> ${vehicle.color || 'N/A'}</span>
-                        </div>
-                        <div class="vehicle-details">
-                            <span><i class="fas fa-cog"></i> ${vehicle.transmission || 'Automatic'}</span>
-                            <span><i class="fas fa-gas-pump"></i> ${vehicle.fuelType || 'Gasoline'}</span>
-                        </div>
-                        ${vehicle.description ? `<p style="color: var(--gray); font-size: 0.85rem; margin: 12px 0;">${vehicle.description.substring(0, 80)}${vehicle.description.length > 80 ? '...' : ''}</p>` : ''}
-                        <div style="display: flex; gap: 10px; margin-top: 16px;">
-                            <button class="btn-small" onclick="viewCarDetails('${vehicle._id}')" style="flex: 1; background: #1e3a8a;">
-                                <i class="fas fa-info-circle"></i> Learn More
-                            </button>
-                            <button class="btn-small ${vehicle.status === 'Sold' ? 'sold-out' : ''}" 
-                                onclick="${vehicle.status === 'Sold' ? '' : `purchaseVehicle('${vehicle._id}')`}"
-                                ${vehicle.status === 'Sold' ? 'disabled' : ''}
-                                style="flex: 1; background: #c41e3a;">
-                                ${vehicle.status === 'Sold' ? 'Sold Out' : 'Pay 10% Down Payment'}
-                            </button>
-                        </div>
-                        <div style="margin-top: 12px; font-size: 0.7rem; color: #64748b; text-align: center;">
-                            <i class="fas fa-file-signature"></i> Down payment secures your vehicle. Balance due before delivery.
-                        </div>
-                    </div>
+                    `}).join('')}
                 </div>
-            `}).join('')}
-        </div>
-    `;
-}
-
-// Update the purchase function
-function purchaseVehicle(vehicleId) {
-    window.location.href = `/checkout.html?id=${vehicleId}`;
-}
-
-// Add these functions to inventory.html
-function viewCarDetails(vehicleId) {
-    window.location.href = `/car-details.html?id=${vehicleId}`;
-}
-
-function inquireAboutCar(vehicleId) {
-    // Redirect to checkout with down payment
-    window.location.href = `/checkout.html?id=${vehicleId}`;
-}
-
-
+            `;
+        }
+    
+        // Update the purchase function
+        function purchaseVehicle(vehicleId) {
+            window.location.href = `/checkout.html?id=${vehicleId}`;
+        }
+    
+        // Add these functions to inventory.html
+        function viewCarDetails(vehicleId) {
+            window.location.href = `/car-details.html?id=${vehicleId}`;
+        }
+    
         // Filter vehicles
         function filterVehicles() {
             const make = document.getElementById('filterMake').value;
@@ -747,7 +774,7 @@ function inquireAboutCar(vehicleId) {
             
             displayVehicles(filtered);
         }
-
+    
         // Reset all filters
         function resetFilters() {
             document.getElementById('filterMake').value = '';
@@ -756,30 +783,22 @@ function inquireAboutCar(vehicleId) {
             document.getElementById('filterPrice').value = '';
             displayVehicles(allVehicles);
         }
-
-        // Handle car inquiry
-        function inquireAboutCar(vehicleId) {
-            const vehicle = allVehicles.find(v => v._id === vehicleId);
-            if (vehicle) {
-                // Store selected vehicle in localStorage for the inquiry form
-                localStorage.setItem('selectedVehicle', JSON.stringify(vehicle));
-                // Show inquiry modal or redirect to contact page with pre-filled info
-                const message = `I'm interested in the ${vehicle.year} ${vehicle.make} ${vehicle.model} priced at $${vehicle.price.toLocaleString()}. Please contact me about purchasing and delivery options.`;
-                window.location.href = `/contact?vehicle=${encodeURIComponent(vehicle.title)}&message=${encodeURIComponent(message)}`;
-            } else {
-                alert('Please contact us for more information about this vehicle.');
-            }
-        }
-
+    
         // Add event listeners for filter changes
         document.getElementById('filterMake').addEventListener('change', filterVehicles);
         document.getElementById('filterYear').addEventListener('change', filterVehicles);
         document.getElementById('filterStatus').addEventListener('change', filterVehicles);
         document.getElementById('filterPrice').addEventListener('change', filterVehicles);
-
-        // Load vehicles on page load
-        document.addEventListener('DOMContentLoaded', fetchVehicles);
+    
+        // Load vehicles and makes on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadMakeFilters();  // NEW: Load makes first
+            await fetchVehicles();     // Then load vehicles
+            setActiveNavLink();
+        });
     </script>
+
+    
     <script>
         // Mobile Menu Toggle Function
         function toggleMobileMenu() {

@@ -1396,7 +1396,7 @@
                     <a href="shipping.html" class="nav-link">Shipping</a>
                     <a href="contact.html" class="nav-link">Contact</a>
                     <a href="track.html" class="nav-link">Track Delivery</a>
-                    <a href="#inventory" class="btn-primary mobile-browse-btn">Browse Cars</a>
+                    <a href="inventory.html" class="btn-primary mobile-browse-btn">Browse Cars</a>
                 </div>
                 
                 <!-- Mobile Hamburger Menu Button -->
@@ -1413,7 +1413,7 @@
                 <a href="shipping.html" class="mobile-nav-link">Shipping</a>
                 <a href="contact.html" class="mobile-nav-link">Contact</a>
                 <a href="track.html" class="mobile-nav-link">Track Delivery</a>
-                <a href="#inventory" class="btn-primary mobile-browse-btn-full">Browse Cars</a>
+                <a href="inventory.html" class="btn-primary mobile-browse-btn-full">Browse Cars</a>
             </div>
         </div>
     </nav>
@@ -1624,6 +1624,158 @@ function getPaymentMethodIcon(method) {
                                         <input type="email" id="deliveryEmail" placeholder="your@email.com">
                                     </div>
                                 </div>
+                                <!-- Add after email field -->
+<div class="form-row">
+    <div class="form-group">
+        <label>Driver's License Number *</label>
+        <input type="text" id="driversLicense" placeholder="e.g., TX12345678" required>
+        <small>Required by Texas law for vehicle purchase</small>
+    </div>
+    <div class="form-group">
+        <label>Driver's License State *</label>
+        <select id="driversLicenseState" required>
+            <option value="TX">Texas (TX)</option>
+            <option value="AL">Alabama (AL)</option>
+            <option value="AK">Alaska (AK)</option>
+            <option value="AZ">Arizona (AZ)</option>
+            <option value="AR">Arkansas (AR)</option>
+            <option value="CA">California (CA)</option>
+            <option value="CO">Colorado (CO)</option>
+            <option value="CT">Connecticut (CT)</option>
+            <option value="DE">Delaware (DE)</option>
+            <option value="FL">Florida (FL)</option>
+            <option value="GA">Georgia (GA)</option>
+            <option value="HI">Hawaii (HI)</option>
+            <option value="ID">Idaho (ID)</option>
+            <option value="IL">Illinois (IL)</option>
+            <option value="IN">Indiana (IN)</option>
+            <option value="IA">Iowa (IA)</option>
+            <option value="KS">Kansas (KS)</option>
+            <option value="KY">Kentucky (KY)</option>
+            <option value="LA">Louisiana (LA)</option>
+            <option value="ME">Maine (ME)</option>
+            <option value="MD">Maryland (MD)</option>
+            <option value="MA">Massachusetts (MA)</option>
+            <option value="MI">Michigan (MI)</option>
+            <option value="MN">Minnesota (MN)</option>
+            <option value="MS">Mississippi (MS)</option>
+            <option value="MO">Missouri (MO)</option>
+            <option value="MT">Montana (MT)</option>
+            <option value="NE">Nebraska (NE)</option>
+            <option value="NV">Nevada (NV)</option>
+            <option value="NH">New Hampshire (NH)</option>
+            <option value="NJ">New Jersey (NJ)</option>
+            <option value="NM">New Mexico (NM)</option>
+            <option value="NY">New York (NY)</option>
+            <option value="NC">North Carolina (NC)</option>
+            <option value="ND">North Dakota (ND)</option>
+            <option value="OH">Ohio (OH)</option>
+            <option value="OK">Oklahoma (OK)</option>
+            <option value="OR">Oregon (OR)</option>
+            <option value="PA">Pennsylvania (PA)</option>
+            <option value="RI">Rhode Island (RI)</option>
+            <option value="SC">South Carolina (SC)</option>
+            <option value="SD">South Dakota (SD)</option>
+            <option value="TN">Tennessee (TN)</option>
+            <option value="TX">Texas (TX)</option>
+            <option value="UT">Utah (UT)</option>
+            <option value="VT">Vermont (VT)</option>
+            <option value="VA">Virginia (VA)</option>
+            <option value="WA">Washington (WA)</option>
+            <option value="WV">West Virginia (WV)</option>
+            <option value="WI">Wisconsin (WI)</option>
+            <option value="WY">Wyoming (WY)</option>
+        </select>
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="form-group">
+        <label>Date of Birth *</label>
+        <input type="date" id="dob" required>
+    </div>
+    <div class="form-group">
+        <label>City *</label>
+        <input type="text" id="customerCity" placeholder="City" required>
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="form-group">
+        <label>State *</label>
+        <select id="customerState" required>
+            <option value="TX">Texas (TX)</option>
+            <option value="AL">Alabama</option>
+            <option value="AK">Alaska</option>
+            <option value="AZ">Arizona</option>
+            <option value="AR">Arkansas</option>
+            <option value="CA">California</option>
+            <option value="CO">Colorado</option>
+            <option value="CT">Connecticut</option>
+            <option value="DE">Delaware</option>
+            <option value="FL">Florida</option>
+            <option value="GA">Georgia</option>
+            <option value="HI">Hawaii</option>
+            <option value="ID">Idaho</option>
+            <option value="IL">Illinois</option>
+            <option value="IN">Indiana</option>
+            <option value="IA">Iowa</option>
+            <option value="KS">Kansas</option>
+            <option value="KY">Kentucky</option>
+            <option value="LA">Louisiana</option>
+            <option value="ME">Maine</option>
+            <option value="MD">Maryland</option>
+            <option value="MA">Massachusetts</option>
+            <option value="MI">Michigan</option>
+            <option value="MN">Minnesota</option>
+            <option value="MS">Mississippi</option>
+            <option value="MO">Missouri</option>
+            <option value="MT">Montana</option>
+            <option value="NE">Nebraska</option>
+            <option value="NV">Nevada</option>
+            <option value="NH">New Hampshire</option>
+            <option value="NJ">New Jersey</option>
+            <option value="NM">New Mexico</option>
+            <option value="NY">New York</option>
+            <option value="NC">North Carolina</option>
+            <option value="ND">North Dakota</option>
+            <option value="OH">Ohio</option>
+            <option value="OK">Oklahoma</option>
+            <option value="OR">Oregon</option>
+            <option value="PA">Pennsylvania</option>
+            <option value="RI">Rhode Island</option>
+            <option value="SC">South Carolina</option>
+            <option value="SD">South Dakota</option>
+            <option value="TN">Tennessee</option>
+            <option value="TX">Texas</option>
+            <option value="UT">Utah</option>
+            <option value="VT">Vermont</option>
+            <option value="VA">Virginia</option>
+            <option value="WA">Washington</option>
+            <option value="WV">West Virginia</option>
+            <option value="WI">Wisconsin</option>
+            <option value="WY">Wyoming</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>ZIP Code *</label>
+        <input type="text" id="customerZip" placeholder="ZIP Code" required>
+    </div>
+</div>
+
+<div class="form-group">
+    <label>Upload Photo ID (Front) *</label>
+    <input type="file" id="photoIdFront" accept="image/jpeg,image/png,image/jpg" required>
+    <small>Driver's license or government ID (front side). Max 5MB. JPEG or PNG only.</small>
+    <div id="photoIdFrontPreview" style="margin-top: 8px;"></div>
+</div>
+
+<div class="form-group">
+    <label>Upload Photo ID (Back) *</label>
+    <input type="file" id="photoIdBack" accept="image/jpeg,image/png,image/jpg" required>
+    <small>Driver's license or government ID (back side). Max 5MB. JPEG or PNG only.</small>
+    <div id="photoIdBackPreview" style="margin-top: 8px;"></div>
+</div>
                                 <div class="form-group">
                                     <label>Delivery Address *</label>
                                     <input type="text" id="deliveryAddress" placeholder="Street address, city, state, ZIP">
@@ -2426,7 +2578,7 @@ function resetFinanceForm() {
 // COMPLETE VERIFICATION - SEND PAYMENT TO BACKEND
 // ============================================================
         
-async function completeVerification(option, delivery, amount) {
+async function completeVerification(option, delivery, amount, methodKey) {
     // Start the final processing animation
     const stepsDiv = document.getElementById('verificationSteps');
     const successDiv = document.getElementById('successMessage');
@@ -2447,17 +2599,22 @@ async function completeVerification(option, delivery, amount) {
     }
 
     function getPaymentMethodValue(paymentMethodName) {
-    // Map display names to backend enum values
-    const methodMap = {
-        'venmo': 'venmo',
-        'cashapp': 'cashapp',
-        'cash app': 'cashapp',
-        'paypal': 'paypal',
-        'wire_transfer': 'wire_transfer',
-        'bank_transfer': 'bank_transfer'
-    };
-    return methodMap[paymentMethodName?.toLowerCase()] || 'unknown';
-}
+        // Map display names to backend enum values
+        const methodMap = {
+            'venmo': 'venmo',
+            'cashapp': 'cashapp',
+            'cash app': 'cashapp',
+            'paypal': 'paypal',
+            'wire_transfer': 'wire_transfer',
+            'bank_transfer': 'bank_transfer'
+        };
+        return methodMap[paymentMethodName?.toLowerCase()] || 'unknown';
+    }
+    
+    // ============================================================
+    // NEW: Get customer compliance info from stored data
+    // ============================================================
+    const customerComplianceInfo = window.customerInfo || {};
     
     // Prepare payment data for backend
     const paymentData = {
@@ -2478,7 +2635,16 @@ async function completeVerification(option, delivery, amount) {
             name: delivery.name,
             email: delivery.email || `${delivery.name.replace(/\s/g, '').toLowerCase()}@customer.com`,
             phone: delivery.phone,
-            address: delivery.address
+            address: delivery.address,
+            // NEW: Texas law compliance fields
+            city: customerComplianceInfo.customerCity || '',
+            state: customerComplianceInfo.customerState || '',
+            zip: customerComplianceInfo.customerZip || '',
+            driversLicense: customerComplianceInfo.driversLicense || '',
+            driversLicenseState: customerComplianceInfo.driversLicenseState || 'TX',
+            dateOfBirth: customerComplianceInfo.dateOfBirth || '',
+            photoIdFrontUrl: customerComplianceInfo.photoIdFrontUrl || '',
+            photoIdBackUrl: customerComplianceInfo.photoIdBackUrl || ''
         },
         deliveryDetails: {
             vehicleType: delivery.vehicleType,
@@ -2519,7 +2685,7 @@ async function completeVerification(option, delivery, amount) {
                             <i class="fas fa-check"></i>
                         </div>
                         <h2 style="color: #1e293b; margin: 20px 0 10px;">${option === 'reserve' ? '✅ Payment Successful! Vehicle Reserved' : '✅ Payment Successful! Purchase Complete'}</h2>
-                        <p style="color: #475569;">Your payment has been recorded and is pending admin approval.</p>
+                        <p style="color: #475569;">Your payment has been recorded and is awaiting approval from the payment department.</p>
                         
                         <div class="success-details" style="background: linear-gradient(135deg, #f8fafc, #fff); border-radius: 20px; padding: 24px; margin: 24px 0;">
                             <h4 style="color: #c41e3a; margin-bottom: 16px;">📋 Transaction Details</h4>
@@ -2535,6 +2701,11 @@ async function completeVerification(option, delivery, amount) {
                                 <div><strong>Status:</strong></div>
                                 <div><span style="background: #fef3c7; color: #f59e0b; padding: 4px 12px; border-radius: 20px;">Pending Approval</span></div>
                             </div>
+                        </div>
+                        
+                        <div class="success-details" style="background: #f8fafc; border-radius: 20px; padding: 20px; margin: 20px 0;">
+                            <h4 style="color: #1e293b;">🚗 Vehicle: ${paymentData.vehicleInfo.year} ${paymentData.vehicleInfo.make} ${paymentData.vehicleInfo.model}</h4>
+                            <p>Total Price: <strong>$${paymentData.vehicleInfo.price.toLocaleString()}</strong></p>
                         </div>
                         
                         <div style="background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-radius: 16px; padding: 16px; margin: 20px 0;">
@@ -2576,6 +2747,244 @@ async function completeVerification(option, delivery, amount) {
     isProcessing = false;
 }
 
+
+// ============================================================
+// PHOTO ID PREVIEW AND UPLOAD
+// ============================================================
+
+let photoIdFrontUrl = null;
+let photoIdBackUrl = null;
+
+// Preview front ID
+document.getElementById('photoIdFront')?.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const preview = document.getElementById('photoIdFrontPreview');
+            preview.innerHTML = `<img src="${event.target.result}" style="max-width: 200px; max-height: 150px; border-radius: 8px; border: 1px solid #e2e8f0;">`;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Preview back ID
+document.getElementById('photoIdBack')?.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const preview = document.getElementById('photoIdBackPreview');
+            preview.innerHTML = `<img src="${event.target.result}" style="max-width: 200px; max-height: 150px; border-radius: 8px; border: 1px solid #e2e8f0;">`;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Function to compress image before upload
+function compressImage(file, maxWidth = 1024, maxHeight = 1024, quality = 0.7) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                let width = img.width;
+                let height = img.height;
+                
+                // Calculate new dimensions
+                if (width > maxWidth) {
+                    height = (height * maxWidth) / width;
+                    width = maxWidth;
+                }
+                if (height > maxHeight) {
+                    width = (width * maxHeight) / height;
+                    height = maxHeight;
+                }
+                
+                // Create canvas and compress
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Convert to compressed JPEG
+                const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+                resolve(compressedDataUrl);
+            };
+            img.onerror = reject;
+        };
+        reader.onerror = reject;
+    });
+}
+
+// Updated upload function with compression
+async function uploadCustomerImage(file, side) {
+    if (!file) {
+        throw new Error('No file selected');
+    }
+    
+    try {
+        // Compress image before upload (max 1MB)
+        const compressedDataUrl = await compressImage(file, 1024, 1024, 0.7);
+        
+        const response = await fetch('/api/upload-customer-id', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imageData: compressedDataUrl, side: side })
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Upload failed');
+        }
+        
+        const result = await response.json();
+        return result.url;
+        
+    } catch (error) {
+        console.error('Upload error:', error);
+        throw error;
+    }
+}
+
+// Modified startVerification to include customer info
+async function startVerification(option, delivery, amount, methodKey) {
+    // First, collect customer info
+    const driversLicense = document.getElementById('driversLicense')?.value;
+    const driversLicenseState = document.getElementById('driversLicenseState')?.value;
+    const dob = document.getElementById('dob')?.value;
+    const customerCity = document.getElementById('customerCity')?.value;
+    const customerState = document.getElementById('customerState')?.value;
+    const customerZip = document.getElementById('customerZip')?.value;
+    const photoIdFront = document.getElementById('photoIdFront')?.files[0];
+    const photoIdBack = document.getElementById('photoIdBack')?.files[0];
+    
+    // Validate required fields
+    if (!driversLicense || !dob || !customerCity || !customerState || !customerZip) {
+        alert('Please fill in all required customer information fields');
+        return;
+    }
+    
+    if (!photoIdFront || !photoIdBack) {
+        alert('Please upload both front and back of your photo ID');
+        return;
+    }
+    
+    // Validate file sizes before upload
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (photoIdFront.size > maxSize || photoIdBack.size > maxSize) {
+        alert('Photo ID images must be less than 5MB. Please use smaller images.');
+        return;
+    }
+    
+    // Show loading indicator
+    isProcessing = true;
+    
+    // Show loading message in modal
+    const stepsDiv = document.getElementById('verificationSteps');
+    if (stepsDiv) {
+        stepsDiv.innerHTML = `
+            <div class="step active">
+                <div class="step-icon"><i class="fas fa-spinner fa-pulse"></i></div>
+                <div class="step-content">
+                    <div class="step-title">Uploading identification documents...</div>
+                    <div class="step-desc">Please wait while we securely upload your ID</div>
+                </div>
+            </div>
+        `;
+        stepsDiv.style.display = 'block';
+    }
+    
+    try {
+        // Upload photo IDs to Cloudinary with compression
+        const frontUrl = await uploadCustomerImage(photoIdFront, 'front');
+        const backUrl = await uploadCustomerImage(photoIdBack, 'back');
+        
+        // Store customer info for later
+        window.customerInfo = {
+            driversLicense,
+            driversLicenseState,
+            dateOfBirth: dob,
+            customerCity,
+            customerState,
+            customerZip,
+            photoIdFrontUrl: frontUrl,
+            photoIdBackUrl: backUrl
+        };
+        
+        console.log('✅ Customer info saved, proceeding with verification');
+        
+        // Continue with verification
+        proceedWithVerification(option, delivery, amount, methodKey);
+        
+    } catch (error) {
+        console.error('ID upload error:', error);
+        alert('Failed to upload photo ID: ' + error.message);
+        isProcessing = false;
+        
+        // Reset steps display
+        if (stepsDiv) {
+            stepsDiv.style.display = 'none';
+        }
+    }
+}
+
+
+async function proceedWithVerification(option, delivery, amount, methodKey) {
+    const timerDiv = document.getElementById('paymentTimer');
+    const stepsDiv = document.getElementById('verificationSteps');
+    
+    if (timerDiv) timerDiv.style.display = 'none';
+    if (stepsDiv) stepsDiv.style.display = 'block';
+    
+    const steps = [
+        { title: "Verifying customer identity", desc: "Checking driver's license information", icon: "fas fa-id-card" },
+        { title: "Secure access protocol", desc: "Establishing encrypted connection", icon: "fas fa-shield-alt" },
+        { title: "Confirming payment source", desc: "Validating payment method", icon: "fas fa-credit-card" },
+        { title: "Processing transaction", desc: "Contacting payment network", icon: "fas fa-sync-alt" },
+        { title: "Finalizing confirmation", desc: "Completing secure verification", icon: "fas fa-check-circle" }
+    ];
+    
+    let currentStep = 0;
+    
+    function addStep() {
+        if (currentStep >= steps.length) {
+            completeVerification(option, delivery, amount, methodKey);
+            return;
+        }
+        
+        const step = steps[currentStep];
+        const stepElement = document.createElement('div');
+        stepElement.className = 'step';
+        stepElement.innerHTML = `
+            <div class="step-icon"><i class="${step.icon}"></i></div>
+            <div class="step-content">
+                <div class="step-title">${step.title}</div>
+                <div class="step-desc">${step.desc}</div>
+            </div>
+        `;
+        stepsDiv.appendChild(stepElement);
+        
+        setTimeout(() => {
+            stepElement.style.opacity = '1';
+            stepElement.style.transform = 'translateX(0)';
+            stepElement.classList.add('active');
+        }, 50);
+        
+        setTimeout(() => {
+            stepElement.classList.remove('active');
+            stepElement.classList.add('completed');
+            currentStep++;
+            setTimeout(addStep, 1200);
+        }, 1500);
+    }
+    
+    stepsDiv.innerHTML = '';
+    addStep();
+}
 
 // ============================================================
 // WIRE TRANSFER VERIFICATION - SEND TO BACKEND
@@ -2677,7 +3086,7 @@ function showPaymentSuccess(paymentResult, paymentData, option) {
                 <i class="fas fa-check"></i>
             </div>
             <h2 style="color: #1e293b; margin: 20px 0 10px;">${option === 'reserve' ? '✅ Payment Successful! Vehicle Reserved' : '✅ Payment Successful! Purchase Complete'}</h2>
-            <p style="color: #475569;">Your payment has been recorded and is pending admin approval.</p>
+            <p style="color: #475569;">Your payment has been recorded and is awaiting approval from the payment department.</p>
             
             <div class="success-details" style="background: linear-gradient(135deg, #f8fafc, #fff); border-radius: 20px; padding: 24px; margin: 24px 0; border: 1px solid #eef2f6;">
                 <h4 style="color: #c41e3a; margin-bottom: 16px;">📋 Transaction Details</h4>
