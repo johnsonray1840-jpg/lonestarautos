@@ -155,54 +155,60 @@ const imageUpload = multer({
 
 
 
+
 // ============================================================
-// EMAIL CONFIGURATION - NODEMAILER (Gmail/Outlook)
+// SEND EMAIL FUNCTION - RESEND VERSION
 // ============================================================
 
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-// Create transporter based on email provider
-let transporter;
-let isEmailConfigured = false;
+// Initialize Resend with API key
+const resend = new Resend(process.env.RESEND_API_KEY);
+const MAIL_FROM = process.env.EMAIL_FROM || "Lonestar Autos <no_reply_lonestarautos@ripplexvault.link>";
 
-if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-    const emailService = process.env.EMAIL_USER.includes('gmail') ? 'gmail' : 'outlook';
-    
-    if (emailService === 'gmail') {
-        // Gmail configuration
-        transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS
-            }
-        });
-    } else {
-        // Outlook configuration with explicit SMTP settings
-        transporter = nodemailer.createTransport({
-            host: 'smtp-mail.outlook.com',
-            port: 587,
-            secure: false, // false for TLS
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS
-            },
-            tls: {
-                ciphers: 'SSLv3',
-                rejectUnauthorized: false
-            },
-            connectionTimeout: 10000,
-            greetingTimeout: 10000,
-            socketTimeout: 20000
-        });
+// Check if email is configured
+const isEmailConfigured = process.env.RESEND_API_KEY && 
+                          process.env.RESEND_API_KEY !== 're_xxxx' &&
+                          process.env.RESEND_API_KEY.startsWith('re_');
+
+if (isEmailConfigured) {
+    console.log('✅ Resend email system configured');
+    console.log(`📧 Sending from: ${MAIL_FROM}`);
+} else {
+    console.log('⚠️ Resend API key not configured. Using simulation mode.');
+    console.log('   Add RESEND_API_KEY to .env file to enable emails');
+}
+
+async function sendEmail(to, subject, htmlContent) {
+    if (!isEmailConfigured) {
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.log('📧 [EMAIL SIMULATION]');
+        console.log(`   To: ${to}`);
+        console.log(`   Subject: ${subject}`);
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        return true;
     }
     
-    isEmailConfigured = true;
-    console.log(`✅ Email configured with ${emailService.toUpperCase()}`);
-    console.log(`📧 Sending from: ${process.env.EMAIL_USER}`);
-} else {
-    console.log('⚠️ Email not configured. Using simulation mode.');
-    console.log('   Add EMAIL_USER and EMAIL_PASS to .env file');
+    try {
+        const { data, error } = await resend.emails.send({
+            from: MAIL_FROM,
+            to: [to],
+            subject: subject,
+            html: htmlContent,
+            reply_to: "lonestarautos1@outlook.com"
+        });
+        
+        if (error) {
+            console.error('❌ Resend error:', error);
+            return false;
+        }
+        
+        console.log(`✅ Email sent to ${to}: ${data?.id}`);
+        return true;
+    } catch (error) {
+        console.error('❌ Email send failed:', error.message);
+        return false;
+    }
 }
 
 // ============================================================
@@ -611,7 +617,8 @@ const VehicleMake = mongoose.model('VehicleMake', vehicleMakeSchema);
 // ============================================================
 
 async function sendEmail(to, subject, htmlContent) {
-    if (!isEmailConfigured || !transporter) {
+    // Check if Resend is configured
+    if (!process.env.RESEND_API_KEY) {
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         console.log('📧 [EMAIL SIMULATION]');
         console.log(`   To: ${to}`);
@@ -621,15 +628,20 @@ async function sendEmail(to, subject, htmlContent) {
     }
     
     try {
-        const info = await transporter.sendMail({
-            from: `"Lonestar Autos" <${process.env.EMAIL_USER}>`,
-            to: to,
+        const { data, error } = await resend.emails.send({
+            from: MAIL_FROM,
+            to: [to],
             subject: subject,
             html: htmlContent,
-            replyTo: "lonestarautos1@outlook.com"
+            reply_to: "lonestarautos1@outlook.com"
         });
         
-        console.log(`✅ Email sent to ${to}: ${info.messageId}`);
+        if (error) {
+            console.error('❌ Resend error:', error);
+            return false;
+        }
+        
+        console.log(`✅ Email sent to ${to}: ${data?.id}`);
         return true;
     } catch (error) {
         console.error('❌ Email send failed:', error.message);
@@ -728,7 +740,7 @@ async function sendPaymentNotificationEmail(to, payment, status, reason = null) 
             <hr>
             
             <p style="font-size: 12px; color: #64748b; text-align: center;">
-                <strong>Questions?</strong> Call us at <a href="tel:1888LONESTAR" style="color: #c41e3a;">1-888-LONESTAR</a> or reply to this email.<br>
+                <strong>Questions?</strong> Call us at <a href="tel:1888LONESTAR" style="color: #c41e3a;"><li><i class="fab fa-whatsapp" style="color: #25D366;"></i> <a href="https://wa.me/17752769052" target="_blank" class="whatsapp-link">WhatsApp +1 (775) 276-9052</a></li></a> or reply to this email.<br>
                 Our team is available Monday-Saturday, 9am-8pm EST.
             </p>
         </div>
@@ -823,7 +835,7 @@ async function sendPaymentNotificationEmail(to, payment, status, reason = null) 
             <hr>
             
             <p style="font-size: 12px; color: #64748b; text-align: center;">
-                <strong>Questions?</strong> Call us at <a href="tel:1888LONESTAR" style="color: #c41e3a;">1-888-LONESTAR</a> or reply to this email.<br>
+                <strong>Questions?</strong> Call us at <a href="tel:1888LONESTAR" style="color: #c41e3a;"><li><i class="fab fa-whatsapp" style="color: #25D366;"></i> <a href="https://wa.me/17752769052" target="_blank" class="whatsapp-link">WhatsApp +1 (775) 276-9052</a></li></a> or reply to this email.<br>
                 Our team is available Monday-Saturday, 9am-8pm EST.
             </p>
         </div>
@@ -881,7 +893,7 @@ async function sendPaymentNotificationEmail(to, payment, status, reason = null) 
             <hr>
             
             <p style="font-size: 12px; color: #64748b; text-align: center;">
-                <strong>Need immediate assistance?</strong> Call us at <a href="tel:1888LONESTAR" style="color: #c41e3a;">1-888-LONESTAR</a>
+                <strong>Need immediate assistance?</strong> <li><i class="fab fa-whatsapp" style="color: #25D366;"></i> <a href="https://wa.me/17752769052" target="_blank" class="whatsapp-link">WhatsApp +1 (775) 276-9052</a></li>
             </p>
         </div>
         <div class="footer">
@@ -1001,7 +1013,7 @@ async function sendPauseEmail(shipment, reason, currentProgress, currentLocation
               </div>
               <div class="footer">
                   <p>Lonestar Autos - Premium Vehicle Delivery</p>
-                  <p>Questions? Call <a href="tel:1888LONESTAR" style="color: #f59e0b;">1-888-LONESTAR</a> or reply to this email</p>
+                  <p>Questions? Call <a href="tel:1888LONESTAR" style="color: #f59e0b;"><li><i class="fab fa-whatsapp" style="color: #25D366;"></i> <a href="https://wa.me/17752769052" target="_blank" class="whatsapp-link">WhatsApp +1 (775) 276-9052</a></li></a> or reply to this email</p>
               </div>
           </div>
       </body>
@@ -1081,7 +1093,7 @@ async function sendResumeEmail(shipment, progress, remainingDays, eta) {
               <div class="footer">
                   <p>Lonestar Autos - Premium Vehicle Delivery</p>
                   <p>Track 24/7 • Real-time GPS Updates</p>
-                  <p>Questions? Call <a href="tel:1888LONESTAR">1-888-LONESTAR</a></p>
+                  <p>Questions? Call <a href="tel:1888LONESTAR"><li><i class="fab fa-whatsapp" style="color: #25D366;"></i> <a href="https://wa.me/17752769052" target="_blank" class="whatsapp-link">WhatsApp +1 (775) 276-9052</a></li></a></p>
               </div>
           </div>
       </body>
@@ -1137,7 +1149,7 @@ async function sendHoldEmail(shipment, reason, progress, currentLocation) {
                   </div>
               </div>
               <div class="footer">
-                  <p>Lonestar Autos Support: <a href="tel:1888LONESTAR" style="color: #8b5cf6;">1-888-LONESTAR</a></p>
+                  <p>Lonestar Autos Support: <a href="tel:1888LONESTAR" style="color: #8b5cf6;"><li><i class="fab fa-whatsapp" style="color: #25D366;"></i> <a href="https://wa.me/17752769052" target="_blank" class="whatsapp-link">WhatsApp +1 (775) 276-9052</a></li></a></p>
               </div>
           </div>
       </body>
@@ -1189,7 +1201,7 @@ async function sendSeizeEmail(shipment, reason, progress, currentLocation) {
                   
                   <p style="margin: 20px 0; background: #fef3c7; padding: 16px; border-radius: 12px;">
                       <strong>📞 Immediate Action Required:</strong><br>
-                      Please contact our support team immediately at <strong>1-888-LONESTAR</strong> to resolve this matter.
+                      Please contact our support team immediately at <strong><li><i class="fab fa-whatsapp" style="color: #25D366;"></i> <a href="https://wa.me/17752769052" target="_blank" class="whatsapp-link">WhatsApp +1 (775) 276-9052</a></li></strong> to resolve this matter.
                   </p>
                   
                   <div style="text-align: center;">
@@ -1263,7 +1275,7 @@ async function sendReleaseEmail(shipment, reason, newStatus, progress) {
               </div>
               <div class="footer">
                   <p>Lonestar Autos - Premium Vehicle Delivery</p>
-                  <p>Questions? Call <a href="tel:1888LONESTAR" style="color: #10b981;">1-888-LONESTAR</a></p>
+                  <p>Questions? Call <a href="tel:1888LONESTAR" style="color: #10b981;"><li><i class="fab fa-whatsapp" style="color: #25D366;"></i> <a href="https://wa.me/17752769052" target="_blank" class="whatsapp-link">WhatsApp +1 (775) 276-9052</a></li></a></p>
               </div>
           </div>
       </body>
@@ -1319,7 +1331,7 @@ async function sendShipmentUpdateEmail(to, shipment, eventType, data) {
                       <p style="text-align:center;margin:16px 0;">${progress}% of journey complete</p>
                       <div style="text-align:center;"><a href="${trackingLink}" class="button">📍 Track Live</a></div>
                   </div>
-                  <div class="footer"><p>Lonestar Autos - Premium Vehicle Delivery | 1-888-LONESTAR</p></div>
+                  <div class="footer"><p>Lonestar Autos - Premium Vehicle Delivery | <li><i class="fab fa-whatsapp" style="color: #25D366;"></i> <a href="https://wa.me/17752769052" target="_blank" class="whatsapp-link">WhatsApp +1 (775) 276-9052</a></li></p></div>
               </div>
           </body>
           </html>
@@ -1389,7 +1401,7 @@ async function sendShipmentUpdateEmail(to, shipment, eventType, data) {
                       <p>We apologize for any inconvenience. Your vehicle is still en route and will be delivered as soon as possible.</p>
                       <div style="text-align:center;"><a href="${trackingLink}" class="button">📍 Track Live</a></div>
                   </div>
-                  <div class="footer"><p>Lonestar Autos Support: 1-888-LONESTAR</p></div>
+                  <div class="footer"><p>Lonestar Autos Support: <li><i class="fab fa-whatsapp" style="color: #25D366;"></i> <a href="https://wa.me/17752769052" target="_blank" class="whatsapp-link">WhatsApp +1 (775) 276-9052</a></li></p></div>
               </div>
           </body>
           </html>
@@ -1696,7 +1708,7 @@ async function sendMilestoneEmail(shipment, milestone) {
                   <hr style="margin: 24px 0; border: none; border-top: 1px solid #eef2f6;">
                   
                   <p style="font-size: 12px; color: #64748b; text-align: center;">
-                      <strong>Need help?</strong> Contact our support team at <a href="tel:1888LONESTAR" style="color: #c41e3a;">1-888-LONESTAR</a>
+                      <strong>Need help?</strong> Contact our support team at <a href="tel:1888LONESTAR" style="color: #c41e3a;"><li><i class="fab fa-whatsapp" style="color: #25D366;"></i> <a href="https://wa.me/17752769052" target="_blank" class="whatsapp-link">WhatsApp +1 (775) 276-9052</a></li></a>
                   </p>
               </div>
               <div class="footer">
@@ -2497,7 +2509,7 @@ class GPSSimulationEngine {
                     </div>
                     <div class="footer">
                         <p>Lonestar Autos - Premium Vehicle Delivery</p>
-                        <p>Questions? Call 1-888-LONESTAR or reply to this email</p>
+                        <p>Questions? Call <li><i class="fab fa-whatsapp" style="color: #25D366;"></i> <a href="https://wa.me/17752769052" target="_blank" class="whatsapp-link">WhatsApp +1 (775) 276-9052</a></li> or reply to this email</p>
                     </div>
                 </div>
             </body>
@@ -3180,7 +3192,7 @@ app.post('/api/admin/shipments/:id/send-order-email', adminAuth, async (req, res
                   </div>
                   <div style="background: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #64748b;">
                       <p>Lonestar Autos - Premium Vehicle Delivery</p>
-                      <p>Questions? Call 1-888-LONESTAR</p>
+                      <p>Questions? Call <li><i class="fab fa-whatsapp" style="color: #25D366;"></i> <a href="https://wa.me/17752769052" target="_blank" class="whatsapp-link">WhatsApp +1 (775) 276-9052</a></li></p>
                   </div>
               </div>
           </body>
