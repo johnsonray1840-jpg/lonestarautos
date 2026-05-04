@@ -163,27 +163,47 @@ const nodemailer = require('nodemailer');
 
 // Create transporter based on email provider
 let transporter;
+let isEmailConfigured = false;
 
 if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
     const emailService = process.env.EMAIL_USER.includes('gmail') ? 'gmail' : 'outlook';
     
-    transporter = nodemailer.createTransport({
-        service: emailService,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
-    });
+    if (emailService === 'gmail') {
+        // Gmail configuration
+        transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            }
+        });
+    } else {
+        // Outlook configuration with explicit SMTP settings
+        transporter = nodemailer.createTransport({
+            host: 'smtp-mail.outlook.com',
+            port: 587,
+            secure: false, // false for TLS
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            },
+            tls: {
+                ciphers: 'SSLv3',
+                rejectUnauthorized: false
+            },
+            connectionTimeout: 10000,
+            greetingTimeout: 10000,
+            socketTimeout: 20000
+        });
+    }
     
+    isEmailConfigured = true;
     console.log(`✅ Email configured with ${emailService.toUpperCase()}`);
     console.log(`📧 Sending from: ${process.env.EMAIL_USER}`);
 } else {
     console.log('⚠️ Email not configured. Using simulation mode.');
     console.log('   Add EMAIL_USER and EMAIL_PASS to .env file');
 }
-
-// Check if email is configured
-const isEmailConfigured = !!transporter;
 
 
 // ============================================================
