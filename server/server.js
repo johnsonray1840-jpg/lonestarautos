@@ -163,28 +163,47 @@ const nodemailer = require('nodemailer');
 
 // Create transporter based on email provider
 let transporter;
+let isEmailConfigured = false;
 
 if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
     const emailService = process.env.EMAIL_USER.includes('gmail') ? 'gmail' : 'outlook';
     
-    transporter = nodemailer.createTransport({
-        service: emailService,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
-    });
+    if (emailService === 'gmail') {
+        // Gmail configuration
+        transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            }
+        });
+    } else {
+        // Outlook configuration with explicit SMTP settings
+        transporter = nodemailer.createTransport({
+            host: 'smtp-mail.outlook.com',
+            port: 587,
+            secure: false, // false for TLS
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            },
+            tls: {
+                ciphers: 'SSLv3',
+                rejectUnauthorized: false
+            },
+            connectionTimeout: 10000,
+            greetingTimeout: 10000,
+            socketTimeout: 20000
+        });
+    }
     
+    isEmailConfigured = true;
     console.log(`✅ Email configured with ${emailService.toUpperCase()}`);
     console.log(`📧 Sending from: ${process.env.EMAIL_USER}`);
 } else {
     console.log('⚠️ Email not configured. Using simulation mode.');
     console.log('   Add EMAIL_USER and EMAIL_PASS to .env file');
 }
-
-// Check if email is configured
-const isEmailConfigured = !!transporter;
-
 
 // ============================================================
 // DATABASE SCHEMAS / MODELS
@@ -3189,6 +3208,184 @@ app.post('/api/admin/shipments/:id/send-order-email', adminAuth, async (req, res
   }
 });
 
+
+
+// ============================================================
+// CONTACT FORM ENQUIRY - SEND TO lonestarautos1@outlook.com
+// ============================================================
+
+app.post('/api/contact', async (req, res) => {
+    try {
+        const { name, email, phone, inquiryType, message, timestamp, userAgent } = req.body;
+        
+        // Validate required fields
+        if (!name || !email || !message) {
+            return res.status(400).json({ error: 'Name, email, and message are required' });
+        }
+        
+        // Target email for all enquiries
+        const targetEmail = 'lonestarautos1@outlook.com';
+        
+        // Generate unique reference ID
+        const referenceId = `CON-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+        
+        // Email to the dealership (admin)
+        const adminEmailHtml = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>New Contact Form Enquiry</title>
+                <style>
+                    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Inter, Helvetica, Arial, sans-serif; line-height: 1.6; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background: linear-gradient(135deg, #c41e3a, #1e3a8a); padding: 20px; text-align: center; color: white; border-radius: 12px 12px 0 0; }
+                    .content { background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; border-radius: 0 0 12px 12px; }
+                    .field { margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0; }
+                    .label { font-weight: 700; color: #1e293b; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+                    .value { color: #0f172a; margin-top: 6px; font-size: 15px; }
+                    .badge { display: inline-block; background: #c41e3a; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; margin-top: 8px; }
+                    hr { margin: 20px 0; border: none; border-top: 1px solid #e2e8f0; }
+                    .footer { font-size: 11px; color: #64748b; text-align: center; margin-top: 20px; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h2>📬 New Contact Form Enquiry</h2>
+                        <p>Reference: ${referenceId}</p>
+                    </div>
+                    <div class="content">
+                        <div class="field">
+                            <div class="label">👤 Name</div>
+                            <div class="value">${name}</div>
+                        </div>
+                        <div class="field">
+                            <div class="label">📧 Email</div>
+                            <div class="value">${email}</div>
+                        </div>
+                        ${phone ? `
+                        <div class="field">
+                            <div class="label">📞 Phone</div>
+                            <div class="value">${phone}</div>
+                        </div>
+                        ` : ''}
+                        ${inquiryType ? `
+                        <div class="field">
+                            <div class="label">📋 Inquiry Type</div>
+                            <div class="value">${inquiryType}</div>
+                        </div>
+                        ` : ''}
+                        <div class="field">
+                            <div class="label">💬 Message</div>
+                            <div class="value">${message.replace(/\n/g, '<br>')}</div>
+                        </div>
+                        <hr>
+                        <div class="field">
+                            <div class="label">🕐 Submitted</div>
+                            <div class="value">${new Date(timestamp).toLocaleString()}</div>
+                        </div>
+                        ${userAgent ? `
+                        <div class="field">
+                            <div class="label">🌐 Browser/Device</div>
+                            <div class="value" style="font-size: 11px; word-break: break-word;">${userAgent}</div>
+                        </div>
+                        ` : ''}
+                        <div class="badge">Action Required: Respond within 24 hours</div>
+                    </div>
+                    <div class="footer">
+                        <p>Lonestar Autos - Customer Enquiry System</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        `;
+        
+        // Auto-reply to customer
+        const customerReplyHtml = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>Thank You for Contacting Lonestar Autos</title>
+                <style>
+                    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Inter, Helvetica, Arial, sans-serif; line-height: 1.6; }
+                    .container { max-width: 580px; margin: 0 auto; padding: 20px; }
+                    .header { background: linear-gradient(135deg, #10b981, #059669); padding: 30px; text-align: center; color: white; border-radius: 16px 16px 0 0; }
+                    .content { background: #ffffff; padding: 30px; border: 1px solid #eef2f6; border-radius: 0 0 16px 16px; }
+                    .reference-box { background: #f8fafc; padding: 16px; border-radius: 12px; margin: 20px 0; text-align: center; border: 1px dashed #cbd5e1; }
+                    .message-box { background: #f1f5f9; padding: 16px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #c41e3a; }
+                    .button { display: inline-block; background: linear-gradient(135deg, #c41e3a, #1e3a8a); color: white; padding: 12px 28px; text-decoration: none; border-radius: 40px; font-weight: 600; margin-top: 20px; }
+                    .footer { margin-top: 24px; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #eef2f6; padding-top: 20px; }
+                    .contact-info { display: flex; justify-content: center; gap: 20px; margin-top: 16px; flex-wrap: wrap; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h2>✅ Thank You for Contacting Lonestar Autos</h2>
+                        <p>We've received your enquiry</p>
+                    </div>
+                    <div class="content">
+                        <p>Dear <strong>${name}</strong>,</p>
+                        <p>Thank you for reaching out to Lonestar Autos. We have received your enquiry and a member of our team will get back to you within <strong>24 hours</strong>.</p>
+                        
+                        <div class="reference-box">
+                            <strong>📋 Reference ID:</strong> ${referenceId}<br>
+                            <small>Please quote this reference when contacting us</small>
+                        </div>
+                        
+                        <div class="message-box">
+                            <strong>💬 Your Message:</strong><br>
+                            <p style="margin-top: 8px;">${message.replace(/\n/g, '<br>')}</p>
+                        </div>
+                        
+                        <p><strong>What happens next?</strong></p>
+                        <ul>
+                            <li>✅ A representative will review your enquiry</li>
+                            <li>📞 You will be contacted via email or phone within 24 hours</li>
+                            <li>📦 If this is about a delivery, you can also track your vehicle <a href="https://lonestarautos.onrender.com/track">here</a></li>
+                        </ul>
+                        
+                        <div style="text-align: center;">
+                            <a href="https://lonestarautos.onrender.com" class="button">🏠 Visit Our Website</a>
+                        </div>
+                        
+                        <div class="contact-info">
+                            <a href="https://wa.me/17752769052" style="color: #25D366; text-decoration: none;">📱 WhatsApp +1 (775) 276-9052</a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <p>Lonestar Autos - Premium Vehicle Delivery</p>
+                        <p>© 2026 Lonestar Autos. All rights reserved.</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        `;
+        
+        // Send email to the dealership (lonestarautos1@outlook.com)
+        const adminEmailSent = await sendEmail(targetEmail, `📬 New Enquiry (${referenceId}): ${name} - ${inquiryType || 'General Enquiry'}`, adminEmailHtml);
+        
+        // Send auto-reply to customer
+        const customerEmailSent = await sendEmail(email, 'Thank You for Contacting Lonestar Autos', customerReplyHtml);
+        
+        if (adminEmailSent || customerEmailSent) {
+            console.log(`✅ Contact form enquiry from ${name} (${email}) - Reference: ${referenceId}`);
+            res.json({ 
+                success: true, 
+                message: 'Your enquiry has been sent successfully. We will get back to you shortly.',
+                referenceId: referenceId
+            });
+        } else {
+            throw new Error('Failed to send emails');
+        }
+        
+    } catch (error) {
+        console.error('Contact form error:', error);
+        res.status(500).json({ error: 'Failed to send your enquiry. Please try again or contact us directly on WhatsApp.' });
+    }
+});
 
 // ============================================================
 // ADD THESE 4 ENDPOINTS TO server.js
